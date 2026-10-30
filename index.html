@@ -1893,34 +1893,242 @@ footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8
   .flyer .main{max-height:105mm}
   .flyer dd{font-size:16pt}
 }
+.langsw{display:flex;justify-content:flex-end;align-items:center;margin:-16px -8px 6px 0;font-size:14px;color:var(--text-muted)}
+.langsw button{min-height:44px;min-width:44px;padding:0 10px;border:0;background:transparent;font-family:var(--serif);font-size:14px;letter-spacing:.06em;color:var(--text-muted);cursor:pointer}
+.langsw button.on{color:var(--navy);font-weight:600}
+.brand-main{font-family:var(--display);font-size:30px;font-weight:500;letter-spacing:.14em;color:var(--navy);display:block;line-height:1.4}
+.brand-sub{font-size:13px;letter-spacing:.14em;color:var(--text-muted);display:block}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
 <body>
-<header class="site">
-  <a href="#/"><span class="brand-en">Lost Pet SOS</span><span class="brand-ja">迷子ペットSOS</span></a>
-</header>
+<header class="site" id="hdr"></header>
 <main id="app"></main>
-<footer class="site">
-  <div>運営：cura（在宅ケア・東京）</div>
-    <div><a href="mailto:honeypots.m@gmail.com?subject=%E3%80%90%E8%BF%B7%E5%AD%90%E3%83%9A%E3%83%83%E3%83%88SOS%E3%80%91%E5%89%8A%E9%99%A4%E4%BE%9D%E9%A0%BC">投稿の削除依頼</a></div>
-</footer>
+<footer class="site" id="ftr"></footer>
 
 <script>
 (function(){
 var app = document.getElementById('app');
-var TYPES = {lost:'迷子', found:'保護しました', sighting:'見かけました'};
-var SPECIES = {dog:'犬', cat:'猫', bird:'鳥', other:'その他'};
-var STATUS = {open:'', closed_found:'見つかりました', closed_cancel:'取り下げ済み'};
-var NOTICE = '迷子の動物を保護した方は、警察署か、お住まいの都道府県の動物愛護センター（届け先一覧）へご連絡ください。1週間以内に届けないと、お礼を受け取る権利などがなくなります。電話番号や住所は投稿しないでください。連絡は当サイトのフォームでお願いします。「先に送料や治療費を振り込んで」という連絡は詐欺の可能性があります。お金を払う前に、必ず動物本人を確認してください。';
 var rid = 0;
+
+/* ---------- i18n ---------- */
+var T = {
+ja: {
+  title:'迷子ペットSOS',
+  tagline:'大切な家族が、帰ってくるまで。',
+  homeEyebrow:'Lost Pet SOS', homeTitle:'迷子ペットSOS',
+  homeLead:'全国の迷子ペット掲示板。いなくなった子・保護された子を、都道府県と市区町村で探せます。無料です。',
+  post:'投稿する', guideBtn:'届け先と注意',
+  homeH2:'いま探している子・保護されている子',
+  fType:'種別：すべて', fSpecies:'動物：すべて', fArea:'都道府県：すべて', fCityPh:'市区町村（例：文京区）',
+  pickArea:'都道府県をえらぶ',
+  noPhoto:'写真なし',
+  typeLost:'迷子', typeFound:'保護しました', typeSighting:'見かけました',
+  spDog:'犬', spCat:'猫', spBird:'鳥', spOther:'その他',
+  stClosedFound:'見つかりました', stClosedCancel:'取り下げ済み',
+  loading:'読み込んでいます…', loadFail:'うまく読み込めませんでした。',
+  noApi:'掲示板の接続先がまだ設定されていません。',
+  netFail:'通信に失敗しました。電波の良いところで、もう一度お試しください。',
+  noneFiltered:'条件に合う投稿はありません', noneAll:'まだ投稿はありません。最初の投稿をお待ちしています',
+  more:'ほか{n}件は都道府県のページで',
+  areaPrep:'この都道府県は準備中です。',
+  tabLost:'迷子', tabFound:'保護・目撃',
+  cityFilter:'市区町村でしぼる', cityFilterPh:'例：文京区／横浜市',
+  subscribeBtn:'新着を受け取る',
+  noneCity:'この市区町村の投稿はまだありません', nonePref:'この都道府県の投稿はまだありません',
+  listOf:'{0}の一覧',
+  bandClosed:'受付を終了しました',
+  fFeatures:'特徴', fPlace:'場所', fWhen:'日時', fDesc:'説明', fPosted:'投稿日', fStatus:'状態',
+  stOpen:'受付中', stEnded:'終了',
+  nudge:'小さなことでも、教えてください。<br>「似た子を見た気がする」だけで、手がかりになります。',
+  contactBtn:'連絡する', flyerBtn:'チラシを作る',
+  dateFmt:'{y}年{m}月{d}日',
+  wd:['日','月','火','水','木','金','土'],
+  mdFmt:'{m}月{d}日（{w}）',
+  tods:['早朝（〜7時）','朝（7〜10時）','昼（10〜15時）','夕方（15〜18時）','夜（18〜22時）','深夜（22時〜）','わからない'],
+  /* new */
+  backList:'一覧にもどる', newEyebrow:'Post', newTitle:'投稿する',
+  newLead:'電話番号と住所は書かないでください。連絡はこのサイトのフォームで届きます。',
+  req:'必須',
+  lType:'種別', lArea:'都道府県', lCity:'市区町村',
+  hCity:'市区町村名だけで大丈夫です（番地は書かなくて構いません）', phCity:'例：文京区／横浜市青葉区',
+  lSpecies:'動物', lName:'名前（わかれば）', lFeatures:'特徴', hFeatures:'種類・色・大きさ・首輪など',
+  lPlace:'最後に見た場所', hPlace:'駅・交差点・公園名で書いてください',
+  lDate:'日にち', hDate:'いなくなった日、または見た日', lTod:'時間帯', choose:'えらぶ',
+  lDesc:'説明（任意）', lPhotos:'写真（任意・3枚まで）',
+  lEmail:'メールアドレス', hEmail:'公開されません。連絡の中継と管理リンクの送付に使います。',
+  lSecret:'合言葉', hSecret:'写真にも本文にも書かない特徴を1つ（例：足環の本当の色、しっぽの先の模様）。保護した方が本物か見分けるために使います。',
+  photoWait:'写真を整えています…', photoErr:'写真を読み込めませんでした。別の写真をお試しください。',
+  needAll:'必須の項目をすべて入力してください。', badEmail:'メールアドレスの形式をご確認ください。',
+  noPhone:'電話番号は書けません。連絡はこのサイトのフォームで届きます',
+  sending:'送信しています…', sendFail:'送信できませんでした。',
+  doneEyebrow:'Thank you', doneTitle:'投稿を受け付けました', doneLead:'確認のメールもお送りしています。',
+  manageLink:'管理リンク', manageHelp:'見つかったとき、取り下げるときに使います。他の人には教えないでください。',
+  secretCopy:'合言葉の控え', viewPost:'投稿を見る', viewGuide:'届け先を見る',
+  /* contact */
+  backPost:'投稿にもどる', cEyebrow:'Contact', cTitle:'連絡する',
+  cLead:'メッセージは、投稿された方のメールに届きます。電話番号や住所は書かないでください。',
+  lMessage:'メッセージ', lFrom:'返信先メール（任意）', hFrom:'空のままだと、投稿者から返信できません。',
+  lAnswer:'合言葉の答え（任意）', hAnswer:'投稿者だけが知っている特徴を知っていれば書いてください',
+  send:'送信する', needMsg:'メッセージを入力してください。',
+  sentEyebrow:'Sent', sentTitle:'送信しました', sentLead:'投稿された方にメッセージを届けました。お返事があるまでお待ちください。',
+  /* manage */
+  mEyebrow:'Manage', mTitle:'投稿の管理', btnFound:'見つかりました', btnCancel:'取り下げる',
+  updFail:'更新できませんでした。', doneEyebrow2:'Done', doneFound:'見つかって、よかったです', doneCancel:'取り下げました', doneLead2:'投稿の状態を更新しました。',
+  /* flyer */
+  flyLost:'さがしています', flyFound:'保護しています', flySighting:'見かけました',
+  print:'PDFにする／印刷', flyAnimal:'動物',
+  qrText:'見かけた方は、このQRを読み取って<br>フォームからご連絡ください',
+  /* guide */
+  gEyebrow:'Guide', gTitle:'{0}の届け先', gEnLine:'',
+  mapSearch:'地図で検索', numSee:'番号は公式サイトでご確認ください',
+  policeFallback:'最寄りの警察署（遺失物届）', centerGeneric:'お住まいの都道府県の動物愛護センター',
+  gFinderH:'保護した方へ',
+  gFinderP:'動物を見つけたら、まず安全な場所で落ち着かせてください。警察署か、上の動物愛護センターに届けたうえで、この掲示板に「保護しました」と投稿すると、飼い主の方が見つけやすくなります。',
+  gOwnerH:'飼い主の方へ',
+  gOwnerP:'いなくなったら、5日以内に{0}へ電話してください。収容されても、一定の日数で扱いが変わります（東京都は7日間。ほかの地域は各センターにご確認ください）。あわせて、最寄りの警察署に遺失物届を出してください。',
+  /* subscribe */
+  sEyebrow:'Notify', sTitle:'新着を受け取る',
+  sLead:'選んだ都道府県に新しい投稿があると、メールでお知らせします。解除はメール内のリンクからできます。',
+  lEmail2:'メールアドレス', register:'登録する', regFail:'登録できませんでした。',
+  sSent:'確認のメールをお送りしました', sSentLead:'{0}の新着をお知らせします。', toList:'一覧へ',
+  /* footer / notice */
+  footOp:'運営：cura（在宅ケア・東京）', footDel:'投稿の削除依頼',
+  delSubject:'【迷子ペットSOS】削除依頼',
+  notice:'迷子の動物を保護した方は、警察署か、お住まいの都道府県の動物愛護センター（届け先一覧）へご連絡ください。1週間以内に届けないと、お礼を受け取る権利などがなくなります。電話番号や住所は投稿しないでください。連絡は当サイトのフォームでお願いします。「先に送料や治療費を振り込んで」という連絡は詐欺の可能性があります。お金を払う前に、必ず動物本人を確認してください。'
+},
+en: {
+  title:'Lost Pet SOS',
+  tagline:'Until your family comes home.',
+  homeEyebrow:'Nationwide', homeTitle:'Lost Pet SOS',
+  homeLead:'A nationwide bulletin board for lost pets in Japan. Search for lost and found animals by prefecture and city. Free to use.',
+  post:'Post', guideBtn:'Where to report',
+  homeH2:'Pets being searched for or found',
+  fType:'Type: all', fSpecies:'Animal: all', fArea:'Prefecture: all', fCityPh:'City or ward (e.g. Bunkyo)',
+  pickArea:'Choose a prefecture',
+  noPhoto:'No photo',
+  typeLost:'Lost', typeFound:'Found', typeSighting:'Sighted',
+  spDog:'Dog', spCat:'Cat', spBird:'Bird', spOther:'Other',
+  stClosedFound:'Reunited', stClosedCancel:'Withdrawn',
+  loading:'Loading...', loadFail:'Could not load. Please try again.',
+  noApi:'The board is not connected yet.',
+  netFail:'Connection failed. Please try again where the signal is good.',
+  noneFiltered:'No posts match your search', noneAll:'No posts yet. Be the first to post.',
+  more:'{n} more on each prefecture page',
+  areaPrep:'This prefecture is not open yet.',
+  tabLost:'Lost', tabFound:'Found & sighted',
+  cityFilter:'Filter by city or ward', cityFilterPh:'e.g. Bunkyo / Yokohama',
+  subscribeBtn:'Get alerts',
+  noneCity:'No posts for this city yet', nonePref:'No posts for this prefecture yet',
+  listOf:'Posts in {0}',
+  bandClosed:'This post is closed',
+  fFeatures:'Features', fPlace:'Place', fWhen:'Date and time', fDesc:'Details', fPosted:'Posted', fStatus:'Status',
+  stOpen:'Open', stEnded:'Closed',
+  nudge:'Even a small clue helps.<br>"I think I saw a similar animal" is enough to be a lead.',
+  contactBtn:'Contact', flyerBtn:'Make a flyer',
+  dateFmt:'{mon} {d}, {y}',
+  wd:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+  mdFmt:'{mon} {d} ({w})',
+  tods:['early morning (until 7 am)','morning (7–10 am)','daytime (10 am–3 pm)','evening (3–6 pm)','night (6–10 pm)','late night (after 10 pm)','unknown time'],
+  backList:'Back to list', newEyebrow:'Post', newTitle:'Post a notice',
+  newLead:'Do not write phone numbers or addresses. Messages reach you through this site\'s form.',
+  req:'required',
+  lType:'Type', lArea:'Prefecture', lCity:'City or ward',
+  hCity:'The city or ward name is enough. No street address needed.', phCity:'e.g. Bunkyo / Yokohama Aoba',
+  lSpecies:'Animal', lName:'Name (if known)', lFeatures:'Features', hFeatures:'Breed, color, size, collar, etc.',
+  lPlace:'Last seen place', hPlace:'Use a station, intersection or park name.',
+  lDate:'Date', hDate:'The day it went missing, or the day you saw it', lTod:'Time of day', choose:'Choose',
+  lDesc:'Details (optional)', lPhotos:'Photos (optional, up to 3)',
+  lEmail:'Email address', hEmail:'Not shown publicly. Used to relay messages and send your management link.',
+  lSecret:'Secret detail', hSecret:'One feature you will not write in the photos or text (e.g. the real color of the leg band, a mark on the tip of the tail). It is used to check that a finder has the real animal.',
+  photoWait:'Preparing photos...', photoErr:'Could not read the photo. Please try another one.',
+  needAll:'Please fill in all required fields.', badEmail:'Please check the email address.',
+  noPhone:'Phone numbers cannot be written. Messages reach you through this site\'s form.',
+  sending:'Sending...', sendFail:'Could not send.',
+  doneEyebrow:'Thank you', doneTitle:'Your post has been received', doneLead:'We have also sent a confirmation email.',
+  manageLink:'Management link', manageHelp:'Use it to mark the animal as found or to withdraw the post. Do not share it with others.',
+  secretCopy:'Your secret detail (copy)', viewPost:'View post', viewGuide:'See where to report',
+  backPost:'Back to post', cEyebrow:'Contact', cTitle:'Contact the poster',
+  cLead:'Your message goes to the poster\'s email. Do not write phone numbers or addresses.',
+  lMessage:'Message', lFrom:'Your reply email (optional)', hFrom:'If left blank, the poster cannot reply to you.',
+  lAnswer:'Answer to the secret detail (optional)', hAnswer:'If you know a feature only the owner would know, write it here.',
+  send:'Send', needMsg:'Please enter a message.',
+  sentEyebrow:'Sent', sentTitle:'Sent', sentLead:'Your message has been delivered to the poster. Please wait for a reply.',
+  mEyebrow:'Manage', mTitle:'Manage your post', btnFound:'Found', btnCancel:'Withdraw',
+  updFail:'Could not update.', doneEyebrow2:'Done', doneFound:'We are glad it was found', doneCancel:'Withdrawn', doneLead2:'The post has been updated.',
+  flyLost:'LOST', flyFound:'FOUND', flySighting:'SIGHTED',
+  print:'Save as PDF / Print', flyAnimal:'Animal',
+  qrText:'If you have seen this animal,<br>scan this QR code and send a message through the form',
+  gEyebrow:'Guide', gTitle:'Where to report in {0}',
+  gEnLine:'Call the prefectural animal welfare center below (Japanese). In an emergency, call 110 (police).',
+  mapSearch:'Search on map', numSee:'See the official site for the number',
+  policeFallback:'Nearest police station (lost property)', centerGeneric:'your prefectural animal welfare center',
+  gFinderH:'If you found an animal',
+  gFinderP:'Keep the animal calm in a safe place first. Report it to the police or the animal welfare center above, then post it as "Found" here so the owner can find it.',
+  gOwnerH:'If you lost your pet',
+  gOwnerP:'Call {0} within 5 days. Even after an animal is taken in, how it is handled changes after a set number of days (7 days in Tokyo; ask each center for other areas). Also file a lost property report at your nearest police station.',
+  sEyebrow:'Notify', sTitle:'Get alerts',
+  sLead:'We will email you when a new post appears in the prefecture you choose. You can unsubscribe from the link in the email.',
+  lEmail2:'Email address', register:'Sign up', regFail:'Could not sign up.',
+  sSent:'We sent you a confirmation email', sSentLead:'We will let you know about new posts in {0}.', toList:'To the list',
+  footOp:'Run by cura (home care, Tokyo)', footDel:'Request removal',
+  delSubject:'[Lost Pet SOS] Removal request',
+  notice:'If you have found a lost animal, please contact the police or your prefectural animal welfare center. If you do not report it within one week, you may lose certain rights. Do not post phone numbers or addresses; use the contact form on this site. Messages asking you to send shipping or medical fees in advance may be scams. Never pay before you have seen the animal yourself.'
+}
+};
+var REGION_EN = {'北海道・東北':'Hokkaido & Tohoku','関東':'Kanto','中部':'Chubu','近畿':'Kinki (Kansai)','中国・四国':'Chugoku & Shikoku','九州・沖縄':'Kyushu & Okinawa'};
+var MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function pickLang(){
+  var m=/[?&]lang=(ja|en)\b/.exec(location.search); if(m) return m[1];
+  try{ var s=localStorage.getItem('maigo_lang'); if(s==='ja'||s==='en') return s; }catch(e){}
+  var n=(navigator.language||'ja').toLowerCase();
+  return n.indexOf('ja')===0?'ja':'en';
+}
+var lang = pickLang();
+function t(k,a){
+  var v=T[lang][k]; if(v==null) v=T.ja[k]; if(v==null) return k;
+  if(a!=null && typeof v==='string'){ if(typeof a==='object' && !Array.isArray(a)){ for(var x in a) v=v.split('{'+x+'}').join(a[x]); } else { v=v.split('{0}').join(a); } }
+  return v;
+}
+function typeLabel(k){ return t({lost:'typeLost',found:'typeFound',sighting:'typeSighting'}[k]||'')||k; }
+function typeName(k){ var m={lost:'typeLost',found:'typeFound',sighting:'typeSighting'}[k]; return m?t(m):(k||''); }
+function spName(k){ var m={dog:'spDog',cat:'spCat',bird:'spBird',other:'spOther'}[k]; return m?t(m):''; }
+function stName(k){ var m={closed_found:'stClosedFound',closed_cancel:'stClosedCancel'}[k]; return m?t(m):''; }
+function rname(r){ return lang==='en'?(REGION_EN[r]||r):r; }
+function pname(a){ return lang==='en'?(a.id.charAt(0).toUpperCase()+a.id.slice(1)):a.name; }
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function area(id){ for(var i=0;i<AREAS.length;i++) if(AREAS[i].id===id) return AREAS[i]; return null; }
-function areaName(id){ var a=area(id); return a?a.name:(id||''); }
+function areaName(id){ var a=area(id); return a?pname(a):(id||''); }
 function openAreas(){ return AREAS.filter(function(a){return a.open;}); }
+
+function renderChrome(){
+  document.documentElement.lang=lang;
+  document.title=t('title');
+  var h=document.getElementById('hdr');
+  var sw='<div class="langsw" role="group" aria-label="Language"><button type="button" data-lang="ja"'+(lang==='ja'?' class="on" aria-pressed="true"':' aria-pressed="false"')+'>日本語</button><span aria-hidden="true">｜</span><button type="button" data-lang="en"'+(lang==='en'?' class="on" aria-pressed="true"':' aria-pressed="false"')+'>English</button></div>';
+  var brand = lang==='en'
+    ? '<a href="#/"><span class="brand-main">Lost Pet SOS</span><span class="brand-sub">迷子ペットSOS</span></a>'
+    : '<a href="#/"><span class="brand-en">Lost Pet SOS</span><span class="brand-ja">迷子ペットSOS</span></a>';
+  h.innerHTML=sw+brand;
+  var btns=h.querySelectorAll('button[data-lang]');
+  for(var i=0;i<btns.length;i++) btns[i].addEventListener('click',function(){ setLang(this.getAttribute('data-lang')); });
+  var f=document.getElementById('ftr');
+  f.innerHTML='<div>'+esc(t('footOp'))+'</div><div><a href="mailto:honeypots.m@gmail.com?subject='+encodeURIComponent(t('delSubject'))+'">'+esc(t('footDel'))+'</a></div>';
+}
+function setLang(l){
+  if(l!==lang){
+    lang=l;
+    try{ localStorage.setItem('maigo_lang',l); }catch(e){}
+    try{ if(/[?&]lang=/.test(location.search)){ var q=location.search.replace(/([?&])lang=[^&]*&?/,'$1').replace(/[?&]$/,''); history.replaceState(null,'',location.pathname+q+location.hash); } }catch(e){}
+  }
+  renderChrome();
+  route();
+}
+
 function api(method, params, body){
-  if(!API_URL || API_URL==='PASTE_GAS_URL') return Promise.resolve({ok:false,error:'掲示板の接続先がまだ設定されていません。'});
+  if(!API_URL || API_URL==='PASTE_GAS_URL') return Promise.resolve({ok:false,error:t('noApi')});
   var p;
   if(method==='GET'){
     var q=Object.keys(params).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
@@ -1928,12 +2136,12 @@ function api(method, params, body){
   } else {
     p=fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
   }
-  return p.then(function(r){return r.json();}).catch(function(){return {ok:false,error:'通信に失敗しました。電波の良いところで、もう一度お試しください。'};});
+  return p.then(function(r){return r.json();}).catch(function(){return {ok:false,error:t('netFail')};});
 }
-function loading(){ return '<p class="msg">読み込んでいます…</p>'; }
-function errHtml(e){ return '<p class="err">'+esc(e||'うまく読み込めませんでした。')+'</p>'; }
+function loading(){ return '<p class="msg">'+esc(t('loading'))+'</p>'; }
+function errHtml(e){ return '<p class="err">'+esc(e||t('loadFail'))+'</p>'; }
 function crumb(href,label){ return '<a class="crumb" href="'+href+'">'+esc(label)+'</a>'; }
-function noticeHtml(){ return '<div class="notice">'+esc(NOTICE)+'</div>'; }
+function noticeHtml(){ return '<div class="notice">'+esc(t('notice'))+'</div>'; }
 function firstPhoto(p){ var u=photos(p); return u.length?u[0]:''; }
 function photos(p){
   var u=p.photoUrls; if(typeof u==='string'){ try{u=JSON.parse(u);}catch(e){u=[];} }
@@ -1941,10 +2149,13 @@ function photos(p){
 }
 function badge(p){
   var cls = p.type==='found'?'found':(p.type==='sighting'?'sighting':'');
-  return '<span class="badge '+cls+'">'+esc(TYPES[p.type]||p.type)+'</span>';
+  return '<span class="badge '+cls+'">'+esc(typeName(p.type))+'</span>';
 }
-function fmtDate(s){ if(!s) return ''; var d=new Date(s); if(isNaN(d)) return String(s); return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'; }
-function pageUrl(h){ return location.href.split('#')[0]+'#'+h; }
+function fmtDate(s){
+  if(!s) return ''; var d=new Date(s); if(isNaN(d)) return String(s);
+  return t('dateFmt',{y:d.getFullYear(),m:d.getMonth()+1,d:d.getDate(),mon:MONTHS_EN[d.getMonth()]});
+}
+function pageUrl(h){ return location.href.split('#')[0].replace(/([?&])lang=[^&]*&?/,'$1').replace(/[?&]$/,'')+'#'+h; }
 function parseHash(){
   var h=location.hash.replace(/^#/,'')||'/';
   var qi=h.indexOf('?'), q={};
@@ -1959,13 +2170,14 @@ function regions(){
 function areaSelect(id,sel){
   var h='<select id="'+id+'">';
   regions().forEach(function(r){
-    h+='<optgroup label="'+esc(r)+'">';
-    openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<option value="'+a.id+'"'+(a.id===sel?' selected':'')+'>'+esc(a.name)+'</option>'; });
+    h+='<optgroup label="'+esc(rname(r))+'">';
+    openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<option value="'+a.id+'"'+(a.id===sel?' selected':'')+'>'+esc(pname(a))+'</option>'; });
     h+='</optgroup>';
   });
   return h+'</select>';
 }
 function whereText(p){ return (p.city?p.city+(p.place?' ・ ':''):'')+(p.place||''); }
+function animalTitle(p){ return (spName(p.species))+(p.name?'　'+p.name:''); }
 
 /* ---------- routes ---------- */
 function route(){
@@ -1984,25 +2196,25 @@ function route(){
   viewHome(my);
 }
 
-function cardHtml(p){
-  var ph=firstPhoto(p), st=STATUS[p.status]||'';
-  return '<a class="card" href="#/post/'+esc(p.id)+'"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="" loading="lazy">':'写真なし')+'</div><div class="bd"><div>'+badge(p)+(st?'<span class="badge done">'+esc(st)+'</span>':'')+'</div><div class="t">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</div><div class="m">'+esc(areaName(p.area)+' '+whereText(p))+'<br>'+esc(p.datetime)+'</div></div></a>';
+function cardHtml(p,showArea){
+  var ph=firstPhoto(p), st=stName(p.status);
+  return '<a class="card" href="#/post/'+esc(p.id)+'"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="" loading="lazy">':esc(t('noPhoto')))+'</div><div class="bd"><div>'+badge(p)+(st?'<span class="badge done">'+esc(st)+'</span>':'')+'</div><div class="t">'+esc(animalTitle(p))+'</div><div class="m">'+esc((showArea?areaName(p.area)+' ':'')+whereText(p))+'<br>'+esc(p.datetime)+'</div></div></a>';
 }
 function viewHome(my){
-  var h='<p class="tagline">大切な家族が、帰ってくるまで。</p><div class="eyebrow">Lost Pet SOS</div><h1>迷子ペットSOS</h1><p class="lead">全国の迷子ペット掲示板。いなくなった子・保護された子を、都道府県と市区町村で探せます。無料です。</p>';
-  h+='<div class="btns"><a class="btn" href="#/new">投稿する</a><a class="btn ghost" href="#/guide/tokyo">届け先と注意</a></div>';
-  h+='<h2>いま探している子・保護されている子</h2>';
+  var h='<p class="tagline">'+esc(t('tagline'))+'</p><div class="eyebrow">'+esc(t('homeEyebrow'))+'</div><h1>'+esc(t('homeTitle'))+'</h1><p class="lead">'+esc(t('homeLead'))+'</p>';
+  h+='<div class="btns"><a class="btn" href="#/new">'+esc(t('post'))+'</a><a class="btn ghost" href="#/guide/tokyo">'+esc(t('guideBtn'))+'</a></div>';
+  h+='<h2>'+esc(t('homeH2'))+'</h2>';
   h+='<div class="filters">';
-  h+='<select id="f_type"><option value="">種別：すべて</option><option value="lost">迷子</option><option value="found">保護しました</option><option value="sighting">見かけました</option></select>';
-  h+='<select id="f_species"><option value="">動物：すべて</option><option value="dog">犬</option><option value="cat">猫</option><option value="bird">鳥</option><option value="other">その他</option></select>';
-  h+='<select id="f_area"><option value="">都道府県：すべて</option>';
-  regions().forEach(function(r){ h+='<optgroup label="'+esc(r)+'">'; openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<option value="'+a.id+'">'+esc(a.name)+'</option>'; }); h+='</optgroup>'; });
-  h+='</select><input type="text" id="f_city" placeholder="市区町村（例：文京区）" autocomplete="off"></div>';
+  h+='<select id="f_type"><option value="">'+esc(t('fType'))+'</option><option value="lost">'+esc(t('typeLost'))+'</option><option value="found">'+esc(t('typeFound'))+'</option><option value="sighting">'+esc(t('typeSighting'))+'</option></select>';
+  h+='<select id="f_species"><option value="">'+esc(t('fSpecies'))+'</option><option value="dog">'+esc(t('spDog'))+'</option><option value="cat">'+esc(t('spCat'))+'</option><option value="bird">'+esc(t('spBird'))+'</option><option value="other">'+esc(t('spOther'))+'</option></select>';
+  h+='<select id="f_area"><option value="">'+esc(t('fArea'))+'</option>';
+  regions().forEach(function(r){ h+='<optgroup label="'+esc(rname(r))+'">'; openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<option value="'+a.id+'">'+esc(pname(a))+'</option>'; }); h+='</optgroup>'; });
+  h+='</select><input type="text" id="f_city" placeholder="'+esc(t('fCityPh'))+'" autocomplete="off"></div>';
   h+='<div id="home_list">'+loading()+'</div>';
-  h+='<h2>都道府県をえらぶ</h2>';
+  h+='<h2>'+esc(t('pickArea'))+'</h2>';
   regions().forEach(function(r){
-    h+='<h3 class="region">'+esc(r)+'</h3><div class="areas">';
-    openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<a href="#/area/'+a.id+'">'+esc(a.name)+'</a>'; });
+    h+='<h3 class="region">'+esc(rname(r))+'</h3><div class="areas">';
+    openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<a href="#/area/'+a.id+'">'+esc(pname(a))+'</a>'; });
     h+='</div>';
   });
   h+=noticeHtml();
@@ -2013,10 +2225,10 @@ function viewHome(my){
     if(!r.ok){ box.innerHTML=errHtml(r.error); return; }
     var all=r.posts||[];
     function draw(){
-      var t=val('f_type'), sp=val('f_species'), ar=val('f_area'), q=val('f_city');
-      var list=all.filter(function(p){ return (!t||p.type===t)&&(!sp||p.species===sp)&&(!ar||p.area===ar)&&(!q||String(p.city||'').indexOf(q)>=0); });
-      if(!list.length){ box.innerHTML='<p class="msg">'+(all.length?'条件に合う投稿はありません':'まだ投稿はありません。最初の投稿をお待ちしています')+'</p>'; return; }
-      box.innerHTML=list.slice(0,30).map(cardHtml).join('')+(list.length>30?'<p class="msg">ほか'+(list.length-30)+'件は都道府県のページで</p>':'');
+      var tp=val('f_type'), sp=val('f_species'), ar=val('f_area'), q=val('f_city');
+      var list=all.filter(function(p){ return (!tp||p.type===tp)&&(!sp||p.species===sp)&&(!ar||p.area===ar)&&(!q||String(p.city||'').indexOf(q)>=0); });
+      if(!list.length){ box.innerHTML='<p class="msg">'+esc(all.length?t('noneFiltered'):t('noneAll'))+'</p>'; return; }
+      box.innerHTML=list.slice(0,30).map(function(p){return cardHtml(p,true);}).join('')+(list.length>30?'<p class="msg">'+esc(t('more',{n:list.length-30}))+'</p>':'');
     }
     ['f_type','f_species','f_area'].forEach(function(id){ document.getElementById(id).addEventListener('change',draw); });
     document.getElementById('f_city').addEventListener('input',draw);
@@ -2026,11 +2238,11 @@ function viewHome(my){
 
 function viewArea(id,q,my){
   var a=area(id);
-  if(!a||!a.open){ app.innerHTML=crumb('#/','都道府県をえらぶ')+'<p class="msg">この都道府県は準備中です。</p>'; return; }
+  if(!a||!a.open){ app.innerHTML=crumb('#/',t('pickArea'))+'<p class="msg">'+esc(t('areaPrep'))+'</p>'; return; }
   var tab=q.tab==='found'?'found':'lost';
-  var h=crumb('#/','都道府県をえらぶ')+'<div class="eyebrow">'+esc(a.region)+'</div><h1>'+esc(a.name)+'</h1>';
-  h+='<div class="btns"><a class="btn" href="#/new?area='+a.id+'">投稿する</a><a class="btn ghost" href="#/guide/'+a.id+'">届け先と注意</a><a class="btn ghost" href="#/subscribe?area='+a.id+'">新着を受け取る</a></div>';
-  h+='<div class="tabs"><a href="#/area/'+a.id+'" class="'+(tab==='lost'?'on':'')+'">迷子</a><a href="#/area/'+a.id+'?tab=found" class="'+(tab==='found'?'on':'')+'">保護・目撃</a></div><div class="field"><label class="l" for="cityq">市区町村でしぼる</label><input type="text" id="cityq" placeholder="例：文京区／横浜市" autocomplete="off"></div><div id="list">'+loading()+'</div>';
+  var h=crumb('#/',t('pickArea'))+'<div class="eyebrow">'+esc(rname(a.region))+'</div><h1>'+esc(pname(a))+'</h1>';
+  h+='<div class="btns"><a class="btn" href="#/new?area='+a.id+'">'+esc(t('post'))+'</a><a class="btn ghost" href="#/guide/'+a.id+'">'+esc(t('guideBtn'))+'</a><a class="btn ghost" href="#/subscribe?area='+a.id+'">'+esc(t('subscribeBtn'))+'</a></div>';
+  h+='<div class="tabs"><a href="#/area/'+a.id+'" class="'+(tab==='lost'?'on':'')+'">'+esc(t('tabLost'))+'</a><a href="#/area/'+a.id+'?tab=found" class="'+(tab==='found'?'on':'')+'">'+esc(t('tabFound'))+'</a></div><div class="field"><label class="l" for="cityq">'+esc(t('cityFilter'))+'</label><input type="text" id="cityq" placeholder="'+esc(t('cityFilterPh'))+'" autocomplete="off"></div><div id="list">'+loading()+'</div>';
   app.innerHTML=h;
   api('GET',{action:'listPosts',area:a.id}).then(function(r){
     if(my!==rid) return;
@@ -2040,11 +2252,8 @@ function viewArea(id,q,my){
     function draw(){
       var q=(document.getElementById('cityq').value||'').trim();
       var list=q?all.filter(function(p){ return String(p.city||'').indexOf(q)>=0; }):all;
-      if(!list.length){ box.innerHTML='<p class="msg">'+(q?'この市区町村の投稿はまだありません':'この都道府県の投稿はまだありません')+'</p>'; return; }
-      box.innerHTML=list.map(function(p){
-        var ph=firstPhoto(p), st=STATUS[p.status]||'';
-        return '<a class="card" href="#/post/'+esc(p.id)+'"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="" loading="lazy">':'写真なし')+'</div><div class="bd"><div>'+badge(p)+(st?'<span class="badge done">'+esc(st)+'</span>':'')+'</div><div class="t">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</div><div class="m">'+esc(whereText(p))+'<br>'+esc(p.datetime)+'</div></div></a>';
-      }).join('');
+      if(!list.length){ box.innerHTML='<p class="msg">'+esc(q?t('noneCity'):t('nonePref'))+'</p>'; return; }
+      box.innerHTML=list.map(function(p){ return cardHtml(p,false); }).join('');
     }
     document.getElementById('cityq').addEventListener('input',draw);
     draw();
@@ -2052,21 +2261,21 @@ function viewArea(id,q,my){
 }
 
 function viewPost(id,my){
-  app.innerHTML=crumb('#/','都道府県をえらぶ')+loading();
+  app.innerHTML=crumb('#/',t('pickArea'))+loading();
   api('GET',{action:'getPost',id:id}).then(function(r){
     if(my!==rid) return;
-    if(!r.ok){ app.innerHTML=crumb('#/','都道府県をえらぶ')+errHtml(r.error); return; }
+    if(!r.ok){ app.innerHTML=crumb('#/',t('pickArea'))+errHtml(r.error); return; }
     var p=r.post, ph=photos(p), closed=p.status&&p.status!=='open';
-    var h=crumb('#/area/'+esc(p.area),areaName(p.area)+'の一覧');
-    if(p.status==='closed_found') h+='<div class="band">見つかりました</div>';
-    else if(closed) h+='<div class="band">'+esc(STATUS[p.status]||'受付を終了しました')+'</div>';
-    h+='<div>'+badge(p)+'</div><h1 style="margin-top:8px">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</h1>';
+    var h=crumb('#/area/'+esc(p.area),t('listOf',areaName(p.area)));
+    if(p.status==='closed_found') h+='<div class="band">'+esc(t('stClosedFound'))+'</div>';
+    else if(closed) h+='<div class="band">'+esc(stName(p.status)||t('bandClosed'))+'</div>';
+    h+='<div>'+badge(p)+'</div><h1 style="margin-top:8px">'+esc(animalTitle(p))+'</h1>';
     if(ph.length) h+='<div class="gallery" style="margin-top:16px">'+ph.map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
-    h+='<dl class="facts"><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc(whereText(p))+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd>';
-    if(p.description) h+='<dt>説明</dt><dd>'+esc(p.description)+'</dd>';
-    h+='<dt>投稿日</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>状態</dt><dd>'+esc(closed?(STATUS[p.status]||'終了'):'受付中')+'</dd></dl>';
-    if(!closed) h+='<p class="nudge">小さなことでも、教えてください。<br>「似た子を見た気がする」だけで、手がかりになります。</p>';
-    h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">連絡する</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">チラシを作る</a><a class="btn ghost" href="#/guide/'+esc(p.area)+'?city='+encodeURIComponent(p.city||'')+'">届け先と注意</a></div>'+noticeHtml();
+    h+='<dl class="facts"><dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc(whereText(p))+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd>';
+    if(p.description) h+='<dt>'+esc(t('fDesc'))+'</dt><dd>'+esc(p.description)+'</dd>';
+    h+='<dt>'+esc(t('fPosted'))+'</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>'+esc(t('fStatus'))+'</dt><dd>'+esc(closed?(stName(p.status)||t('stEnded')):t('stOpen'))+'</dd></dl>';
+    if(!closed) h+='<p class="nudge">'+t('nudge')+'</p>';
+    h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">'+esc(t('contactBtn'))+'</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">'+esc(t('flyerBtn'))+'</a><a class="btn ghost" href="#/guide/'+esc(p.area)+'?city='+encodeURIComponent(p.city||'')+'">'+esc(t('guideBtn'))+'</a></div>'+noticeHtml();
     app.innerHTML=h;
   });
 }
@@ -2090,14 +2299,15 @@ function shrink(file){
     fr.readAsDataURL(file);
   });
 }
-function hasPhone(t){
-  var s=String(t||'').replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/[\-‐－ー―\s　()（）]/g,'');
+function hasPhone(s0){
+  var s=String(s0||'').replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/[\-‐－ー―\s　()（）]/g,'');
   return /0\d{9,10}/.test(s);
 }
 function dateText(){
-  var v=val('date'), t=val('tod'); if(!v||!t) return '';
-  var p=v.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]); var w=['日','月','火','水','木','金','土'][d.getDay()];
-  return (+p[1])+'月'+(+p[2])+'日（'+w+'）'+' '+t;
+  var v=val('date'), tv=val('tod'); if(!v||tv==='') return '';
+  var tod=t('tods')[+tv]; if(!tod) return '';
+  var p=v.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]); var w=t('wd')[d.getDay()];
+  return t('mdFmt',{m:+p[1],d:+p[2],w:w,mon:MONTHS_EN[+p[1]-1]})+(lang==='en'?', ':' ')+tod;
 }
 function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
 function checked(name){ var e=document.querySelector('input[name="'+name+'"]:checked'); return e?e.value:''; }
@@ -2107,92 +2317,95 @@ function validEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 function viewNew(areaId){
   var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'tokyo';
   var photoData=[];
+  var TYPES={lost:typeName('lost'),found:typeName('found'),sighting:typeName('sighting')};
+  var SPECIES={dog:spName('dog'),cat:spName('cat'),bird:spName('bird'),other:spName('other')};
   function opts(name,map,def){ return '<div class="opts">'+Object.keys(map).map(function(k){return '<label><input type="radio" name="'+name+'" value="'+k+'"'+(k===def?' checked':'')+'><span>'+esc(map[k])+'</span></label>';}).join('')+'</div>'; }
-  var h=crumb('#/area/'+sel,'一覧にもどる')+'<div class="eyebrow">Post</div><h1>投稿する</h1><p class="lead">電話番号と住所は書かないでください。連絡はこのサイトのフォームで届きます。</p>';
+  function req(){ return '<em>'+esc(t('req'))+'</em>'; }
+  var h=crumb('#/area/'+sel,t('backList'))+'<div class="eyebrow">'+esc(t('newEyebrow'))+'</div><h1>'+esc(t('newTitle'))+'</h1><p class="lead">'+esc(t('newLead'))+'</p>';
   h+='<form id="f" novalidate autocomplete="off">';
-  h+='<div class="field"><label class="l">種別<em>必須</em></label>'+opts('type',TYPES,'lost')+'</div>';
-  h+='<div class="field"><label class="l" for="area">都道府県<em>必須</em></label>'+areaSelect('area',sel)+'</div>';
-  h+='<div class="field"><label class="l" for="city">市区町村<em>必須</em></label><div class="help">市区町村名だけで大丈夫です（番地は書かなくて構いません）</div><input type="text" id="city" maxlength="40" placeholder="例：文京区／横浜市青葉区"></div>';
-  h+='<div class="field"><label class="l">動物<em>必須</em></label>'+opts('species',SPECIES,'dog')+'</div>';
-  h+='<div class="field"><label class="l" for="name">名前（わかれば）</label><input type="text" id="name" maxlength="60"></div>';
-  h+='<div class="field"><label class="l" for="features">特徴<em>必須</em></label><div class="help">種類・色・大きさ・首輪など</div><textarea id="features" maxlength="500"></textarea></div>';
-  h+='<div class="field"><label class="l" for="place">最後に見た場所<em>必須</em></label><div class="help">駅・交差点・公園名で書いてください</div><input type="text" id="place" maxlength="120"></div>';
+  h+='<div class="field"><label class="l">'+esc(t('lType'))+req()+'</label>'+opts('type',TYPES,'lost')+'</div>';
+  h+='<div class="field"><label class="l" for="area">'+esc(t('lArea'))+req()+'</label>'+areaSelect('area',sel)+'</div>';
+  h+='<div class="field"><label class="l" for="city">'+esc(t('lCity'))+req()+'</label><div class="help">'+esc(t('hCity'))+'</div><input type="text" id="city" maxlength="40" placeholder="'+esc(t('phCity'))+'"></div>';
+  h+='<div class="field"><label class="l">'+esc(t('lSpecies'))+req()+'</label>'+opts('species',SPECIES,'dog')+'</div>';
+  h+='<div class="field"><label class="l" for="name">'+esc(t('lName'))+'</label><input type="text" id="name" maxlength="60"></div>';
+  h+='<div class="field"><label class="l" for="features">'+esc(t('lFeatures'))+req()+'</label><div class="help">'+esc(t('hFeatures'))+'</div><textarea id="features" maxlength="500"></textarea></div>';
+  h+='<div class="field"><label class="l" for="place">'+esc(t('lPlace'))+req()+'</label><div class="help">'+esc(t('hPlace'))+'</div><input type="text" id="place" maxlength="120"></div>';
   var today=new Date(), ymd=today.getFullYear()+'-'+('0'+(today.getMonth()+1)).slice(-2)+'-'+('0'+today.getDate()).slice(-2);
-  h+='<div class="field"><label class="l" for="date">日にち<em>必須</em></label><div class="help">いなくなった日、または見た日</div><input type="date" id="date" value="'+ymd+'" max="'+ymd+'"></div>';
-  h+='<div class="field"><label class="l" for="tod">時間帯<em>必須</em></label><select id="tod"><option value="">えらぶ</option><option>早朝（〜7時）</option><option>朝（7〜10時）</option><option>昼（10〜15時）</option><option>夕方（15〜18時）</option><option>夜（18〜22時）</option><option>深夜（22時〜）</option><option>わからない</option></select></div>';
-  h+='<div class="field"><label class="l" for="description">説明（任意）</label><textarea id="description" maxlength="1000"></textarea></div>';
-  h+='<div class="field"><label class="l" for="photos">写真（任意・3枚まで）</label><input type="file" id="photos" accept="image/*" multiple><div class="thumbs" id="thumbs"></div></div>';
-  h+='<div class="field"><label class="l" for="ownerEmail">メールアドレス<em>必須</em></label><div class="help">公開されません。連絡の中継と管理リンクの送付に使います。</div><input type="email" id="ownerEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>';
-  h+='<div class="field"><label class="l" for="secret">合言葉<em>必須</em></label><div class="help">写真にも本文にも書かない特徴を1つ（例：足環の本当の色、しっぽの先の模様）。保護した方が本物か見分けるために使います。</div><input type="text" id="secret" maxlength="60"></div>';
+  h+='<div class="field"><label class="l" for="date">'+esc(t('lDate'))+req()+'</label><div class="help">'+esc(t('hDate'))+'</div><input type="date" id="date" value="'+ymd+'" max="'+ymd+'"></div>';
+  h+='<div class="field"><label class="l" for="tod">'+esc(t('lTod'))+req()+'</label><select id="tod"><option value="">'+esc(t('choose'))+'</option>'+t('tods').map(function(x,i){return '<option value="'+i+'">'+esc(x)+'</option>';}).join('')+'</select></div>';
+  h+='<div class="field"><label class="l" for="description">'+esc(t('lDesc'))+'</label><textarea id="description" maxlength="1000"></textarea></div>';
+  h+='<div class="field"><label class="l" for="photos">'+esc(t('lPhotos'))+'</label><input type="file" id="photos" accept="image/*" multiple><div class="thumbs" id="thumbs"></div></div>';
+  h+='<div class="field"><label class="l" for="ownerEmail">'+esc(t('lEmail'))+req()+'</label><div class="help">'+esc(t('hEmail'))+'</div><input type="email" id="ownerEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>';
+  h+='<div class="field"><label class="l" for="secret">'+esc(t('lSecret'))+req()+'</label><div class="help">'+esc(t('hSecret'))+'</div><input type="text" id="secret" maxlength="60"></div>';
   h+='<div class="hp" aria-hidden="true"><label>hp<input type="text" name="hp" id="hp" tabindex="-1" autocomplete="off"></label></div>';
   h+='<p class="err" id="formerr" role="alert"></p>';
-  h+='<button type="submit" class="btn block" id="go">投稿する</button></form>';
+  h+='<button type="submit" class="btn block" id="go">'+esc(t('post'))+'</button></form>';
   app.innerHTML=h;
   document.getElementById('photos').addEventListener('change',function(ev){
     var files=Array.prototype.slice.call(ev.target.files,0,3);
-    var t=document.getElementById('thumbs'); t.innerHTML='<span class="help">写真を整えています…</span>';
+    var th=document.getElementById('thumbs'); th.innerHTML='<span class="help">'+esc(t('photoWait'))+'</span>';
     Promise.all(files.map(shrink)).then(function(arr){
-      photoData=arr; t.innerHTML=arr.map(function(u){return '<img src="'+u+'" alt="">';}).join('');
-    }).catch(function(){ photoData=[]; t.innerHTML=''; showErr('写真を読み込めませんでした。別の写真をお試しください。'); });
+      photoData=arr; th.innerHTML=arr.map(function(u){return '<img src="'+u+'" alt="">';}).join('');
+    }).catch(function(){ photoData=[]; th.innerHTML=''; showErr(t('photoErr')); });
   });
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault();
     showErr('');
     var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:dateText(),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:'createPost'};
-    if(!d.features||!d.city||!d.place||!d.datetime||!d.ownerEmail||!d.secret) return showErr('必須の項目をすべて入力してください。');
-    if(!validEmail(d.ownerEmail)) return showErr('メールアドレスの形式をご確認ください。');
-    if(hasPhone(d.features)||hasPhone(d.description)||hasPhone(d.name)||hasPhone(d.place)||hasPhone(d.city)) return showErr('電話番号は書けません。連絡はこのサイトのフォームで届きます');
-    var b=document.getElementById('go'); b.disabled=true; b.textContent='送信しています…';
+    if(!d.features||!d.city||!d.place||!d.datetime||!d.ownerEmail||!d.secret) return showErr(t('needAll'));
+    if(!validEmail(d.ownerEmail)) return showErr(t('badEmail'));
+    if(hasPhone(d.features)||hasPhone(d.description)||hasPhone(d.name)||hasPhone(d.place)||hasPhone(d.city)) return showErr(t('noPhone'));
+    var b=document.getElementById('go'); b.disabled=true; b.textContent=t('sending');
     api('POST',null,d).then(function(r){
-      if(!r.ok){ b.disabled=false; b.textContent='投稿する'; return showErr(r.error||'送信できませんでした。'); }
+      if(!r.ok){ b.disabled=false; b.textContent=t('post'); return showErr(r.error||t('sendFail')); }
       var link=pageUrl('/manage/'+r.id+'/'+r.manageToken);
-      app.innerHTML='<div class="eyebrow">Thank you</div><h1>投稿を受け付けました</h1><p class="lead">確認のメールもお送りしています。</p>'
-        +'<h3>管理リンク</h3><p class="help">見つかったとき、取り下げるときに使います。他の人には教えないでください。</p><div class="copybox">'+esc(link)+'</div>'
-        +'<h3>合言葉の控え</h3><div class="copybox">'+esc(d.secret)+'</div>'
+      app.innerHTML='<div class="eyebrow">'+esc(t('doneEyebrow'))+'</div><h1>'+esc(t('doneTitle'))+'</h1><p class="lead">'+esc(t('doneLead'))+'</p>'
+        +'<h3>'+esc(t('manageLink'))+'</h3><p class="help">'+esc(t('manageHelp'))+'</p><div class="copybox">'+esc(link)+'</div>'
+        +'<h3>'+esc(t('secretCopy'))+'</h3><div class="copybox">'+esc(d.secret)+'</div>'
         +noticeHtml()
-        +'<div class="btns"><a class="btn" href="#/post/'+esc(r.id)+'">投稿を見る</a><a class="btn ghost" href="#/flyer/'+esc(r.id)+'">チラシを作る</a><a class="btn ghost" href="#/guide/'+esc(d.area)+'?city='+encodeURIComponent(d.city)+'">届け先を見る</a></div>';
+        +'<div class="btns"><a class="btn" href="#/post/'+esc(r.id)+'">'+esc(t('viewPost'))+'</a><a class="btn ghost" href="#/flyer/'+esc(r.id)+'">'+esc(t('flyerBtn'))+'</a><a class="btn ghost" href="#/guide/'+esc(d.area)+'?city='+encodeURIComponent(d.city)+'">'+esc(t('viewGuide'))+'</a></div>';
       window.scrollTo(0,0);
     });
   });
 }
 
 function viewContact(id,my){
-  app.innerHTML=crumb('#/post/'+esc(id),'投稿にもどる')+'<div class="eyebrow">Contact</div><h1>連絡する</h1><p class="nudge">小さなことでも、教えてください。「似た子を見た気がする」だけで、手がかりになります。</p><p class="lead">メッセージは、投稿された方のメールに届きます。電話番号や住所は書かないでください。</p>'
+  app.innerHTML=crumb('#/post/'+esc(id),t('backPost'))+'<div class="eyebrow">'+esc(t('cEyebrow'))+'</div><h1>'+esc(t('cTitle'))+'</h1><p class="nudge">'+esc(t('nudge').replace('<br>',lang==='en'?' ':''))+'</p><p class="lead">'+esc(t('cLead'))+'</p>'
   +'<form id="f" novalidate autocomplete="off">'
-  +'<div class="field"><label class="l" for="message">メッセージ<em>必須</em></label><textarea id="message" maxlength="1500"></textarea></div>'
-  +'<div class="field"><label class="l" for="fromEmail">返信先メール（任意）</label><div class="help">空のままだと、投稿者から返信できません。</div><input type="email" id="fromEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
-  +'<div class="field"><label class="l" for="secretAnswer">合言葉の答え（任意）</label><div class="help">投稿者だけが知っている特徴を知っていれば書いてください</div><input type="text" id="secretAnswer" maxlength="60"></div>'
-  +'<p class="err" id="formerr" role="alert"></p><button type="submit" class="btn block" id="go">送信する</button></form>';
+  +'<div class="field"><label class="l" for="message">'+esc(t('lMessage'))+'<em>'+esc(t('req'))+'</em></label><textarea id="message" maxlength="1500"></textarea></div>'
+  +'<div class="field"><label class="l" for="fromEmail">'+esc(t('lFrom'))+'</label><div class="help">'+esc(t('hFrom'))+'</div><input type="email" id="fromEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
+  +'<div class="field"><label class="l" for="secretAnswer">'+esc(t('lAnswer'))+'</label><div class="help">'+esc(t('hAnswer'))+'</div><input type="text" id="secretAnswer" maxlength="60"></div>'
+  +'<p class="err" id="formerr" role="alert"></p><button type="submit" class="btn block" id="go">'+esc(t('send'))+'</button></form>';
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault(); showErr('');
     var d={action:'contact',id:id,message:val('message'),fromEmail:val('fromEmail'),secretAnswer:val('secretAnswer')};
-    if(!d.message) return showErr('メッセージを入力してください。');
-    if(d.fromEmail&&!validEmail(d.fromEmail)) return showErr('メールアドレスの形式をご確認ください。');
-    if(hasPhone(d.message)) return showErr('電話番号は書けません。連絡はこのサイトのフォームで届きます');
-    var b=document.getElementById('go'); b.disabled=true; b.textContent='送信しています…';
+    if(!d.message) return showErr(t('needMsg'));
+    if(d.fromEmail&&!validEmail(d.fromEmail)) return showErr(t('badEmail'));
+    if(hasPhone(d.message)) return showErr(t('noPhone'));
+    var b=document.getElementById('go'); b.disabled=true; b.textContent=t('sending');
     api('POST',null,d).then(function(r){
-      if(!r.ok){ b.disabled=false; b.textContent='送信する'; return showErr(r.error||'送信できませんでした。'); }
-      app.innerHTML='<div class="eyebrow">Sent</div><h1>送信しました</h1><p class="lead">投稿された方にメッセージを届けました。お返事があるまでお待ちください。</p>'+noticeHtml()+'<div class="btns"><a class="btn ghost" href="#/post/'+esc(id)+'">投稿にもどる</a></div>';
+      if(!r.ok){ b.disabled=false; b.textContent=t('send'); return showErr(r.error||t('sendFail')); }
+      app.innerHTML='<div class="eyebrow">'+esc(t('sentEyebrow'))+'</div><h1>'+esc(t('sentTitle'))+'</h1><p class="lead">'+esc(t('sentLead'))+'</p>'+noticeHtml()+'<div class="btns"><a class="btn ghost" href="#/post/'+esc(id)+'">'+esc(t('backPost'))+'</a></div>';
     });
   });
 }
 
 function viewManage(id,token,my){
-  app.innerHTML=crumb('#/','都道府県をえらぶ')+loading();
+  app.innerHTML=crumb('#/',t('pickArea'))+loading();
   api('GET',{action:'getPost',id:id}).then(function(r){
     if(my!==rid) return;
-    if(!r.ok){ app.innerHTML=crumb('#/','都道府県をえらぶ')+errHtml(r.error); return; }
+    if(!r.ok){ app.innerHTML=crumb('#/',t('pickArea'))+errHtml(r.error); return; }
     var p=r.post, closed=p.status&&p.status!=='open';
-    var h=crumb('#/post/'+esc(id),'投稿を見る')+'<div class="eyebrow">Manage</div><h1>投稿の管理</h1><p class="lead">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'　／　'+esc(p.place)+'</p>';
-    if(closed) h+='<div class="band">'+esc(STATUS[p.status]||'受付を終了しました')+'</div>';
-    else h+='<div class="btns"><button class="btn" id="bf">見つかりました</button><button class="btn ghost" id="bc">取り下げる</button></div><p class="err" id="formerr" role="alert"></p>';
-    h+='<div class="btns"><a class="btn ghost" href="#/flyer/'+esc(id)+'">チラシを作る</a></div>';
+    var h=crumb('#/post/'+esc(id),t('viewPost'))+'<div class="eyebrow">'+esc(t('mEyebrow'))+'</div><h1>'+esc(t('mTitle'))+'</h1><p class="lead">'+esc(animalTitle(p))+'　／　'+esc(p.place)+'</p>';
+    if(closed) h+='<div class="band">'+esc(stName(p.status)||t('bandClosed'))+'</div>';
+    else h+='<div class="btns"><button class="btn" id="bf">'+esc(t('btnFound'))+'</button><button class="btn ghost" id="bc">'+esc(t('btnCancel'))+'</button></div><p class="err" id="formerr" role="alert"></p>';
+    h+='<div class="btns"><a class="btn ghost" href="#/flyer/'+esc(id)+'">'+esc(t('flyerBtn'))+'</a></div>';
     app.innerHTML=h;
     function close(outcome){
       var b1=document.getElementById('bf'),b2=document.getElementById('bc'); b1.disabled=b2.disabled=true;
       api('POST',null,{action:'closePost',id:id,token:token,outcome:outcome}).then(function(r){
-        if(!r.ok){ b1.disabled=b2.disabled=false; return showErr(r.error||'更新できませんでした。'); }
-        app.innerHTML=crumb('#/','都道府県をえらぶ')+'<div class="eyebrow">Done</div><h1>'+(outcome==='found'?'見つかって、よかったです':'取り下げました')+'</h1><p class="lead">投稿の状態を更新しました。</p>';
+        if(!r.ok){ b1.disabled=b2.disabled=false; return showErr(r.error||t('updFail')); }
+        app.innerHTML=crumb('#/',t('pickArea'))+'<div class="eyebrow">'+esc(t('doneEyebrow2'))+'</div><h1>'+esc(outcome==='found'?t('doneFound'):t('doneCancel'))+'</h1><p class="lead">'+esc(t('doneLead2'))+'</p>';
       });
     }
     if(!closed){
@@ -2203,19 +2416,19 @@ function viewManage(id,token,my){
 }
 
 function viewFlyer(id,my){
-  app.innerHTML=crumb('#/post/'+esc(id),'投稿にもどる')+loading();
+  app.innerHTML=crumb('#/post/'+esc(id),t('backPost'))+loading();
   api('GET',{action:'getPost',id:id}).then(function(r){
     if(my!==rid) return;
-    if(!r.ok){ app.innerHTML=crumb('#/','都道府県をえらぶ')+errHtml(r.error); return; }
+    if(!r.ok){ app.innerHTML=crumb('#/',t('pickArea'))+errHtml(r.error); return; }
     var p=r.post, ph=photos(p);
-    var title=p.type==='found'?'保護しています':(p.type==='sighting'?'見かけました':'さがしています');
-    var h=crumb('#/post/'+esc(id),'投稿にもどる')+'<div class="btns noprint"><button class="btn" id="pr">PDFにする／印刷</button></div>';
+    var title=p.type==='found'?t('flyFound'):(p.type==='sighting'?t('flySighting'):t('flyLost'));
+    var h=crumb('#/post/'+esc(id),t('backPost'))+'<div class="btns noprint"><button class="btn" id="pr">'+esc(t('print'))+'</button></div>';
     h+='<div class="flyer"><div class="big">'+esc(title)+'</div>';
     if(ph.length) h+='<img class="main" src="'+esc(ph[0])+'" alt="">';
     if(ph.length>1) h+='<div class="sub">'+ph.slice(1).map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
-    h+='<dl><dt>動物</dt><dd>'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</dd><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc((p.city?p.city+'　':'')+p.place)+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd></dl>';
+    h+='<dl><dt>'+esc(t('flyAnimal'))+'</dt><dd>'+esc(animalTitle(p))+'</dd><dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc((p.city?p.city+'　':'')+p.place)+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd></dl>';
     var curl=pageUrl('/contact/'+p.id);
-    h+='<div class="how"><div class="qrwrap"><div id="qr" class="qr"></div><div class="qrtext">見かけた方は、このQRを読み取って<br>フォームからご連絡ください<div class="url">'+esc(curl)+'</div></div></div></div></div>';
+    h+='<div class="how"><div class="qrwrap"><div id="qr" class="qr"></div><div class="qrtext">'+t('qrText')+'<div class="url">'+esc(curl)+'</div></div></div></div></div>';
     app.innerHTML=h;
     try{ if(window.qrcode){ var q=qrcode(0,'M'); q.addData(curl); q.make(); document.getElementById('qr').innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true}); } }catch(e){}
     document.getElementById('pr').onclick=function(){window.print();};
@@ -2226,42 +2439,44 @@ function viewGuide(id,city){
   var a=area(id)||area('tokyo');
   function row(c){
     var telHtml = c.tel ? '<a href="tel:'+esc(c.tel.replace(/[^0-9+]/g,''))+'" style="display:inline-flex;align-items:center;min-height:44px">'+esc(c.tel)+'</a>'
-      : (c.url ? '<a href="'+esc(c.url)+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px">地図で検索</a>' : '<span class="help" style="display:inline-flex;align-items:center;min-height:44px">番号は公式サイトでご確認ください</span>');
+      : (c.url ? '<a href="'+esc(c.url)+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px">'+esc(t('mapSearch'))+'</a>' : '<span class="help" style="display:inline-flex;align-items:center;min-height:44px">'+esc(t('numSee'))+'</span>');
     return '<div style="padding:12px 0;border-bottom:1px solid var(--rose-pale)">'+esc(c.label)+'<br>'+telHtml+'</div>';
   }
   var cs=a.contacts||[];
   var main=cs.filter(function(c){return c.tel;}), fixed=cs.filter(function(c){return !c.tel;});
   var wards=[];
   if(a.wards&&city){ Object.keys(a.wards).forEach(function(k){ if(String(city).indexOf(k)>=0) wards=wards.concat(a.wards[k]); }); }
-  var h=crumb('#/area/'+a.id,a.name+'の一覧')+'<div class="eyebrow">Guide</div><h1>'+esc(a.name)+'の届け先</h1>';
-  if(!fixed.length) fixed=[{label:'最寄りの警察署（遺失物届）',tel:'',url:'https://www.google.com/maps/search/警察署'}];
+  var h=crumb('#/area/'+a.id,t('listOf',pname(a)))+'<div class="eyebrow">'+esc(t('gEyebrow'))+'</div><h1>'+esc(t('gTitle',pname(a)))+'</h1>';
+  if(!fixed.length) fixed=[{label:T.ja.policeFallback,tel:'',url:'https://www.google.com/maps/search/警察署'}];
+  if(lang==='en') h+='<p class="lead">'+esc(t('gEnLine'))+'</p>';
   h+='<div class="notice" style="padding:6px 20px">'+main.concat(wards).concat(fixed).map(row).join('')+'</div>';
-  var center=main.length?main[0].label:'お住まいの都道府県の動物愛護センター';
-  h+='<h2>保護した方へ</h2><p>動物を見つけたら、まず安全な場所で落ち着かせてください。警察署か、上の動物愛護センターに届けたうえで、この掲示板に「保護しました」と投稿すると、飼い主の方が見つけやすくなります。</p>';
-  h+='<h2>飼い主の方へ</h2><p>いなくなったら、5日以内に'+esc(center)+'へ電話してください。収容されても、一定の日数で扱いが変わります（東京都は7日間。ほかの地域は各センターにご確認ください）。あわせて、最寄りの警察署に遺失物届を出してください。</p>';
-  h+=noticeHtml()+'<div class="btns"><a class="btn" href="#/new?area='+a.id+'">投稿する</a></div>';
+  var center=(lang==='ja'&&main.length)?main[0].label:t('centerGeneric');
+  h+='<h2>'+esc(t('gFinderH'))+'</h2><p>'+esc(t('gFinderP'))+'</p>';
+  h+='<h2>'+esc(t('gOwnerH'))+'</h2><p>'+esc(t('gOwnerP',center))+'</p>';
+  h+=noticeHtml()+'<div class="btns"><a class="btn" href="#/new?area='+a.id+'">'+esc(t('post'))+'</a></div>';
   app.innerHTML=h;
 }
 
 function viewSubscribe(areaId){
   var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'tokyo';
-  app.innerHTML=crumb('#/area/'+sel,'一覧にもどる')+'<div class="eyebrow">Notify</div><h1>新着を受け取る</h1><p class="lead">選んだ都道府県に新しい投稿があると、メールでお知らせします。解除はメール内のリンクからできます。</p>'
-  +'<form id="f" novalidate><div class="field"><label class="l" for="area">都道府県</label>'+areaSelect('area',sel)+'</div>'
-  +'<div class="field"><label class="l" for="email">メールアドレス</label><input type="email" id="email" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
-  +'<p class="err" id="formerr" role="alert"></p><button type="submit" class="btn block" id="go">登録する</button></form>';
+  app.innerHTML=crumb('#/area/'+sel,t('backList'))+'<div class="eyebrow">'+esc(t('sEyebrow'))+'</div><h1>'+esc(t('sTitle'))+'</h1><p class="lead">'+esc(t('sLead'))+'</p>'
+  +'<form id="f" novalidate><div class="field"><label class="l" for="area">'+esc(t('lArea'))+'</label>'+areaSelect('area',sel)+'</div>'
+  +'<div class="field"><label class="l" for="email">'+esc(t('lEmail2'))+'</label><input type="email" id="email" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
+  +'<p class="err" id="formerr" role="alert"></p><button type="submit" class="btn block" id="go">'+esc(t('register'))+'</button></form>';
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault(); showErr('');
     var d={action:'subscribe',area:val('area'),email:val('email')};
-    if(!validEmail(d.email)) return showErr('メールアドレスの形式をご確認ください。');
-    var b=document.getElementById('go'); b.disabled=true; b.textContent='送信しています…';
+    if(!validEmail(d.email)) return showErr(t('badEmail'));
+    var b=document.getElementById('go'); b.disabled=true; b.textContent=t('sending');
     api('POST',null,d).then(function(r){
-      if(!r.ok){ b.disabled=false; b.textContent='登録する'; return showErr(r.error||'登録できませんでした。'); }
-      app.innerHTML='<div class="eyebrow">Sent</div><h1>確認のメールをお送りしました</h1><p class="lead">'+esc(areaName(d.area))+'の新着をお知らせします。</p><div class="btns"><a class="btn ghost" href="#/area/'+esc(d.area)+'">一覧へ</a></div>';
+      if(!r.ok){ b.disabled=false; b.textContent=t('register'); return showErr(r.error||t('regFail')); }
+      app.innerHTML='<div class="eyebrow">'+esc(t('sentEyebrow'))+'</div><h1>'+esc(t('sSent'))+'</h1><p class="lead">'+esc(t('sSentLead',areaName(d.area)))+'</p><div class="btns"><a class="btn ghost" href="#/area/'+esc(d.area)+'">'+esc(t('toList'))+'</a></div>';
     });
   });
 }
 
 window.addEventListener('hashchange',route);
+renderChrome();
 route();
 })();
 </script>
