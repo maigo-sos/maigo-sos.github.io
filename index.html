@@ -1813,6 +1813,7 @@ h3{font-size:17px;margin:20px 0 6px}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
 .filters select,.filters input{min-height:46px}
 .about{font-size:17px;line-height:2;margin-bottom:22px}
+dl.facts dd.voice{background:#fff;border:1px solid var(--rose-pale);padding:14px 16px;margin-top:6px;font-size:17px}
 .nudge{font-size:17px;color:var(--rose-deep);line-height:1.9;margin:26px 0 4px}
 .tagline{font-size:22px;letter-spacing:.12em;color:var(--rose-deep);line-height:1.8;margin:4px 0 26px}
 .rule{height:1px;background:var(--rose-pale);border:0;margin:28px 0}
@@ -1954,7 +1955,7 @@ ja: {
   noneCity:'この市区町村の投稿はまだありません', nonePref:'この都道府県の投稿はまだありません',
   listOf:'{0}の一覧',
   bandClosed:'受付を終了しました',
-  fFeatures:'特徴', fPlace:'場所', fWhen:'日時', fDesc:'説明', fPosted:'投稿日', fStatus:'状態',
+  fFeatures:'特徴', fPlace:'場所', fWhen:'日時', fDescLost:'飼い主さんより', fDescFound:'保護した方より', fDescSight:'見かけた方より', fPosted:'投稿日', fStatus:'状態',
   stOpen:'受付中', stEnded:'終了',
   nudge:'小さなことでも、教えてください。<br>「似た子を見た気がする」だけで、手がかりになります。',
   contactBtn:'連絡する', flyerBtn:'チラシを作る',
@@ -1971,7 +1972,7 @@ ja: {
   lSpecies:'動物', lName:'名前（わかれば）', lFeatures:'特徴', hFeatures:'種類・色・大きさ・首輪など',
   lPlace:'最後に見た場所', hPlace:'駅・交差点・公園名で書いてください',
   lDate:'日にち', hDate:'いなくなった日、または見た日', lTod:'時間帯', choose:'えらぶ',
-  lDesc:'説明（任意）', lPhotos:'写真（任意・3枚まで）',
+  lDesc:'A few words (optional)', lDescHelp:'Anything people should know. e.g. only 4 months old and I worry about the cold; used to people and will step onto a hand', lDescHelp:'見た人に伝えたいこと。例：まだ4か月で寒さが心配です、人に慣れているので手に乗ります、など', lPhotos:'写真（任意・3枚まで）',
   lEmail:'メールアドレス', hEmail:'公開されません。連絡の中継と管理リンクの送付に使います。',
   lSecret:'合言葉', hSecret:'写真にも本文にも書かない特徴を1つ（例：足環の本当の色、しっぽの先の模様）。保護した方が本物か見分けるために使います。',
   photoWait:'写真を整えています…', photoErr:'写真を読み込めませんでした。別の写真をお試しください。',
@@ -2041,7 +2042,7 @@ en: {
   noneCity:'No posts for this city yet', nonePref:'No posts for this prefecture yet',
   listOf:'Posts in {0}',
   bandClosed:'This post is closed',
-  fFeatures:'Features', fPlace:'Place', fWhen:'Date and time', fDesc:'Details', fPosted:'Posted', fStatus:'Status',
+  fFeatures:'Features', fPlace:'Place', fWhen:'Date and time', fDescLost:'From the owner', fDescFound:'From the finder', fDescSight:'From the person who saw it', fPosted:'Posted', fStatus:'Status',
   stOpen:'Open', stEnded:'Closed',
   nudge:'Even a small clue helps.<br>"I think I saw a similar animal" is enough to be a lead.',
   contactBtn:'Contact', flyerBtn:'Make a flyer',
@@ -2349,7 +2350,7 @@ function viewPost(id,my){
     h+='<div>'+badge(p)+'</div><h1 style="margin-top:8px">'+esc(animalTitle(p))+'</h1>';
     if(ph.length) h+='<div class="gallery" style="margin-top:16px">'+ph.map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
     h+='<dl class="facts"><dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc(whereText(p))+(ll(p)?'<div class="mapbox small" id="post_map"></div><div class="mapnote">'+esc(t('mapApprox'))+'</div>':'')+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd>';
-    if(p.description) h+='<dt>'+esc(t('fDesc'))+'</dt><dd>'+esc(p.description)+'</dd>';
+    if(p.description) h+='<dt>'+esc(t(p.type==='lost'?'fDescLost':(p.type==='found'?'fDescFound':'fDescSight')))+'</dt><dd class="voice">'+esc(p.description)+'</dd>';
     h+='<dt>'+esc(t('fPosted'))+'</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>'+esc(t('fStatus'))+'</dt><dd>'+esc(closed?(stName(p.status)||t('stEnded')):t('stOpen'))+'</dd></dl>';
     if(!closed) h+='<p class="nudge">'+t('nudge')+'</p>';
     h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">'+esc(t('contactBtn'))+'</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">'+esc(t('flyerBtn'))+'</a><a class="btn ghost" href="#/guide/'+esc(p.area)+'?city='+encodeURIComponent(p.city||'')+'">'+esc(t('guideBtn'))+'</a></div>'+noticeHtml();
@@ -2412,7 +2413,7 @@ function viewNew(areaId){
   var today=new Date(), ymd=today.getFullYear()+'-'+('0'+(today.getMonth()+1)).slice(-2)+'-'+('0'+today.getDate()).slice(-2);
   h+='<div class="field"><label class="l" for="date">'+esc(t('lDate'))+req()+'</label><div class="help">'+esc(t('hDate'))+'</div><input type="date" id="date" value="'+ymd+'" max="'+ymd+'"></div>';
   h+='<div class="field"><label class="l" for="tod">'+esc(t('lTod'))+req()+'</label><select id="tod"><option value="">'+esc(t('choose'))+'</option>'+t('tods').map(function(x,i){return '<option value="'+i+'">'+esc(x)+'</option>';}).join('')+'</select></div>';
-  h+='<div class="field"><label class="l" for="description">'+esc(t('lDesc'))+'</label><textarea id="description" maxlength="1000"></textarea></div>';
+  h+='<div class="field"><label class="l" for="description">'+esc(t('lDesc'))+'</label><div class="help">'+esc(t('lDescHelp'))+'</div><textarea id="description" maxlength="1000"></textarea></div>';
   h+='<div class="field"><label class="l" for="photos">'+esc(t('lPhotos'))+'</label><input type="file" id="photos" accept="image/*" multiple><div class="thumbs" id="thumbs"></div></div>';
   h+='<div class="field"><label class="l" for="ownerEmail">'+esc(t('lEmail'))+req()+'</label><div class="help">'+esc(t('hEmail'))+'</div><input type="email" id="ownerEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>';
   h+='<div class="field"><label class="l" for="secret">'+esc(t('lSecret'))+req()+'</label><div class="help">'+esc(t('hSecret'))+'</div><input type="text" id="secret" maxlength="60"></div>';
