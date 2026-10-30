@@ -1845,7 +1845,7 @@ dl.facts dd{overflow-wrap:anywhere;white-space:pre-wrap}
 label.l{display:block;font-size:15px;letter-spacing:.06em;margin-bottom:6px;color:var(--navy)}
 label.l em{font-style:normal;color:var(--rose-deep);font-size:13px;margin-left:6px}
 .help{font-size:14px;color:var(--text-muted);margin-bottom:6px;line-height:1.7}
-input[type=text],input[type=email],textarea,select{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--rose-light);background:#fff;color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.7;border-radius:2px;-webkit-appearance:none;appearance:none}
+input[type=text],input[type=email],input[type=date],textarea,select{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--rose-light);background:#fff;color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.7;border-radius:2px;-webkit-appearance:none;appearance:none}
 textarea{min-height:120px;resize:vertical}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--rose-deep) 50%),linear-gradient(135deg,var(--rose-deep) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:40px}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--rose-light);outline-offset:1px}
@@ -2055,6 +2055,11 @@ function hasPhone(t){
   var s=String(t||'').replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/[\-‐－ー―\s　()（）]/g,'');
   return /0\d{9,10}/.test(s);
 }
+function dateText(){
+  var v=val('date'), t=val('tod'); if(!v||!t) return '';
+  var p=v.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]); var w=['日','月','火','水','木','金','土'][d.getDay()];
+  return (+p[1])+'月'+(+p[2])+'日（'+w+'）'+' '+t;
+}
 function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
 function checked(name){ var e=document.querySelector('input[name="'+name+'"]:checked'); return e?e.value:''; }
 function showErr(msg){ var e=document.getElementById('formerr'); if(e){ e.textContent=msg||''; if(msg) e.scrollIntoView({block:'center'});} }
@@ -2073,7 +2078,9 @@ function viewNew(areaId){
   h+='<div class="field"><label class="l" for="name">名前（わかれば）</label><input type="text" id="name" maxlength="60"></div>';
   h+='<div class="field"><label class="l" for="features">特徴<em>必須</em></label><div class="help">種類・色・大きさ・首輪など</div><textarea id="features" maxlength="500"></textarea></div>';
   h+='<div class="field"><label class="l" for="place">最後に見た場所<em>必須</em></label><div class="help">駅・交差点・公園名で書いてください</div><input type="text" id="place" maxlength="120"></div>';
-  h+='<div class="field"><label class="l" for="datetime">日時<em>必須</em></label><div class="help">いなくなった日時、または見た日時</div><input type="text" id="datetime" maxlength="60" placeholder="例：10月29日 夕方ごろ"></div>';
+  var today=new Date(), ymd=today.getFullYear()+'-'+('0'+(today.getMonth()+1)).slice(-2)+'-'+('0'+today.getDate()).slice(-2);
+  h+='<div class="field"><label class="l" for="date">日にち<em>必須</em></label><div class="help">いなくなった日、または見た日</div><input type="date" id="date" value="'+ymd+'" max="'+ymd+'"></div>';
+  h+='<div class="field"><label class="l" for="tod">時間帯<em>必須</em></label><select id="tod"><option value="">えらぶ</option><option>早朝（〜7時）</option><option>朝（7〜10時）</option><option>昼（10〜15時）</option><option>夕方（15〜18時）</option><option>夜（18〜22時）</option><option>深夜（22時〜）</option><option>わからない</option></select></div>';
   h+='<div class="field"><label class="l" for="description">説明（任意）</label><textarea id="description" maxlength="1000"></textarea></div>';
   h+='<div class="field"><label class="l" for="photos">写真（任意・3枚まで）</label><input type="file" id="photos" accept="image/*" multiple><div class="thumbs" id="thumbs"></div></div>';
   h+='<div class="field"><label class="l" for="ownerEmail">メールアドレス<em>必須</em></label><div class="help">公開されません。連絡の中継と管理リンクの送付に使います。</div><input type="email" id="ownerEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>';
@@ -2092,7 +2099,7 @@ function viewNew(areaId){
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault();
     showErr('');
-    var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:val('datetime'),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:'createPost'};
+    var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:dateText(),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:'createPost'};
     if(!d.features||!d.city||!d.place||!d.datetime||!d.ownerEmail||!d.secret) return showErr('必須の項目をすべて入力してください。');
     if(!validEmail(d.ownerEmail)) return showErr('メールアドレスの形式をご確認ください。');
     if(hasPhone(d.features)||hasPhone(d.description)||hasPhone(d.name)||hasPhone(d.place)||hasPhone(d.city)) return showErr('電話番号は書けません。連絡はこのサイトのフォームで届きます');
