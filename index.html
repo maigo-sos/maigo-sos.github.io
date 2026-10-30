@@ -1808,6 +1808,7 @@ h2{font-size:20px;letter-spacing:.08em;margin:36px 0 12px}
 h3{font-size:17px;margin:20px 0 6px}
 .eyebrow{font-family:var(--display);font-size:16px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
 .lead{color:var(--text-muted);margin-bottom:28px}
+.nudge{font-size:17px;color:var(--rose-deep);line-height:1.9;margin:26px 0 4px}
 .tagline{font-size:22px;letter-spacing:.12em;color:var(--rose-deep);line-height:1.8;margin:4px 0 26px}
 .rule{height:1px;background:var(--rose-pale);border:0;margin:28px 0}
 .crumb{display:inline-flex;align-items:center;min-height:44px;font-size:15px;color:var(--text-muted);text-decoration:none;margin-bottom:8px}
@@ -2034,6 +2035,7 @@ function viewPost(id,my){
     h+='<dl class="facts"><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc(whereText(p))+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd>';
     if(p.description) h+='<dt>説明</dt><dd>'+esc(p.description)+'</dd>';
     h+='<dt>投稿日</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>状態</dt><dd>'+esc(closed?(STATUS[p.status]||'終了'):'受付中')+'</dd></dl>';
+    if(!closed) h+='<p class="nudge">小さなことでも、教えてください。<br>「似た子を見た気がする」だけで、手がかりになります。</p>';
     h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">連絡する</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">チラシを作る</a><a class="btn ghost" href="#/guide/'+esc(p.area)+'?city='+encodeURIComponent(p.city||'')+'">届け先と注意</a></div>'+noticeHtml();
     app.innerHTML=h;
   });
@@ -2125,7 +2127,7 @@ function viewNew(areaId){
 }
 
 function viewContact(id,my){
-  app.innerHTML=crumb('#/post/'+esc(id),'投稿にもどる')+'<div class="eyebrow">Contact</div><h1>連絡する</h1><p class="lead">メッセージは、投稿された方のメールに届きます。電話番号や住所は書かないでください。</p>'
+  app.innerHTML=crumb('#/post/'+esc(id),'投稿にもどる')+'<div class="eyebrow">Contact</div><h1>連絡する</h1><p class="nudge">小さなことでも、教えてください。「似た子を見た気がする」だけで、手がかりになります。</p><p class="lead">メッセージは、投稿された方のメールに届きます。電話番号や住所は書かないでください。</p>'
   +'<form id="f" novalidate autocomplete="off">'
   +'<div class="field"><label class="l" for="message">メッセージ<em>必須</em></label><textarea id="message" maxlength="1500"></textarea></div>'
   +'<div class="field"><label class="l" for="fromEmail">返信先メール（任意）</label><div class="help">空のままだと、投稿者から返信できません。</div><input type="email" id="fromEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
