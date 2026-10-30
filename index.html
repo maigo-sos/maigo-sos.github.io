@@ -1808,6 +1808,8 @@ h2{font-size:20px;letter-spacing:.08em;margin:36px 0 12px}
 h3{font-size:17px;margin:20px 0 6px}
 .eyebrow{font-family:var(--display);font-size:16px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
 .lead{color:var(--text-muted);margin-bottom:28px}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
+.filters select,.filters input{min-height:46px}
 .nudge{font-size:17px;color:var(--rose-deep);line-height:1.9;margin:26px 0 4px}
 .tagline{font-size:22px;letter-spacing:.12em;color:var(--rose-deep);line-height:1.8;margin:4px 0 26px}
 .rule{height:1px;background:var(--rose-pale);border:0;margin:28px 0}
@@ -1969,7 +1971,7 @@ function whereText(p){ return (p.city?p.city+(p.place?' ・ ':''):'')+(p.place||
 function route(){
   var r=parseHash(), p=r.parts, my=++rid;
   window.scrollTo(0,0);
-  if(!p.length) return viewHome();
+  if(!p.length) return viewHome(my);
   var k=p[0];
   if(k==='area') return viewArea(p[1],r.q,my);
   if(k==='post') return viewPost(p[1],my);
@@ -1979,12 +1981,25 @@ function route(){
   if(k==='flyer') return viewFlyer(p[1],my);
   if(k==='guide') return viewGuide(p[1],r.q.city);
   if(k==='subscribe') return viewSubscribe(r.q.area);
-  viewHome();
+  viewHome(my);
 }
 
-function viewHome(){
+function cardHtml(p){
+  var ph=firstPhoto(p), st=STATUS[p.status]||'';
+  return '<a class="card" href="#/post/'+esc(p.id)+'"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="" loading="lazy">':'写真なし')+'</div><div class="bd"><div>'+badge(p)+(st?'<span class="badge done">'+esc(st)+'</span>':'')+'</div><div class="t">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</div><div class="m">'+esc(areaName(p.area)+' '+whereText(p))+'<br>'+esc(p.datetime)+'</div></div></a>';
+}
+function viewHome(my){
   var h='<p class="tagline">大切な家族が、帰ってくるまで。</p><div class="eyebrow">Lost Pet SOS</div><h1>迷子ペットSOS</h1><p class="lead">全国の迷子ペット掲示板。いなくなった子・保護された子を、都道府県と市区町村で探せます。無料です。</p>';
-  h+='<h2 style="margin-top:8px">都道府県をえらぶ</h2>';
+  h+='<div class="btns"><a class="btn" href="#/new">投稿する</a><a class="btn ghost" href="#/guide/tokyo">届け先と注意</a></div>';
+  h+='<h2>いま探している子・保護されている子</h2>';
+  h+='<div class="filters">';
+  h+='<select id="f_type"><option value="">種別：すべて</option><option value="lost">迷子</option><option value="found">保護しました</option><option value="sighting">見かけました</option></select>';
+  h+='<select id="f_species"><option value="">動物：すべて</option><option value="dog">犬</option><option value="cat">猫</option><option value="bird">鳥</option><option value="other">その他</option></select>';
+  h+='<select id="f_area"><option value="">都道府県：すべて</option>';
+  regions().forEach(function(r){ h+='<optgroup label="'+esc(r)+'">'; openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<option value="'+a.id+'">'+esc(a.name)+'</option>'; }); h+='</optgroup>'; });
+  h+='</select><input type="text" id="f_city" placeholder="市区町村（例：文京区）" autocomplete="off"></div>';
+  h+='<div id="home_list">'+loading()+'</div>';
+  h+='<h2>都道府県をえらぶ</h2>';
   regions().forEach(function(r){
     h+='<h3 class="region">'+esc(r)+'</h3><div class="areas">';
     openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<a href="#/area/'+a.id+'">'+esc(a.name)+'</a>'; });
@@ -1992,6 +2007,21 @@ function viewHome(){
   });
   h+=noticeHtml();
   app.innerHTML=h;
+  api('GET',{action:'listPosts',area:'all',status:'open'}).then(function(r){
+    if(my!==rid) return;
+    var box=document.getElementById('home_list'); if(!box) return;
+    if(!r.ok){ box.innerHTML=errHtml(r.error); return; }
+    var all=r.posts||[];
+    function draw(){
+      var t=val('f_type'), sp=val('f_species'), ar=val('f_area'), q=val('f_city');
+      var list=all.filter(function(p){ return (!t||p.type===t)&&(!sp||p.species===sp)&&(!ar||p.area===ar)&&(!q||String(p.city||'').indexOf(q)>=0); });
+      if(!list.length){ box.innerHTML='<p class="msg">'+(all.length?'条件に合う投稿はありません':'まだ投稿はありません。最初の投稿をお待ちしています')+'</p>'; return; }
+      box.innerHTML=list.slice(0,30).map(cardHtml).join('')+(list.length>30?'<p class="msg">ほか'+(list.length-30)+'件は都道府県のページで</p>':'');
+    }
+    ['f_type','f_species','f_area'].forEach(function(id){ document.getElementById(id).addEventListener('change',draw); });
+    document.getElementById('f_city').addEventListener('input',draw);
+    draw();
+  });
 }
 
 function viewArea(id,q,my){
