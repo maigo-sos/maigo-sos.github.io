@@ -1808,6 +1808,7 @@ h2{font-size:20px;letter-spacing:.08em;margin:36px 0 12px}
 h3{font-size:17px;margin:20px 0 6px}
 .eyebrow{font-family:var(--display);font-size:16px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
 .lead{color:var(--text-muted);margin-bottom:28px}
+.tagline{font-size:22px;letter-spacing:.12em;color:var(--rose-deep);line-height:1.8;margin:4px 0 26px}
 .rule{height:1px;background:var(--rose-pale);border:0;margin:28px 0}
 .crumb{display:inline-flex;align-items:center;min-height:44px;font-size:15px;color:var(--text-muted);text-decoration:none;margin-bottom:8px}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 28px;border-radius:2px;border:1px solid var(--rose-deep);background:var(--rose-deep);color:#fff;font-family:var(--serif);font-size:16px;letter-spacing:.1em;text-decoration:none;cursor:pointer;-webkit-appearance:none;appearance:none}
@@ -1981,7 +1982,7 @@ function route(){
 }
 
 function viewHome(){
-  var h='<div class="eyebrow">Lost Pet SOS</div><h1>迷子ペットSOS</h1><p class="lead">全国の迷子ペット掲示板。いなくなった子・保護された子を、都道府県と市区町村で探せます。無料です。</p>';
+  var h='<p class="tagline">大切な家族が、帰ってくるまで。</p><div class="eyebrow">Lost Pet SOS</div><h1>迷子ペットSOS</h1><p class="lead">全国の迷子ペット掲示板。いなくなった子・保護された子を、都道府県と市区町村で探せます。無料です。</p>';
   h+='<h2 style="margin-top:8px">都道府県をえらぶ</h2>';
   regions().forEach(function(r){
     h+='<h3 class="region">'+esc(r)+'</h3><div class="areas">';
