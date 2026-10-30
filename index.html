@@ -1784,6 +1784,7 @@ var AREAS = [
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1888,7 +1889,17 @@ footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8
 @media print{.flyer .qr,.flyer .qr svg{width:42mm;height:42mm;flex-basis:42mm}}
 @media (min-width:600px){.areas{grid-template-columns:repeat(3,1fr)}}
 @media print{
-  @page{size:A4 portrait;margin:15mm}
+  @page{size:A4 portrait;margin:10mm}
+  .flyer{height:275mm;overflow:hidden;page-break-inside:avoid;break-inside:avoid;padding:6mm 8mm}
+  .flyer .big{font-size:44pt;margin-bottom:6mm}
+  .flyer .main{max-height:95mm !important}
+  .flyer .sub{display:none}
+  .flyer dd{font-size:13pt;line-height:1.6;max-height:34mm;overflow:hidden}
+  .flyer dd.feat{max-height:40mm}
+  .flyer .how{margin-top:6mm;padding-top:4mm}
+  .flyer .qr,.flyer .qr svg{width:38mm;height:38mm;flex-basis:38mm}
+  .flyer .qrtext{font-size:12pt}
+  .flyer .url{font-size:9pt}
   body{background:#fff;display:block}
   header.site,footer.site,.noprint,.crumb{display:none !important}
   main{max-width:none;padding:0}
@@ -1994,7 +2005,7 @@ ja: {
   updFail:'更新できませんでした。', doneEyebrow2:'Done', doneFound:'見つかって、よかったです', doneCancel:'取り下げました', doneLead2:'投稿の状態を更新しました。',
   /* flyer */
   flyLost:'さがしています', flyFound:'保護しています', flySighting:'見かけました',
-  print:'PDFにする／印刷', flyAnimal:'動物',
+  print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', flyAnimal:'動物',
   qrText:'見かけた方は、このQRを読み取って<br>フォームからご連絡ください',
   /* guide */
   gEyebrow:'Guide', gTitle:'{0}の届け先', gEnLine:'',
@@ -2077,7 +2088,7 @@ en: {
   mEyebrow:'Manage', mTitle:'Manage your post', btnFound:'Found', btnCancel:'Withdraw',
   updFail:'Could not update.', doneEyebrow2:'Done', doneFound:'We are glad it was found', doneCancel:'Withdrawn', doneLead2:'The post has been updated.',
   flyLost:'LOST', flyFound:'FOUND', flySighting:'SIGHTED',
-  print:'Save as PDF / Print', flyAnimal:'Animal',
+  print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', flyAnimal:'Animal',
   qrText:'If you have seen this animal,<br>scan this QR code and send a message through the form',
   gEyebrow:'Guide', gTitle:'Where to report in {0}',
   gEnLine:'Call the prefectural animal welfare center below (Japanese). In an emergency, call 110 (police).',
@@ -2383,6 +2394,7 @@ function hasPhone(s0){
   var s=String(s0||'').replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/[\-‐－ー―\s　()（）]/g,'');
   return /0\d{9,10}/.test(s);
 }
+function clip(x,n){ x=String(x||'').replace(/\n{2,}/g,'\n').trim(); return x.length>n?x.slice(0,n)+'…':x; }
 function dateText(){
   var v=val('date'), tv=val('tod'); if(!v||tv==='') return '';
   var tod=t('tods')[+tv]; if(!tod) return '';
@@ -2502,16 +2514,31 @@ function viewFlyer(id,my){
     if(!r.ok){ app.innerHTML=crumb('#/',t('pickArea'))+errHtml(r.error); return; }
     var p=r.post, ph=photos(p);
     var title=p.type==='found'?t('flyFound'):(p.type==='sighting'?t('flySighting'):t('flyLost'));
-    var h=crumb('#/post/'+esc(id),t('backPost'))+'<div class="btns noprint"><button class="btn" id="pr">'+esc(t('print'))+'</button></div>';
+    var h=crumb('#/post/'+esc(id),t('backPost'))+'<div class="btns noprint"><button class="btn" id="sv">'+esc(t('saveImg'))+'</button><button class="btn ghost" id="pr">'+esc(t('print'))+'</button></div><div id="imgout" class="noprint"></div>';
     h+='<div class="flyer"><div class="big">'+esc(title)+'</div>';
     if(ph.length) h+='<img class="main" src="'+esc(ph[0])+'" alt="">';
     if(ph.length>1) h+='<div class="sub">'+ph.slice(1).map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
-    h+='<dl><dt>'+esc(t('flyAnimal'))+'</dt><dd>'+esc(animalTitle(p))+'</dd><dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc((p.city?p.city+'　':'')+p.place)+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd></dl>';
+    h+='<dl><dt>'+esc(t('flyAnimal'))+'</dt><dd>'+esc(animalTitle(p))+'</dd><dt>'+esc(t('fFeatures'))+'</dt><dd class="feat">'+esc(clip(p.features,220))+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc((p.city?p.city+'　':'')+p.place)+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd></dl>';
     var curl=pageUrl('/contact/'+p.id);
     h+='<div class="how"><div class="qrwrap"><div id="qr" class="qr"></div><div class="qrtext">'+t('qrText')+'<div class="url">'+esc(curl)+'</div></div></div></div></div>';
     app.innerHTML=h;
     try{ if(window.qrcode){ var q=qrcode(0,'M'); q.addData(curl); q.make(); document.getElementById('qr').innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true}); } }catch(e){}
     document.getElementById('pr').onclick=function(){window.print();};
+    document.getElementById('sv').onclick=function(){
+      var out=document.getElementById('imgout'), btn=document.getElementById('sv'); btn.disabled=true; out.innerHTML='<p class="msg">'+esc(t('saveBusy'))+'</p>';
+      var fl=document.querySelector('.flyer'); var imgs=Array.prototype.slice.call(fl.querySelectorAll('img'));
+      var jobs=imgs.map(function(im){
+        var m=/[?&]id=([\w-]+)/.exec(im.getAttribute('src')||''); if(!m) return Promise.resolve();
+        return api('GET',{action:'photoData',id:m[1]}).then(function(r){ if(r.ok&&r.dataUrl){ return new Promise(function(res){ im.onload=function(){res();}; im.onerror=function(){res();}; im.src=r.dataUrl; }); } });
+      });
+      Promise.all(jobs).then(function(){
+        if(!window.html2canvas) throw new Error('no html2canvas');
+        return html2canvas(fl,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+      }).then(function(c){
+        out.innerHTML='<p class="help">'+esc(t('saveHint'))+'</p><img src="'+c.toDataURL('image/jpeg',0.92)+'" alt="" style="width:100%;border:1px solid var(--rose-pale)">';
+        btn.disabled=false; out.scrollIntoView({block:'start'});
+      }).catch(function(){ out.innerHTML='<p class="err">'+esc(t('saveFail'))+'</p>'; btn.disabled=false; });
+    };
   });
 }
 
