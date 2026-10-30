@@ -1783,6 +1783,7 @@ var AREAS = [
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1871,7 +1872,12 @@ footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8
 .flyer dt{font-size:13px;letter-spacing:.14em;color:#8a6d45;margin-top:10px}
 .flyer dd{font-size:18px;overflow-wrap:anywhere;white-space:pre-wrap}
 .flyer .how{margin-top:22px;border-top:1px solid var(--gold);padding-top:14px;font-size:16px}
-.flyer .url{font-size:15px;word-break:break-all;margin-top:6px}
+.flyer .url{font-size:13px;word-break:break-all;margin-top:6px;color:var(--text-muted)}
+.flyer .qrwrap{display:flex;gap:18px;align-items:center;justify-content:center;text-align:left}
+.flyer .qr{width:150px;height:150px;flex:0 0 150px}
+.flyer .qr svg{width:150px;height:150px;display:block}
+.flyer .qrtext{font-size:17px;line-height:1.7}
+@media print{.flyer .qr,.flyer .qr svg{width:42mm;height:42mm;flex-basis:42mm}}
 @media (min-width:600px){.areas{grid-template-columns:repeat(3,1fr)}}
 @media print{
   @page{size:A4 portrait;margin:15mm}
@@ -2175,8 +2181,10 @@ function viewFlyer(id,my){
     if(ph.length) h+='<img class="main" src="'+esc(ph[0])+'" alt="">';
     if(ph.length>1) h+='<div class="sub">'+ph.slice(1).map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
     h+='<dl><dt>動物</dt><dd>'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</dd><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc((p.city?p.city+'　':'')+p.place)+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd></dl>';
-    h+='<div class="how">連絡は、このURLから（検索しても出ません。そのまま入力してください）<div class="url">'+esc(pageUrl('/contact/'+p.id))+'</div></div></div>';
+    var curl=pageUrl('/contact/'+p.id);
+    h+='<div class="how"><div class="qrwrap"><div id="qr" class="qr"></div><div class="qrtext">見かけた方は、このQRを読み取って<br>フォームからご連絡ください<div class="url">'+esc(curl)+'</div></div></div></div></div>';
     app.innerHTML=h;
+    try{ if(window.qrcode){ var q=qrcode(0,'M'); q.addData(curl); q.make(); document.getElementById('qr').innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true}); } }catch(e){}
     document.getElementById('pr').onclick=function(){window.print();};
   });
 }
