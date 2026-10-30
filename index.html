@@ -2059,7 +2059,7 @@ footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
 .p4-qrbox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#fef521;border:0;border-radius:12px;padding:10px;width:170px}
 .p4-qrbox .qr{width:130px;height:130px;background:#fff;padding:6px;box-sizing:content-box}
 .p4-qrbox .qr svg{width:100%;height:100%;display:block}
-.p4-qrt{font-size:12px;font-weight:900;color:#410b0d;text-align:center;line-height:1.4}
+.p4-qrt{font-size:12px;font-weight:900;color:#410b0d;text-align:center;line-height:1.4;white-space:pre-line}
 .p4-site{text-align:center;font-size:12px;color:#410b0d;padding:0 0 10px;letter-spacing:.08em}
 @media print{
   /* A4より一回り小さい固定高さ（iPhoneのヘッダー/フッター余白込みでも1枚に収まる）。写真の欄だけ伸縮 */
@@ -2085,33 +2085,34 @@ footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
   .p4-qrt{font-size:9pt}
   .p4-site{padding:0 0 2mm;font-size:8pt;flex:0 0 auto}
 }
-}
 /* A4のPDF用（画面外で同じ形に組んで撮る） */
+@media screen and (max-width:560px){.p4-body{grid-template-columns:1fr}.p4-photo{min-height:0}.p4-photo img{max-height:440px;height:auto}.p4-title{font-size:24px}.p4-call{font-size:15px}.p4-foot{grid-template-columns:1fr}.p4-qrbox{width:auto}}
 .capwrap{position:fixed;left:0;top:0;width:198mm;z-index:-1;pointer-events:none}
+.cap .p4-body{grid-template-columns:1.1fr 1fr !important}.cap .p4-foot{grid-template-columns:1fr auto !important}.cap .p4-photo img{height:100% !important;max-height:100% !important}
 .p4.cap{width:198mm;margin:0}
 .cap .p4-head{padding:3mm 4mm 5mm !important}.cap .p4-title{position:relative;top:-.18em}.cap .p4-bv,.cap .p4-name{position:relative;top:-.15em}.cap .p4-k{padding:0 3mm 1.6mm !important;line-height:1.5}
 .cap .p4-feats li,.cap .p4-ask li{padding-left:0 !important}
 .cap .p4-feats li:before,.cap .p4-ask li:before{content:'●';position:static !important;display:inline;width:auto;height:auto;background:none !important;border-radius:0;color:#fc1e62;font-size:.7em;margin-right:1.5mm;vertical-align:.15em}
 .cap .p4-ask li:before{color:#410b0d}
-.p4.cap{max-width:none;border-width:2mm;border-radius:0;height:238mm;display:flex;flex-direction:column;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+.p4.cap{max-width:none;border-width:2mm;border-radius:0;height:287mm;display:flex;flex-direction:column;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
 .cap .p4-head{padding:3mm 4mm;flex:0 0 auto}
-.cap .p4-title{font-size:24pt}
+.cap .p4-title{font-size:28pt}
 .cap .p4-body{padding:3mm 4mm;gap:4mm;flex:1 1 auto;min-height:0;grid-template-rows:minmax(0,1fr)}
 .cap .p4-photo{min-height:0;height:100%;border-width:1.5mm}
 .cap .p4-photo img{max-height:100%;height:100%}
 .cap .p4-info{min-height:0;overflow:hidden}
-.cap .p4-name{font-size:20pt;padding:0 3mm 1.5mm;border-bottom-width:.8mm}
+.cap .p4-name{font-size:26pt;padding:0 3mm 1.5mm;border-bottom-width:.8mm}
 .cap .p4-info{gap:3mm}
-.cap .p4-v{font-size:13pt}.cap .p4-feats li{font-size:12.5pt;line-height:1.6;padding:1.2mm 0 1.2mm 4mm}.cap .p4-feats li:before{top:3.2mm}
+.cap .p4-v{font-size:13pt}.cap .p4-feats li{font-size:13pt;line-height:1.55;padding:1.4mm 0 1.4mm 4mm}.cap .p4-feats li:before{top:3.2mm}
 .cap .p4-yellow{padding:0 4mm 3mm;flex:0 0 auto;gap:3mm}
 .cap .p4-box{padding:2mm 3mm}
-.cap .p4-bv{font-size:12.5pt}.cap .p4-bk{font-size:9pt}
-.cap .p4-call{font-size:12.5pt;padding:2.5mm;flex:0 0 auto}
+.cap .p4-bv{font-size:15pt}.cap .p4-bk{font-size:9pt}
+.cap .p4-call{font-size:15pt;padding:3mm;flex:0 0 auto}
 .cap .p4-foot{padding:3mm 4mm;gap:4mm;flex:0 0 auto}
 .cap .p4-ask{padding:3mm 4mm;display:flex;flex-direction:column;justify-content:center}
-.cap .p4-ask li{font-size:11.5pt;line-height:1.75}.cap .p4-ask li:before{top:2.6mm}.cap .p4-askt{font-size:13pt;margin-bottom:1.5mm}
-.cap .p4-qrbox{width:46mm;padding:3mm;gap:2mm}.cap .p4-qrbox .qr{width:33mm;height:33mm;padding:1.5mm}
-.cap .p4-qrt{font-size:9pt}
+.cap .p4-ask li{font-size:12.5pt;line-height:1.8}.cap .p4-ask li:before{top:2.6mm}.cap .p4-askt{font-size:13pt;margin-bottom:1.5mm}
+.cap .p4-qrbox{width:52mm;padding:3mm;gap:2mm}.cap .p4-qrbox .qr{width:40mm;height:40mm;padding:1.5mm}
+.cap .p4-qrt{font-size:10pt}
 .cap .p4-site{padding:0 0 2mm;font-size:8pt;flex:0 0 auto}
 .legal h1{font-size:22px;margin-bottom:6px}.legal h2{font-size:17px;margin:22px 0 6px}.legal p,.legal li{font-size:15px;line-height:1.9;font-family:var(--serif)}.legal ul{padding-left:20px;margin:4px 0}.agree{text-align:center;margin:-6px 0 14px}
 </style>
@@ -2195,7 +2196,7 @@ ja: {
   updFail:'更新できませんでした。', doneEyebrow2:'Done', doneFound:'見つかって、よかったです', doneCancel:'取り下げました', doneLead2:'投稿の状態を更新しました。',
   /* flyer */
   flyLost:'迷子の{sp}を\nさがしています', flyFound:'{sp}を\n保護しています', flySighting:'{sp}を\n見かけました', headLost:'迷子の{sp}', headFound:'保護した{sp}', headSighting:'見かけた{sp}',
-  lBreed:'種類（わかれば）', phBreed:'例：ウロコインコ／柴犬／雑種の黒猫', pTitleLost:'迷子の{sp}を探しています！', pTitleFound:'{sp}を保護しています', pTitleSight:'{sp}を見かけました', pName:'名前', pKind:'種類', pFeat:'特徴', pPlaceLost:'いなくなった場所', pWhenLost:'いなくなった日時', pPlaceFound:'見つけた場所', pWhenFound:'見つけた日時', pCall:'見かけた方・保護された方はご連絡ください', pQr:'このQRを読み取ると連絡フォームが開きます', pAsk:'見かけた時のお願い', pAsk1:'追いかけたり、大声を出さないでください', pAsk2:'ゆっくり落ち着いて見守ってください', pAsk3:'できれば写真や動画を撮ってご連絡ください', pAsk4:'小さなことでも、どうぞお知らせください', pSite:'迷子ペットSOS　maigo-sos.github.io', ctaLost:'いなくなった', ctaLostSub:'迷子を投稿する', ctaFound:'見つけた・保護した', ctaFoundSub:'目撃・保護を投稿する', kw:'キーワード（名前・特徴・市区町村・場所）', openPrefs:'都道府県の一覧を開く', noPhoto:'写真なし', editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', pdfBusy:'A4のPDFを作っています…', pdfHint:'PDFができました。開いた画面の共有ボタンから「プリント」を選ぶと、A4の1枚で印刷できます。', pdfOpen:'PDFを開く', pdfFail:'PDFを作れませんでした。時間をおいてもう一度お試しください。', flyAnimal:'動物',
+  lBreed:'種類（わかれば）', phBreed:'例：ウロコインコ／柴犬／雑種の黒猫', pTitleLost:'迷子の{sp}を探しています！', pTitleFound:'{sp}を保護しています', pTitleSight:'{sp}を見かけました', pName:'名前', pKind:'種類', pFeat:'特徴', pPlaceLost:'いなくなった場所', pWhenLost:'いなくなった日時', pPlaceFound:'見つけた場所', pWhenFound:'見つけた日時', pCall:'見かけた方・保護された方はご連絡ください', pQr:'このQRを読み取ると\n連絡フォームが開きます', pAsk:'見かけた時のお願い', pAsk1:'追いかけたり、大声を出さないでください', pAsk2:'ゆっくり落ち着いて見守ってください', pAsk3:'できれば写真や動画を撮ってご連絡ください', pAsk4:'どんな小さなことでも、お知らせをお願いします', pSite:'迷子ペットSOS　maigo-sos.github.io', ctaLost:'いなくなった', ctaLostSub:'迷子を投稿する', ctaFound:'見つけた・保護した', ctaFoundSub:'目撃・保護を投稿する', kw:'キーワード（名前・特徴・市区町村・場所）', openPrefs:'都道府県の一覧を開く', noPhoto:'写真なし', editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', pdfBusy:'A4のPDFを作っています…', pdfHint:'PDFができました。開いた画面の共有ボタンから「プリント」を選ぶと、A4の1枚で印刷できます。', pdfOpen:'PDFを開く', pdfFail:'PDFを作れませんでした。時間をおいてもう一度お試しください。', flyAnimal:'動物',
   qrText:'見かけた方は、このQRを読み取って<br>フォームからご連絡ください',
   /* guide */
   gEyebrow:'Guide', gTitle:'{0}の届け先', gEnLine:'',
@@ -2728,7 +2729,7 @@ function viewFlyer(id,my){
     var p=r.post, ph=photos(p);
     var spn=p.breed||spName(p.species)||'';
     var title=(p.type==='found'?t('pTitleFound',{sp:spn}):(p.type==='sighting'?t('pTitleSight',{sp:spn}):t('pTitleLost',{sp:spn})));
-    var feats=String(p.features||'').split(/\n+|[。．]/).map(function(x){return x.replace(/^[・●\-\s]+/,'').trim();}).filter(function(x){return x&&!/特徴[:：]?$/.test(x);}).slice(0,5).map(function(x){return x.length>26?x.slice(0,25)+'…':x;});
+    var feats=String(p.features||'').split(/\n+|[。．]/).map(function(x){return x.replace(/^[・●\-\s]+/,'').trim();}).filter(function(x){return x&&!/特徴[:：]?$/.test(x);}).slice(0,5);
     var curl=pageUrl('/contact/'+p.id);
     var isLost=p.type==='lost';
     var h=crumb('#/post/'+esc(id),t('backPost'))+'<div class="btns noprint"><button class="btn" id="sv">'+esc(t('saveImg'))+'</button><button class="btn ghost" id="pr">'+esc(t('print'))+'</button></div><div id="imgout" class="noprint"></div>';
@@ -2777,18 +2778,17 @@ function viewFlyer(id,my){
     };
     document.getElementById('sv').onclick=function(){
       var out=document.getElementById('imgout'), btn=document.getElementById('sv'); btn.disabled=true; out.innerHTML='<p class="msg">'+esc(t('saveBusy'))+'</p>';
-      var fl=document.querySelector('.flyer'); var imgs=Array.prototype.slice.call(fl.querySelectorAll('img'));
-      var jobs=imgs.map(function(im){
-        var m=/[?&]id=([\w-]+)/.exec(im.getAttribute('src')||''); if(!m) return Promise.resolve();
-        return api('GET',{action:'photoData',id:m[1]}).then(function(r){ if(r.ok&&r.dataUrl){ return new Promise(function(res){ im.onload=function(){res();}; im.onerror=function(){res();}; im.src=r.dataUrl; }); } });
-      });
-      Promise.all(jobs).then(function(){
+      var fl=document.querySelector('.flyer'), wrap=null;
+      inlinePhotos(fl).then(function(){
         if(!window.html2canvas) throw new Error('no html2canvas');
-        return html2canvas(fl,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+        wrap=document.createElement('div'); wrap.className='capwrap';
+        var cl=fl.cloneNode(true); cl.classList.add('cap'); wrap.appendChild(cl); document.body.appendChild(wrap);
+        return new Promise(function(r){ setTimeout(r,150); }).then(function(){ return html2canvas(cl,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}); });
       }).then(function(c){
+        if(wrap) wrap.remove();
         out.innerHTML='<p class="help">'+esc(t('saveHint'))+'</p><img src="'+c.toDataURL('image/jpeg',0.92)+'" alt="" style="width:100%;border:1px solid var(--rose-pale)">';
         btn.disabled=false; out.scrollIntoView({block:'start'});
-      }).catch(function(){ out.innerHTML='<p class="err">'+esc(t('saveFail'))+'</p>'; btn.disabled=false; });
+      }).catch(function(){ if(wrap) wrap.remove(); out.innerHTML='<p class="err">'+esc(t('saveFail'))+'</p>'; btn.disabled=false; });
     };
   });
 }
