@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>迷子ペット掲示板</title>
+<script>
+var API_URL = 'https://script.google.com/macros/s/AKfycbyZLGM0iacd32at5tN5f3hz3iQsWAzNUKTGNBMts4UHBzus2BastvBKneBBn69BN-JH/exec';
+var AREAS = [
+  { id: 'bunkyo', name: '文京区', group: '東京23区', open: true,
+    patrolWords: ['文京', '本駒込', '駒込', '千石', '白山', '本郷', '小石川', '茗荷谷', '護国寺', '根津', '千駄木', '湯島', '後楽園', '春日', '六義園', '播磨坂'],
+    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
+      { label: '文京保健所 生活衛生課', tel: '03-5803-1227' },
+      { label: '富坂警察署', tel: '03-3817-0110' }, { label: '大塚警察署', tel: '03-3941-0110' },
+      { label: '本富士警察署', tel: '03-3818-0110' }, { label: '駒込警察署', tel: '03-3944-0110' }] },
+  { id: 'toshima', name: '豊島区', group: '東京23区', open: true,
+    patrolWords: ['豊島', '池袋', '巣鴨', '大塚', '目白', '駒込', '千川', '要町', '長崎', '雑司が谷', '雑司ヶ谷', '高田', '西巣鴨', '椎名町', '上池袋'],
+    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
+      { label: '豊島区保健所 生活衛生課', tel: '' },
+      { label: '池袋警察署', tel: '03-3986-0110' }, { label: '巣鴨警察署', tel: '03-3910-0110' },
+      { label: '大塚警察署', tel: '03-3941-0110' }, { label: '目白警察署', tel: '03-3987-0110' }] },
+  { id: 'kita', name: '北区', group: '東京23区', open: true,
+    patrolWords: ['北区', '赤羽', '王子', '田端', '十条', '滝野川', '上中里', '志茂', '神谷', '浮間', '西ケ原', '西ヶ原', '飛鳥山', '岩淵', '東十条'],
+    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
+      { label: '北区保健所 生活衛生課', tel: '' },
+      { label: '赤羽警察署', tel: '03-3903-0110' }, { label: '王子警察署', tel: '03-3911-0110' },
+      { label: '滝野川警察署', tel: '03-3940-0110' }] },
+  { id: 'arakawa', name: '荒川区', group: '東京23区', open: true,
+    patrolWords: ['荒川', '日暮里', '町屋', '尾久', '南千住', '西日暮里', '三河島', '東日暮里', '西尾久', '東尾久', '小台', '宮前'],
+    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
+      { label: '荒川区保健所 生活衛生課', tel: '' },
+      { label: '荒川警察署', tel: '03-3801-0110' }, { label: '尾久警察署', tel: '03-3810-0110' },
+      { label: '南千住警察署', tel: '03-3805-0110' }] },
+  { id: 'taito', name: '台東区', group: '東京23区', open: true,
+    patrolWords: ['台東', '上野', '浅草', '蔵前', '御徒町', '鶯谷', '入谷', '三ノ輪', '竜泉', '谷中', '根岸', '浅草橋', '秋葉原', '下谷', '東上野'],
+    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
+      { label: '台東保健所 生活衛生課', tel: '' },
+      { label: '上野警察署', tel: '03-3847-0110' }, { label: '浅草警察署', tel: '03-3871-0110' },
+      { label: '蔵前警察署', tel: '03-3864-0110' }, { label: '下谷警察署', tel: '03-3872-0110' }] },
+  { id: 'shinjuku', name: '新宿区', group: '東京23区', open: true,
+    patrolWords: ['新宿', '歌舞伎町', '高田馬場', '神楽坂', '四谷', '早稲田', '落合', '大久保', '西新宿', '牛込', '市谷', '中井', '戸山', '信濃町', '戸塚'],
+    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
+      { label: '新宿区保健所 生活衛生課', tel: '' },
+      { label: '新宿警察署', tel: '03-3346-0110' }, { label: '四谷警察署', tel: '03-3357-0110' },
+      { label: '牛込警察署', tel: '03-3269-0110' }, { label: '戸塚警察署', tel: '03-3207-0110' }] },
+  { id: 'chiyoda', name: '千代田区', group: '東京23区', open: true,
+    patrolWords: ['千代田', '神田', '秋葉原', '麹町', '丸の内', '大手町', '九段', '飯田橋', '御茶ノ水', '永田町', '有楽町', '番町', '市ヶ谷', '市谷', '半蔵門', '紀尾井'],
+    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
+      { label: '千代田保健所 生活衛生課', tel: '' },
+      { label: '麹町警察署', tel: '03-3234-0110' }, { label: '丸の内警察署', tel: '03-3213-0110' },
+      { label: '神田警察署', tel: '03-3295-0110' }, { label: '万世橋警察署', tel: '03-3257-0110' }] },
+  { id: 'minato', name: '港区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'chuo', name: '中央区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'shinagawa', name: '品川区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'meguro', name: '目黒区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'ota', name: '大田区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'setagaya', name: '世田谷区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'shibuya', name: '渋谷区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'nakano', name: '中野区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'suginami', name: '杉並区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'nerima', name: '練馬区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'itabashi', name: '板橋区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'adachi', name: '足立区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'katsushika', name: '葛飾区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'edogawa', name: '江戸川区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'sumida', name: '墨田区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
+  { id: 'koto', name: '江東区', group: '東京23区', open: false, patrolWords: [], contacts: [] }
+];
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf6f3; --navy:#2a1f1a; --rose:#b5647a; --rose-light:#d4a0b0; --rose-pale:#f0dada;
+  --rose-deep:#9e4e68; --gold:#c9a882; --text:#2c2220; --text-muted:#7a6560;
+  --serif:'Noto Serif JP','Hiragino Mincho ProN','Yu Mincho',serif;
+  --display:'Cormorant Garamond','Noto Serif JP',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.8;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--rose-deep)}
+img{max-width:100%;display:block}
+header.site{padding:28px 20px 20px;text-align:center;border-bottom:1px solid var(--rose-pale)}
+header.site a{text-decoration:none;color:var(--navy)}
+.brand-en{font-family:var(--display);font-size:15px;letter-spacing:.32em;color:var(--gold);text-transform:uppercase;display:block}
+.brand-ja{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:.14em;color:var(--navy);display:block;line-height:1.6}
+main{flex:1;width:100%;max-width:720px;margin:0 auto;padding:36px 20px 56px}
+h1,h2,h3{font-family:var(--serif);font-weight:500;color:var(--navy);line-height:1.6}
+h1{font-size:26px;letter-spacing:.1em;margin-bottom:8px}
+h2{font-size:20px;letter-spacing:.08em;margin:36px 0 12px}
+h3{font-size:17px;margin:20px 0 6px}
+.eyebrow{font-family:var(--display);font-size:16px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
+.lead{color:var(--text-muted);margin-bottom:28px}
+.rule{height:1px;background:var(--rose-pale);border:0;margin:28px 0}
+.crumb{display:inline-flex;align-items:center;min-height:44px;font-size:15px;color:var(--text-muted);text-decoration:none;margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 28px;border-radius:2px;border:1px solid var(--rose-deep);background:var(--rose-deep);color:#fff;font-family:var(--serif);font-size:16px;letter-spacing:.1em;text-decoration:none;cursor:pointer;-webkit-appearance:none;appearance:none}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;color:var(--rose-deep)}
+.btn.block{display:flex;width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}
+.btns .btn{flex:1 1 200px}
+.areas{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0 28px}
+.areas a,.areas span{display:flex;align-items:center;justify-content:center;min-height:56px;border:1px solid var(--rose-light);background:#fff;color:var(--navy);text-decoration:none;letter-spacing:.12em;border-radius:2px;text-align:center}
+.areas span{border-color:var(--rose-pale);background:transparent;color:var(--text-muted);opacity:.7;font-size:15px}
+.areas small{display:block;font-size:12px;color:var(--text-muted);letter-spacing:.05em}
+.tabs{display:flex;border-bottom:1px solid var(--rose-pale);margin:20px 0}
+.tabs a{flex:1;text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-muted);letter-spacing:.1em;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs a.on{color:var(--rose-deep);border-bottom-color:var(--rose-deep)}
+.card{display:flex;gap:16px;background:#fff;border:1px solid var(--rose-pale);padding:12px;margin-bottom:14px;text-decoration:none;color:var(--text);border-radius:2px}
+.card .ph{flex:0 0 96px;width:96px;height:96px;background:var(--rose-pale);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px;overflow:hidden}
+.card .ph img{width:100%;height:100%;object-fit:cover}
+.card .bd{min-width:0;flex:1}
+.card .t{font-size:17px;color:var(--navy);line-height:1.6;overflow-wrap:anywhere}
+.card .m{font-size:14px;color:var(--text-muted);line-height:1.7;overflow-wrap:anywhere}
+.badge{display:inline-block;font-size:13px;letter-spacing:.1em;padding:0 10px;line-height:1.9;border:1px solid var(--rose-deep);color:var(--rose-deep);margin-right:6px;vertical-align:middle}
+.badge.found{background:var(--rose-deep);color:#fff}
+.badge.sighting{border-color:var(--gold);color:#8a6d45}
+.badge.done{border-color:var(--text-muted);color:var(--text-muted)}
+.msg{padding:28px 0;text-align:center;color:var(--text-muted)}
+.err{color:var(--rose-deep);padding:20px 0}
+.band{background:var(--rose-pale);color:var(--rose-deep);text-align:center;padding:10px 16px;letter-spacing:.14em;margin-bottom:20px}
+.gallery img{width:100%;margin-bottom:10px;border-radius:2px;background:var(--rose-pale)}
+dl.facts{margin:20px 0}
+dl.facts dt{font-size:13px;letter-spacing:.14em;color:var(--gold);margin-top:14px}
+dl.facts dd{overflow-wrap:anywhere;white-space:pre-wrap}
+.notice{background:#fff;border:1px solid var(--rose-pale);padding:18px 20px;margin:24px 0;font-size:15px}
+.field{margin-bottom:22px}
+label.l{display:block;font-size:15px;letter-spacing:.06em;margin-bottom:6px;color:var(--navy)}
+label.l em{font-style:normal;color:var(--rose-deep);font-size:13px;margin-left:6px}
+.help{font-size:14px;color:var(--text-muted);margin-bottom:6px;line-height:1.7}
+input[type=text],input[type=email],textarea,select{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--rose-light);background:#fff;color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.7;border-radius:2px;-webkit-appearance:none;appearance:none}
+textarea{min-height:120px;resize:vertical}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--rose-deep) 50%),linear-gradient(135deg,var(--rose-deep) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:40px}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--rose-light);outline-offset:1px}
+.opts{display:flex;flex-wrap:wrap;gap:10px}
+.opts label{position:relative}
+.opts input{position:absolute;opacity:0;pointer-events:none}
+.opts span{display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border:1px solid var(--rose-light);background:#fff;border-radius:2px;letter-spacing:.08em;cursor:pointer}
+.opts input:checked+span{background:var(--rose-deep);border-color:var(--rose-deep);color:#fff}
+.opts input:focus-visible+span{outline:2px solid var(--rose-light);outline-offset:1px}
+.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.thumbs img{width:72px;height:72px;object-fit:cover;border-radius:2px}
+.copybox{background:#fff;border:1px solid var(--rose-light);padding:12px 14px;word-break:break-all;font-size:15px;margin:8px 0 16px}
+footer.site{border-top:1px solid var(--rose-pale);padding:28px 20px 40px;text-align:center;font-size:14px;color:var(--text-muted)}
+footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8px}
+/* flyer */
+.flyer{background:#fff;border:1px solid var(--rose-pale);padding:28px 24px;text-align:center}
+.flyer .big{font-size:44px;letter-spacing:.3em;color:var(--rose-deep);font-weight:600;line-height:1.4;margin-bottom:16px}
+.flyer .main{width:100%;max-height:420px;object-fit:contain;margin:0 auto 12px;background:var(--rose-pale)}
+.flyer .sub{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.flyer .sub img{width:90px;height:90px;object-fit:cover}
+.flyer dl{text-align:left;max-width:520px;margin:0 auto}
+.flyer dt{font-size:13px;letter-spacing:.14em;color:#8a6d45;margin-top:10px}
+.flyer dd{font-size:18px;overflow-wrap:anywhere;white-space:pre-wrap}
+.flyer .how{margin-top:22px;border-top:1px solid var(--gold);padding-top:14px;font-size:16px}
+.flyer .url{font-size:15px;word-break:break-all;margin-top:6px}
+@media (min-width:600px){.areas{grid-template-columns:repeat(3,1fr)}}
+@media print{
+  @page{size:A4 portrait;margin:15mm}
+  body{background:#fff;display:block}
+  header.site,footer.site,.noprint,.crumb{display:none !important}
+  main{max-width:none;padding:0}
+  .flyer{border:0;padding:0}
+  .flyer .big{font-size:56px}
+  .flyer .main{max-height:105mm}
+  .flyer dd{font-size:16pt}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<header class="site">
+  <a href="#/"><span class="brand-en">Lost &amp; Found</span><span class="brand-ja">迷子ペット掲示板</span></a>
+</header>
+<main id="app"></main>
+<footer class="site">
+  <div>運営：cura（在宅ケア・文京区）</div>
+  <div><a href="https://manchieee.github.io/cura/" target="_blank" rel="noopener">https://manchieee.github.io/cura/</a></div>
+  <div><a href="mailto:honeypots.m@gmail.com?subject=%E3%80%90%E8%BF%B7%E5%AD%90%E3%83%9A%E3%83%83%E3%83%88%E6%8E%B2%E7%A4%BA%E6%9D%BF%E3%80%91%E5%89%8A%E9%99%A4%E4%BE%9D%E9%A0%BC">投稿の削除依頼</a></div>
+</footer>
+
+<script>
+(function(){
+var app = document.getElementById('app');
+var TYPES = {lost:'迷子', found:'保護しました', sighting:'見かけました'};
+var SPECIES = {dog:'犬', cat:'猫', bird:'鳥', other:'その他'};
+var STATUS = {open:'', closed_found:'見つかりました', closed_cancel:'取り下げ済み'};
+var NOTICE = '迷子の動物を保護した方は、警察署か東京都動物愛護相談センター（03-3302-3507）へご連絡ください。1週間以内に届けないと、お礼を受け取る権利などがなくなります。電話番号や住所は投稿しないでください。連絡は当サイトのフォームでお願いします。「先に送料や治療費を振り込んで」という連絡は詐欺の可能性があります。お金を払う前に、必ず動物本人を確認してください。';
+var rid = 0;
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function area(id){ for(var i=0;i<AREAS.length;i++) if(AREAS[i].id===id) return AREAS[i]; return null; }
+function areaName(id){ var a=area(id); return a?a.name:(id||''); }
+function openAreas(){ return AREAS.filter(function(a){return a.open;}); }
+function api(method, params, body){
+  if(!API_URL || API_URL==='PASTE_GAS_URL') return Promise.resolve({ok:false,error:'掲示板の接続先がまだ設定されていません。'});
+  var p;
+  if(method==='GET'){
+    var q=Object.keys(params).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
+    p=fetch(API_URL+'?'+q);
+  } else {
+    p=fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
+  }
+  return p.then(function(r){return r.json();}).catch(function(){return {ok:false,error:'通信に失敗しました。電波の良いところで、もう一度お試しください。'};});
+}
+function loading(){ return '<p class="msg">読み込んでいます…</p>'; }
+function errHtml(e){ return '<p class="err">'+esc(e||'うまく読み込めませんでした。')+'</p>'; }
+function crumb(href,label){ return '<a class="crumb" href="'+href+'">'+esc(label)+'</a>'; }
+function noticeHtml(){ return '<div class="notice">'+esc(NOTICE)+'</div>'; }
+function firstPhoto(p){ var u=photos(p); return u.length?u[0]:''; }
+function photos(p){
+  var u=p.photoUrls; if(typeof u==='string'){ try{u=JSON.parse(u);}catch(e){u=[];} }
+  return Array.isArray(u)?u:[];
+}
+function badge(p){
+  var cls = p.type==='found'?'found':(p.type==='sighting'?'sighting':'');
+  return '<span class="badge '+cls+'">'+esc(TYPES[p.type]||p.type)+'</span>';
+}
+function fmtDate(s){ if(!s) return ''; var d=new Date(s); if(isNaN(d)) return String(s); return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'; }
+function pageUrl(h){ return location.href.split('#')[0]+'#'+h; }
+function parseHash(){
+  var h=location.hash.replace(/^#/,'')||'/';
+  var qi=h.indexOf('?'), q={};
+  if(qi>=0){ h.slice(qi+1).split('&').forEach(function(kv){var a=kv.split('=');if(a[0])q[decodeURIComponent(a[0])]=decodeURIComponent(a[1]||'');}); h=h.slice(0,qi); }
+  return {parts:h.split('/').filter(Boolean), q:q};
+}
+function areaSelect(id,sel){
+  var h='<select id="'+id+'">';
+  openAreas().forEach(function(a){ h+='<option value="'+a.id+'"'+(a.id===sel?' selected':'')+'>'+esc(a.name)+'</option>'; });
+  return h+'</select>';
+}
+
+/* ---------- routes ---------- */
+function route(){
+  var r=parseHash(), p=r.parts, my=++rid;
+  window.scrollTo(0,0);
+  if(!p.length) return viewHome();
+  var k=p[0];
+  if(k==='area') return viewArea(p[1],r.q,my);
+  if(k==='post') return viewPost(p[1],my);
+  if(k==='new') return viewNew(r.q.area);
+  if(k==='contact') return viewContact(p[1],my);
+  if(k==='manage') return viewManage(p[1],p[2],my);
+  if(k==='flyer') return viewFlyer(p[1],my);
+  if(k==='guide') return viewGuide(p[1]);
+  if(k==='subscribe') return viewSubscribe(r.q.area);
+  viewHome();
+}
+
+function viewHome(){
+  var h='<div class="eyebrow">Tokyo</div><h1>迷子ペット掲示板</h1><p class="lead">地域ごとに、いなくなった子と、保護された子を探せます。無料です。</p>';
+  h+='<h2 style="margin-top:8px">地域をえらぶ</h2><div class="areas">';
+  openAreas().forEach(function(a){ h+='<a href="#/area/'+a.id+'">'+esc(a.name)+'</a>'; });
+  h+='</div><h3>準備中の地域</h3><div class="areas">';
+  AREAS.filter(function(a){return !a.open;}).forEach(function(a){ h+='<span>'+esc(a.name)+'<small>準備中</small></span>'; });
+  h+='</div>'+noticeHtml();
+  app.innerHTML=h;
+}
+
+function viewArea(id,q,my){
+  var a=area(id);
+  if(!a||!a.open){ app.innerHTML=crumb('#/','地域をえらぶ')+'<p class="msg">この地域は準備中です。</p>'; return; }
+  var tab=q.tab==='found'?'found':'lost';
+  var h=crumb('#/','地域をえらぶ')+'<div class="eyebrow">Area</div><h1>'+esc(a.name)+'</h1>';
+  h+='<div class="btns"><a class="btn" href="#/new?area='+a.id+'">投稿する</a><a class="btn ghost" href="#/guide/'+a.id+'">届け先と注意</a><a class="btn ghost" href="#/subscribe?area='+a.id+'">新着を受け取る</a></div>';
+  h+='<div class="tabs"><a href="#/area/'+a.id+'" class="'+(tab==='lost'?'on':'')+'">迷子</a><a href="#/area/'+a.id+'?tab=found" class="'+(tab==='found'?'on':'')+'">保護・目撃</a></div><div id="list">'+loading()+'</div>';
+  app.innerHTML=h;
+  api('GET',{action:'listPosts',area:a.id}).then(function(r){
+    if(my!==rid) return;
+    var box=document.getElementById('list'); if(!box) return;
+    if(!r.ok){ box.innerHTML=errHtml(r.error); return; }
+    var list=(r.posts||[]).filter(function(p){ return tab==='lost'?p.type==='lost':p.type!=='lost'; });
+    if(!list.length){ box.innerHTML='<p class="msg">この地域の投稿はまだありません</p>'; return; }
+    box.innerHTML=list.map(function(p){
+      var ph=firstPhoto(p), st=STATUS[p.status]||'';
+      return '<a class="card" href="#/post/'+esc(p.id)+'"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="" loading="lazy">':'写真なし')+'</div><div class="bd"><div>'+badge(p)+(st?'<span class="badge done">'+esc(st)+'</span>':'')+'</div><div class="t">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</div><div class="m">'+esc(p.place)+'<br>'+esc(p.datetime)+'</div></div></a>';
+    }).join('');
+  });
+}
+
+function viewPost(id,my){
+  app.innerHTML=crumb('#/','地域をえらぶ')+loading();
+  api('GET',{action:'getPost',id:id}).then(function(r){
+    if(my!==rid) return;
+    if(!r.ok){ app.innerHTML=crumb('#/','地域をえらぶ')+errHtml(r.error); return; }
+    var p=r.post, ph=photos(p), closed=p.status&&p.status!=='open';
+    var h=crumb('#/area/'+esc(p.area),areaName(p.area)+'の一覧');
+    if(p.status==='closed_found') h+='<div class="band">見つかりました</div>';
+    else if(closed) h+='<div class="band">'+esc(STATUS[p.status]||'受付を終了しました')+'</div>';
+    h+='<div>'+badge(p)+'</div><h1 style="margin-top:8px">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</h1>';
+    if(ph.length) h+='<div class="gallery" style="margin-top:16px">'+ph.map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
+    h+='<dl class="facts"><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc(p.place)+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd>';
+    if(p.description) h+='<dt>説明</dt><dd>'+esc(p.description)+'</dd>';
+    h+='<dt>投稿日</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>状態</dt><dd>'+esc(closed?(STATUS[p.status]||'終了'):'受付中')+'</dd></dl>';
+    h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">連絡する</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">チラシを作る</a></div>'+noticeHtml();
+    app.innerHTML=h;
+  });
+}
+
+/* ---------- photos ---------- */
+function shrink(file){
+  return new Promise(function(res,rej){
+    var fr=new FileReader();
+    fr.onerror=function(){rej();};
+    fr.onload=function(){
+      var im=new Image();
+      im.onerror=function(){rej();};
+      im.onload=function(){
+        var w=im.naturalWidth,h=im.naturalHeight,m=Math.max(w,h),s=m>1200?1200/m:1;
+        var c=document.createElement('canvas'); c.width=Math.round(w*s); c.height=Math.round(h*s);
+        var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height);
+        res(c.toDataURL('image/jpeg',0.8));
+      };
+      im.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function hasPhone(t){
+  var s=String(t||'').replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/[\-‐－ー―\s　()（）]/g,'');
+  return /0\d{9,10}/.test(s);
+}
+function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+function checked(name){ var e=document.querySelector('input[name="'+name+'"]:checked'); return e?e.value:''; }
+function showErr(msg){ var e=document.getElementById('formerr'); if(e){ e.textContent=msg||''; if(msg) e.scrollIntoView({block:'center'});} }
+function validEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
+
+function viewNew(areaId){
+  var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'bunkyo';
+  var photoData=[];
+  function opts(name,map,def){ return '<div class="opts">'+Object.keys(map).map(function(k){return '<label><input type="radio" name="'+name+'" value="'+k+'"'+(k===def?' checked':'')+'><span>'+esc(map[k])+'</span></label>';}).join('')+'</div>'; }
+  var h=crumb('#/area/'+sel,'一覧にもどる')+'<div class="eyebrow">Post</div><h1>投稿する</h1><p class="lead">電話番号と住所は書かないでください。連絡はこのサイトのフォームで届きます。</p>';
+  h+='<form id="f" novalidate autocomplete="off">';
+  h+='<div class="field"><label class="l">種別<em>必須</em></label>'+opts('type',TYPES,'lost')+'</div>';
+  h+='<div class="field"><label class="l" for="area">地域<em>必須</em></label>'+areaSelect('area',sel)+'</div>';
+  h+='<div class="field"><label class="l">動物<em>必須</em></label>'+opts('species',SPECIES,'dog')+'</div>';
+  h+='<div class="field"><label class="l" for="name">名前（わかれば）</label><input type="text" id="name" maxlength="60"></div>';
+  h+='<div class="field"><label class="l" for="features">特徴<em>必須</em></label><div class="help">種類・色・大きさ・首輪など</div><textarea id="features" maxlength="500"></textarea></div>';
+  h+='<div class="field"><label class="l" for="place">最後に見た場所<em>必須</em></label><div class="help">駅・交差点・公園名で書いてください</div><input type="text" id="place" maxlength="120"></div>';
+  h+='<div class="field"><label class="l" for="datetime">日時<em>必須</em></label><div class="help">いなくなった日時、または見た日時</div><input type="text" id="datetime" maxlength="60" placeholder="例：10月29日 夕方ごろ"></div>';
+  h+='<div class="field"><label class="l" for="description">説明（任意）</label><textarea id="description" maxlength="1000"></textarea></div>';
+  h+='<div class="field"><label class="l" for="photos">写真（任意・3枚まで）</label><input type="file" id="photos" accept="image/*" multiple><div class="thumbs" id="thumbs"></div></div>';
+  h+='<div class="field"><label class="l" for="ownerEmail">メールアドレス<em>必須</em></label><div class="help">公開されません。連絡の中継と管理リンクの送付に使います。</div><input type="email" id="ownerEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>';
+  h+='<div class="field"><label class="l" for="secret">合言葉<em>必須</em></label><div class="help">写真にも本文にも書かない特徴を1つ（例：足環の本当の色、しっぽの先の模様）。保護した方が本物か見分けるために使います。</div><input type="text" id="secret" maxlength="60"></div>';
+  h+='<div class="hp" aria-hidden="true"><label>hp<input type="text" name="hp" id="hp" tabindex="-1" autocomplete="off"></label></div>';
+  h+='<p class="err" id="formerr" role="alert"></p>';
+  h+='<button type="submit" class="btn block" id="go">投稿する</button></form>';
+  app.innerHTML=h;
+  document.getElementById('photos').addEventListener('change',function(ev){
+    var files=Array.prototype.slice.call(ev.target.files,0,3);
+    var t=document.getElementById('thumbs'); t.innerHTML='<span class="help">写真を整えています…</span>';
+    Promise.all(files.map(shrink)).then(function(arr){
+      photoData=arr; t.innerHTML=arr.map(function(u){return '<img src="'+u+'" alt="">';}).join('');
+    }).catch(function(){ photoData=[]; t.innerHTML=''; showErr('写真を読み込めませんでした。別の写真をお試しください。'); });
+  });
+  document.getElementById('f').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    showErr('');
+    var d={type:checked('type'),area:val('area'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:val('datetime'),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:'createPost'};
+    if(!d.features||!d.place||!d.datetime||!d.ownerEmail||!d.secret) return showErr('必須の項目をすべて入力してください。');
+    if(!validEmail(d.ownerEmail)) return showErr('メールアドレスの形式をご確認ください。');
+    if(hasPhone(d.features)||hasPhone(d.description)||hasPhone(d.name)||hasPhone(d.place)) return showErr('電話番号は書けません。連絡はこのサイトのフォームで届きます');
+    var b=document.getElementById('go'); b.disabled=true; b.textContent='送信しています…';
+    api('POST',null,d).then(function(r){
+      if(!r.ok){ b.disabled=false; b.textContent='投稿する'; return showErr(r.error||'送信できませんでした。'); }
+      var link=pageUrl('/manage/'+r.id+'/'+r.manageToken);
+      app.innerHTML='<div class="eyebrow">Thank you</div><h1>投稿を受け付けました</h1><p class="lead">確認のメールもお送りしています。</p>'
+        +'<h3>管理リンク</h3><p class="help">見つかったとき、取り下げるときに使います。他の人には教えないでください。</p><div class="copybox">'+esc(link)+'</div>'
+        +'<h3>合言葉の控え</h3><div class="copybox">'+esc(d.secret)+'</div>'
+        +noticeHtml()
+        +'<div class="btns"><a class="btn" href="#/post/'+esc(r.id)+'">投稿を見る</a><a class="btn ghost" href="#/flyer/'+esc(r.id)+'">チラシを作る</a><a class="btn ghost" href="#/guide/'+esc(d.area)+'">届け先を見る</a></div>';
+      window.scrollTo(0,0);
+    });
+  });
+}
+
+function viewContact(id,my){
+  app.innerHTML=crumb('#/post/'+esc(id),'投稿にもどる')+'<div class="eyebrow">Contact</div><h1>連絡する</h1><p class="lead">メッセージは、投稿された方のメールに届きます。電話番号や住所は書かないでください。</p>'
+  +'<form id="f" novalidate autocomplete="off">'
+  +'<div class="field"><label class="l" for="message">メッセージ<em>必須</em></label><textarea id="message" maxlength="1500"></textarea></div>'
+  +'<div class="field"><label class="l" for="fromEmail">返信先メール（任意）</label><div class="help">空のままだと、投稿者から返信できません。</div><input type="email" id="fromEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
+  +'<div class="field"><label class="l" for="secretAnswer">合言葉の答え（任意）</label><div class="help">投稿者だけが知っている特徴を知っていれば書いてください</div><input type="text" id="secretAnswer" maxlength="60"></div>'
+  +'<p class="err" id="formerr" role="alert"></p><button type="submit" class="btn block" id="go">送信する</button></form>';
+  document.getElementById('f').addEventListener('submit',function(ev){
+    ev.preventDefault(); showErr('');
+    var d={action:'contact',id:id,message:val('message'),fromEmail:val('fromEmail'),secretAnswer:val('secretAnswer')};
+    if(!d.message) return showErr('メッセージを入力してください。');
+    if(d.fromEmail&&!validEmail(d.fromEmail)) return showErr('メールアドレスの形式をご確認ください。');
+    if(hasPhone(d.message)) return showErr('電話番号は書けません。連絡はこのサイトのフォームで届きます');
+    var b=document.getElementById('go'); b.disabled=true; b.textContent='送信しています…';
+    api('POST',null,d).then(function(r){
+      if(!r.ok){ b.disabled=false; b.textContent='送信する'; return showErr(r.error||'送信できませんでした。'); }
+      app.innerHTML='<div class="eyebrow">Sent</div><h1>送信しました</h1><p class="lead">投稿された方にメッセージを届けました。お返事があるまでお待ちください。</p>'+noticeHtml()+'<div class="btns"><a class="btn ghost" href="#/post/'+esc(id)+'">投稿にもどる</a></div>';
+    });
+  });
+}
+
+function viewManage(id,token,my){
+  app.innerHTML=crumb('#/','地域をえらぶ')+loading();
+  api('GET',{action:'getPost',id:id}).then(function(r){
+    if(my!==rid) return;
+    if(!r.ok){ app.innerHTML=crumb('#/','地域をえらぶ')+errHtml(r.error); return; }
+    var p=r.post, closed=p.status&&p.status!=='open';
+    var h=crumb('#/post/'+esc(id),'投稿を見る')+'<div class="eyebrow">Manage</div><h1>投稿の管理</h1><p class="lead">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'　／　'+esc(p.place)+'</p>';
+    if(closed) h+='<div class="band">'+esc(STATUS[p.status]||'受付を終了しました')+'</div>';
+    else h+='<div class="btns"><button class="btn" id="bf">見つかりました</button><button class="btn ghost" id="bc">取り下げる</button></div><p class="err" id="formerr" role="alert"></p>';
+    h+='<div class="btns"><a class="btn ghost" href="#/flyer/'+esc(id)+'">チラシを作る</a></div>';
+    app.innerHTML=h;
+    function close(outcome){
+      var b1=document.getElementById('bf'),b2=document.getElementById('bc'); b1.disabled=b2.disabled=true;
+      api('POST',null,{action:'closePost',id:id,token:token,outcome:outcome}).then(function(r){
+        if(!r.ok){ b1.disabled=b2.disabled=false; return showErr(r.error||'更新できませんでした。'); }
+        app.innerHTML=crumb('#/','地域をえらぶ')+'<div class="eyebrow">Done</div><h1>'+(outcome==='found'?'見つかって、よかったです':'取り下げました')+'</h1><p class="lead">投稿の状態を更新しました。</p>';
+      });
+    }
+    if(!closed){
+      document.getElementById('bf').onclick=function(){close('found');};
+      document.getElementById('bc').onclick=function(){close('cancel');};
+    }
+  });
+}
+
+function viewFlyer(id,my){
+  app.innerHTML=crumb('#/post/'+esc(id),'投稿にもどる')+loading();
+  api('GET',{action:'getPost',id:id}).then(function(r){
+    if(my!==rid) return;
+    if(!r.ok){ app.innerHTML=crumb('#/','地域をえらぶ')+errHtml(r.error); return; }
+    var p=r.post, ph=photos(p);
+    var title=p.type==='found'?'保護しています':(p.type==='sighting'?'見かけました':'さがしています');
+    var h=crumb('#/post/'+esc(id),'投稿にもどる')+'<div class="btns noprint"><button class="btn" id="pr">PDFにする／印刷</button></div>';
+    h+='<div class="flyer"><div class="big">'+esc(title)+'</div>';
+    if(ph.length) h+='<img class="main" src="'+esc(ph[0])+'" alt="">';
+    if(ph.length>1) h+='<div class="sub">'+ph.slice(1).map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
+    h+='<dl><dt>動物</dt><dd>'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</dd><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc(p.place)+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd></dl>';
+    h+='<div class="how">連絡は、このURLから（検索しても出ません。そのまま入力してください）<div class="url">'+esc(pageUrl('/contact/'+p.id))+'</div></div></div>';
+    app.innerHTML=h;
+    document.getElementById('pr').onclick=function(){window.print();};
+  });
+}
+
+function viewGuide(id){
+  var a=area(id)||area('bunkyo');
+  var h=crumb('#/area/'+a.id,a.name+'の一覧')+'<div class="eyebrow">Guide</div><h1>'+esc(a.name)+'の届け先</h1>';
+  if(a.contacts&&a.contacts.length){
+    h+='<div class="notice" style="padding:6px 20px">'+a.contacts.map(function(c){
+      var telHtml = c.tel ? '<a href="tel:'+esc(c.tel.replace(/[^0-9+]/g,''))+'" style="display:inline-flex;align-items:center;min-height:44px">'+esc(c.tel)+'</a>' : '<span class="help" style="display:inline-flex;align-items:center;min-height:44px">番号は公式サイトでご確認ください</span>';
+      return '<div style="padding:12px 0;border-bottom:1px solid var(--rose-pale)">'+esc(c.label)+'<br>'+telHtml+'</div>';
+    }).join('')+'</div>';
+  } else {
+    h+='<div class="notice">この地域の届け先は準備中です。まずは東京都動物愛護相談センター（<a href="tel:0333023507">03-3302-3507</a>）と、お近くの警察署へご連絡ください。</div>';
+  }
+  h+='<h2>保護した方へ</h2><p>動物を見つけたら、まず安全な場所で落ち着かせてください。警察署か東京都動物愛護相談センターに届けたうえで、この掲示板に「保護しました」と投稿すると、飼い主の方が見つけやすくなります。</p>';
+  h+='<h2>飼い主の方へ</h2><p>いなくなったら、5日以内に東京都動物愛護相談センターへ電話してください。収容されても7日間で扱いが変わります。あわせて、最寄りの警察署に遺失物届を出してください。</p>';
+  h+=noticeHtml()+'<div class="btns"><a class="btn" href="#/new?area='+a.id+'">投稿する</a></div>';
+  app.innerHTML=h;
+}
+
+function viewSubscribe(areaId){
+  var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'bunkyo';
+  app.innerHTML=crumb('#/area/'+sel,'一覧にもどる')+'<div class="eyebrow">Notify</div><h1>新着を受け取る</h1><p class="lead">選んだ地域に新しい投稿があると、メールでお知らせします。解除はメール内のリンクからできます。</p>'
+  +'<form id="f" novalidate><div class="field"><label class="l" for="area">地域</label>'+areaSelect('area',sel)+'</div>'
+  +'<div class="field"><label class="l" for="email">メールアドレス</label><input type="email" id="email" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
+  +'<p class="err" id="formerr" role="alert"></p><button type="submit" class="btn block" id="go">登録する</button></form>';
+  document.getElementById('f').addEventListener('submit',function(ev){
+    ev.preventDefault(); showErr('');
+    var d={action:'subscribe',area:val('area'),email:val('email')};
+    if(!validEmail(d.email)) return showErr('メールアドレスの形式をご確認ください。');
+    var b=document.getElementById('go'); b.disabled=true; b.textContent='送信しています…';
+    api('POST',null,d).then(function(r){
+      if(!r.ok){ b.disabled=false; b.textContent='登録する'; return showErr(r.error||'登録できませんでした。'); }
+      app.innerHTML='<div class="eyebrow">Sent</div><h1>確認のメールをお送りしました</h1><p class="lead">'+esc(areaName(d.area))+'の新着をお知らせします。</p><div class="btns"><a class="btn ghost" href="#/area/'+esc(d.area)+'">一覧へ</a></div>';
+    });
+  });
+}
+
+window.addEventListener('hashchange',route);
+route();
+})();
+</script>
+</body>
+</html>
