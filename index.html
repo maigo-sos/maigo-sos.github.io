@@ -1812,6 +1812,7 @@ h3{font-size:17px;margin:20px 0 6px}
 .lead{color:var(--text-muted);margin-bottom:28px}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
 .filters select,.filters input{min-height:46px}
+.about{font-size:17px;line-height:2;margin-bottom:22px}
 .nudge{font-size:17px;color:var(--rose-deep);line-height:1.9;margin:26px 0 4px}
 .tagline{font-size:22px;letter-spacing:.12em;color:var(--rose-deep);line-height:1.8;margin:4px 0 26px}
 .rule{height:1px;background:var(--rose-pale);border:0;margin:28px 0}
@@ -2008,7 +2009,9 @@ ja: {
   lEmail2:'メールアドレス', register:'登録する', regFail:'登録できませんでした。',
   sSent:'確認のメールをお送りしました', sSentLead:'{0}の新着をお知らせします。', toList:'一覧へ',
   /* footer / notice */
-  footOp:'運営：cura（在宅ケア・東京）', footDel:'投稿の削除依頼',
+  footOp:'運営：cura（在宅ケア・東京）', footDel:'投稿の削除依頼', footAbout:'この掲示板について',
+  aboutTitle:'この掲示板について',
+  aboutBody:['2026年10月29日、友人のウロコインコが東京・駒込で迷子になりました。載せられる掲示板を探すと、いちばん大きなサイトはメンテナンスで止まっていて、ほかは全国の投稿がひとつに混ざり、新しい目撃があっても飼い主には届きませんでした。','地域で絞れて、新しい情報が通知で届いて、保護した人と飼い主が安全につながれる場所。無いなら作ろうと思い、翌日に立ち上げたのがこの掲示板です。','運営は、東京・文京区で在宅ケアの事業をしている cura が行います。投稿にも閲覧にもお金はかかりません。これからもかかりません。','その子は、まだ探しています。'],
   delSubject:'【迷子ペットSOS】削除依頼',
   notice:'迷子の動物を保護した方は、警察署か、お住まいの都道府県の動物愛護センター（届け先一覧）へご連絡ください。1週間以内に届けないと、お礼を受け取る権利などがなくなります。電話番号や住所は投稿しないでください。連絡は当サイトのフォームでお願いします。「先に送料や治療費を振り込んで」という連絡は詐欺の可能性があります。お金を払う前に、必ず動物本人を確認してください。'
 },
@@ -2087,7 +2090,9 @@ en: {
   sLead:'We will email you when a new post appears in the prefecture you choose. You can unsubscribe from the link in the email.',
   lEmail2:'Email address', register:'Sign up', regFail:'Could not sign up.',
   sSent:'We sent you a confirmation email', sSentLead:'We will let you know about new posts in {0}.', toList:'To the list',
-  footOp:'Run by cura (home care, Tokyo)', footDel:'Request removal',
+  footOp:'Run by cura (home care, Tokyo)', footDel:'Request removal', footAbout:'About this board',
+  aboutTitle:'About this board',
+  aboutBody:['On October 29, 2026, a friend\'s conure went missing in Komagome, Tokyo. When we looked for a place to post, the largest site was down for maintenance, and the others mixed every post in Japan into one long list, so new sightings never reached the owner.','A board you can narrow by area, that notifies you when something new comes in, and that lets finders and owners connect safely. There was none, so we built this one the next day.','It is run by cura, a home care service in Bunkyo, Tokyo. Posting and browsing are free, and will stay free.','We are still looking for that bird.'],
   delSubject:'[Lost Pet SOS] Removal request',
   notice:'If you have found a lost animal, please contact the police or your prefectural animal welfare center. If you do not report it within one week, you may lose certain rights. Do not post phone numbers or addresses; use the contact form on this site. Messages asking you to send shipping or medical fees in advance may be scams. Never pay before you have seen the animal yourself.'
 }
@@ -2131,7 +2136,7 @@ function renderChrome(){
   var btns=h.querySelectorAll('button[data-lang]');
   for(var i=0;i<btns.length;i++) btns[i].addEventListener('click',function(){ setLang(this.getAttribute('data-lang')); });
   var f=document.getElementById('ftr');
-  f.innerHTML='<div>'+esc(t('footOp'))+'</div><div><a href="mailto:honeypots.m@gmail.com?subject='+encodeURIComponent(t('delSubject'))+'">'+esc(t('footDel'))+'</a></div>';
+  f.innerHTML='<div>'+esc(t('footOp'))+'</div><div><a href="#/about">'+esc(t('footAbout'))+'</a></div><div><a href="mailto:honeypots.m@gmail.com?subject='+encodeURIComponent(t('delSubject'))+'">'+esc(t('footDel'))+'</a></div>';
 }
 function setLang(l){
   if(l!==lang){
@@ -2210,6 +2215,7 @@ function route(){
   if(k==='flyer') return viewFlyer(p[1],my);
   if(k==='guide') return viewGuide(p[1],r.q.city);
   if(k==='subscribe') return viewSubscribe(r.q.area);
+  if(k==='about') return viewAbout();
   viewHome(my);
 }
 
@@ -2530,6 +2536,10 @@ function viewGuide(id,city){
   app.innerHTML=h;
 }
 
+function viewAbout(){
+  var body=t('aboutBody'); if(!Array.isArray(body)) body=[String(body)];
+  app.innerHTML=crumb('#/',t('pickArea'))+'<div class="eyebrow">About</div><h1>'+esc(t('aboutTitle'))+'</h1>'+body.map(function(x){return '<p class="about">'+esc(x)+'</p>';}).join('')+'<div class="btns"><a class="btn" href="#/new">'+esc(t('post'))+'</a></div>';
+}
 function viewSubscribe(areaId){
   var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'tokyo';
   app.innerHTML=crumb('#/area/'+sel,t('backList'))+'<div class="eyebrow">'+esc(t('sEyebrow'))+'</div><h1>'+esc(t('sTitle'))+'</h1><p class="lead">'+esc(t('sLead'))+'</p>'
