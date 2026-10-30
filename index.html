@@ -2005,7 +2005,7 @@ ja: {
   updFail:'更新できませんでした。', doneEyebrow2:'Done', doneFound:'見つかって、よかったです', doneCancel:'取り下げました', doneLead2:'投稿の状態を更新しました。',
   /* flyer */
   flyLost:'さがしています', flyFound:'保護しています', flySighting:'見かけました',
-  print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', flyAnimal:'動物',
+  editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', flyAnimal:'動物',
   qrText:'見かけた方は、このQRを読み取って<br>フォームからご連絡ください',
   /* guide */
   gEyebrow:'Guide', gTitle:'{0}の届け先', gEnLine:'',
@@ -2088,7 +2088,7 @@ en: {
   mEyebrow:'Manage', mTitle:'Manage your post', btnFound:'Found', btnCancel:'Withdraw',
   updFail:'Could not update.', doneEyebrow2:'Done', doneFound:'We are glad it was found', doneCancel:'Withdrawn', doneLead2:'The post has been updated.',
   flyLost:'LOST', flyFound:'FOUND', flySighting:'SIGHTED',
-  print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', flyAnimal:'Animal',
+  editBtn:'Edit this post', editTitle:'Edit post', editLead:'Fields left empty stay as they are. Photos are replaced only if you choose new ones.', todKeep:'Keep as is', secretKeep:'Leave empty to keep the current one', save:'Save', savedTitle:'Updated', savedLead:'Your post has been updated.', print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', flyAnimal:'Animal',
   qrText:'If you have seen this animal,<br>scan this QR code and send a message through the form',
   gEyebrow:'Guide', gTitle:'Where to report in {0}',
   gEnLine:'Call the prefectural animal welfare center below (Japanese). In an emergency, call 110 (police).',
@@ -2224,6 +2224,7 @@ function route(){
   if(k==='new') return viewNew(r.q.area);
   if(k==='contact') return viewContact(p[1],my);
   if(k==='manage') return viewManage(p[1],p[2],my);
+  if(k==='edit') return viewEdit(p[1],p[2],my);
   if(k==='flyer') return viewFlyer(p[1],my);
   if(k==='guide') return viewGuide(p[1],r.q.city);
   if(k==='subscribe') return viewSubscribe(r.q.area);
@@ -2406,32 +2407,43 @@ function checked(name){ var e=document.querySelector('input[name="'+name+'"]:che
 function showErr(msg){ var e=document.getElementById('formerr'); if(e){ e.textContent=msg||''; if(msg) e.scrollIntoView({block:'center'});} }
 function validEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 
-function viewNew(areaId){
+function viewEdit(id,token,my){
+  app.innerHTML=crumb('#/manage/'+esc(id)+'/'+esc(token),t('mTitle'))+loading();
+  api('GET',{action:'getPost',id:id}).then(function(r){
+    if(my!==rid) return;
+    if(!r.ok){ app.innerHTML=crumb('#/',t('pickArea'))+errHtml(r.error); return; }
+    viewNew(r.post.area,{id:id,token:token,post:r.post});
+  });
+}
+function viewNew(areaId,edit){
   var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'tokyo';
+  var P=edit?edit.post:{};
+  function v(k){ return P[k]==null?'':String(P[k]); }
   var photoData=[];
   var TYPES={lost:typeName('lost'),found:typeName('found'),sighting:typeName('sighting')};
   var SPECIES={dog:spName('dog'),cat:spName('cat'),bird:spName('bird'),other:spName('other')};
   function opts(name,map,def){ return '<div class="opts">'+Object.keys(map).map(function(k){return '<label><input type="radio" name="'+name+'" value="'+k+'"'+(k===def?' checked':'')+'><span>'+esc(map[k])+'</span></label>';}).join('')+'</div>'; }
   function req(){ return '<em>'+esc(t('req'))+'</em>'; }
-  var h=crumb('#/area/'+sel,t('backList'))+'<div class="eyebrow">'+esc(t('newEyebrow'))+'</div><h1>'+esc(t('newTitle'))+'</h1><p class="lead">'+esc(t('newLead'))+'</p>';
+  var h=edit?crumb('#/manage/'+esc(edit.id)+'/'+esc(edit.token),t('mTitle'))+'<div class="eyebrow">Edit</div><h1>'+esc(t('editTitle'))+'</h1><p class="lead">'+esc(t('editLead'))+'</p>'
+          :crumb('#/area/'+sel,t('backList'))+'<div class="eyebrow">'+esc(t('newEyebrow'))+'</div><h1>'+esc(t('newTitle'))+'</h1><p class="lead">'+esc(t('newLead'))+'</p>';
   h+='<form id="f" novalidate autocomplete="off">';
-  h+='<div class="field"><label class="l">'+esc(t('lType'))+req()+'</label>'+opts('type',TYPES,'lost')+'</div>';
+  h+='<div class="field"><label class="l">'+esc(t('lType'))+req()+'</label>'+opts('type',TYPES,P.type||'lost')+'</div>';
   h+='<div class="field"><label class="l" for="area">'+esc(t('lArea'))+req()+'</label>'+areaSelect('area',sel)+'</div>';
-  h+='<div class="field"><label class="l" for="city">'+esc(t('lCity'))+req()+'</label><div class="help">'+esc(t('hCity'))+'</div><input type="text" id="city" maxlength="40" placeholder="'+esc(t('phCity'))+'"></div>';
-  h+='<div class="field"><label class="l">'+esc(t('lSpecies'))+req()+'</label>'+opts('species',SPECIES,'dog')+'</div>';
-  h+='<div class="field"><label class="l" for="name">'+esc(t('lName'))+'</label><input type="text" id="name" maxlength="60"></div>';
-  h+='<div class="field"><label class="l" for="features">'+esc(t('lFeatures'))+req()+'</label><div class="help">'+esc(t('hFeatures'))+'</div><textarea id="features" maxlength="500"></textarea></div>';
-  h+='<div class="field"><label class="l" for="place">'+esc(t('lPlace'))+req()+'</label><div class="help">'+esc(t('hPlace'))+'</div><input type="text" id="place" maxlength="120"></div>';
+  h+='<div class="field"><label class="l" for="city">'+esc(t('lCity'))+req()+'</label><div class="help">'+esc(t('hCity'))+'</div><input type="text" id="city" maxlength="40" placeholder="'+esc(t('phCity'))+'" value="'+esc(v('city'))+'"></div>';
+  h+='<div class="field"><label class="l">'+esc(t('lSpecies'))+req()+'</label>'+opts('species',SPECIES,P.species||'dog')+'</div>';
+  h+='<div class="field"><label class="l" for="name">'+esc(t('lName'))+'</label><input type="text" id="name" maxlength="60" value="'+esc(v('name'))+'"></div>';
+  h+='<div class="field"><label class="l" for="features">'+esc(t('lFeatures'))+req()+'</label><div class="help">'+esc(t('hFeatures'))+'</div><textarea id="features" maxlength="500">'+esc(v('features'))+'</textarea></div>';
+  h+='<div class="field"><label class="l" for="place">'+esc(t('lPlace'))+req()+'</label><div class="help">'+esc(t('hPlace'))+'</div><input type="text" id="place" maxlength="120" value="'+esc(v('place'))+'"></div>';
   var today=new Date(), ymd=today.getFullYear()+'-'+('0'+(today.getMonth()+1)).slice(-2)+'-'+('0'+today.getDate()).slice(-2);
   h+='<div class="field"><label class="l" for="date">'+esc(t('lDate'))+req()+'</label><div class="help">'+esc(t('hDate'))+'</div><input type="date" id="date" value="'+ymd+'" max="'+ymd+'"></div>';
-  h+='<div class="field"><label class="l" for="tod">'+esc(t('lTod'))+req()+'</label><select id="tod"><option value="">'+esc(t('choose'))+'</option>'+t('tods').map(function(x,i){return '<option value="'+i+'">'+esc(x)+'</option>';}).join('')+'</select></div>';
-  h+='<div class="field"><label class="l" for="description">'+esc(t('lDesc'))+'</label><div class="help">'+esc(t('lDescHelp'))+'</div><textarea id="description" maxlength="1000"></textarea></div>';
+  h+='<div class="field"><label class="l" for="tod">'+esc(t('lTod'))+req()+'</label><select id="tod"><option value="">'+esc(edit?t('todKeep')+'（'+v('datetime')+'）':t('choose'))+'</option>'+t('tods').map(function(x,i){return '<option value="'+i+'">'+esc(x)+'</option>';}).join('')+'</select></div>';
+  h+='<div class="field"><label class="l" for="description">'+esc(t('lDesc'))+'</label><div class="help">'+esc(t('lDescHelp'))+'</div><textarea id="description" maxlength="1000">'+esc(v('description'))+'</textarea></div>';
   h+='<div class="field"><label class="l" for="photos">'+esc(t('lPhotos'))+'</label><input type="file" id="photos" accept="image/*" multiple><div class="thumbs" id="thumbs"></div></div>';
-  h+='<div class="field"><label class="l" for="ownerEmail">'+esc(t('lEmail'))+req()+'</label><div class="help">'+esc(t('hEmail'))+'</div><input type="email" id="ownerEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>';
-  h+='<div class="field"><label class="l" for="secret">'+esc(t('lSecret'))+req()+'</label><div class="help">'+esc(t('hSecret'))+'</div><input type="text" id="secret" maxlength="60"></div>';
+  if(!edit) h+='<div class="field"><label class="l" for="ownerEmail">'+esc(t('lEmail'))+req()+'</label><div class="help">'+esc(t('hEmail'))+'</div><input type="email" id="ownerEmail" inputmode="email" autocapitalize="off" autocorrect="off"></div>';
+  h+='<div class="field"><label class="l" for="secret">'+esc(t('lSecret'))+(edit?'':req())+'</label><div class="help">'+esc(edit?t('secretKeep'):t('hSecret'))+'</div><input type="text" id="secret" maxlength="60"></div>';
   h+='<div class="hp" aria-hidden="true"><label>hp<input type="text" name="hp" id="hp" tabindex="-1" autocomplete="off"></label></div>';
   h+='<p class="err" id="formerr" role="alert"></p>';
-  h+='<button type="submit" class="btn block" id="go">'+esc(t('post'))+'</button></form>';
+  h+='<button type="submit" class="btn block" id="go">'+esc(edit?t('save'):t('post'))+'</button></form>';
   app.innerHTML=h;
   document.getElementById('photos').addEventListener('change',function(ev){
     var files=Array.prototype.slice.call(ev.target.files,0,3);
@@ -2443,13 +2455,19 @@ function viewNew(areaId){
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault();
     showErr('');
-    var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:dateText(),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:'createPost'};
-    if(!d.features||!d.city||!d.place||!d.datetime||!d.ownerEmail||!d.secret) return showErr(t('needAll'));
-    if(!validEmail(d.ownerEmail)) return showErr(t('badEmail'));
+    var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:dateText(),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:edit?'updatePost':'createPost'};
+    if(edit){ d.id=edit.id; d.token=edit.token; delete d.ownerEmail; if(!d.datetime) delete d.datetime; }
+    if(!edit && (!d.features||!d.city||!d.place||!d.datetime||!d.ownerEmail||!d.secret)) return showErr(t('needAll'));
+    if(edit && (!d.features||!d.city||!d.place)) return showErr(t('needAll'));
+    if(!edit && !validEmail(d.ownerEmail)) return showErr(t('badEmail'));
     if(hasPhone(d.features)||hasPhone(d.description)||hasPhone(d.name)||hasPhone(d.place)||hasPhone(d.city)) return showErr(t('noPhone'));
     var b=document.getElementById('go'); b.disabled=true; b.textContent=t('sending');
     api('POST',null,d).then(function(r){
-      if(!r.ok){ b.disabled=false; b.textContent=t('post'); return showErr(r.error||t('sendFail')); }
+      if(!r.ok){ b.disabled=false; b.textContent=edit?t('save'):t('post'); return showErr(r.error||t('sendFail')); }
+      if(edit){
+        app.innerHTML='<div class="eyebrow">Done</div><h1>'+esc(t('savedTitle'))+'</h1><p class="lead">'+esc(t('savedLead'))+'</p><div class="btns"><a class="btn" href="#/post/'+esc(edit.id)+'">'+esc(t('viewPost'))+'</a><a class="btn ghost" href="#/manage/'+esc(edit.id)+'/'+esc(edit.token)+'">'+esc(t('mTitle'))+'</a></div>';
+        window.scrollTo(0,0); return;
+      }
       var link=pageUrl('/manage/'+r.id+'/'+r.manageToken);
       app.innerHTML='<div class="eyebrow">'+esc(t('doneEyebrow'))+'</div><h1>'+esc(t('doneTitle'))+'</h1><p class="lead">'+esc(t('doneLead'))+'</p>'
         +'<h3>'+esc(t('manageLink'))+'</h3><p class="help">'+esc(t('manageHelp'))+'</p><div class="copybox">'+esc(link)+'</div>'
@@ -2491,7 +2509,7 @@ function viewManage(id,token,my){
     var h=crumb('#/post/'+esc(id),t('viewPost'))+'<div class="eyebrow">'+esc(t('mEyebrow'))+'</div><h1>'+esc(t('mTitle'))+'</h1><p class="lead">'+esc(animalTitle(p))+'　／　'+esc(p.place)+'</p>';
     if(closed) h+='<div class="band">'+esc(stName(p.status)||t('bandClosed'))+'</div>';
     else h+='<div class="btns"><button class="btn" id="bf">'+esc(t('btnFound'))+'</button><button class="btn ghost" id="bc">'+esc(t('btnCancel'))+'</button></div><p class="err" id="formerr" role="alert"></p>';
-    h+='<div class="btns"><a class="btn ghost" href="#/flyer/'+esc(id)+'">'+esc(t('flyerBtn'))+'</a></div>';
+    h+='<div class="btns">'+(closed?'':'<a class="btn ghost" href="#/edit/'+esc(id)+'/'+esc(token)+'">'+esc(t('editBtn'))+'</a>')+'<a class="btn ghost" href="#/flyer/'+esc(id)+'">'+esc(t('flyerBtn'))+'</a></div>';
     app.innerHTML=h;
     function close(outcome){
       var b1=document.getElementById('bf'),b2=document.getElementById('bc'); b1.disabled=b2.disabled=true;
