@@ -1784,6 +1784,8 @@ var AREAS = [
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" defer></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1898,6 +1900,18 @@ footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8
 .langsw button.on{color:var(--navy);font-weight:600}
 .brand-main{font-family:var(--display);font-size:30px;font-weight:500;letter-spacing:.14em;color:var(--navy);display:block;line-height:1.4}
 .brand-sub{font-size:13px;letter-spacing:.14em;color:var(--text-muted);display:block}
+.viewsw{display:flex;margin:0 0 14px;border:1px solid var(--rose-light);border-radius:2px;overflow:hidden}
+.viewsw button{flex:1;min-height:44px;border:0;background:#fff;font-family:var(--serif);font-size:15px;letter-spacing:.1em;color:var(--text-muted);cursor:pointer;-webkit-appearance:none;appearance:none}
+.viewsw button.on{background:var(--rose-deep);color:#fff}
+.mapbox{height:60vh;min-height:360px;border:1px solid var(--rose-pale);margin-bottom:14px;background:var(--rose-pale);position:relative;z-index:0}
+.mapbox.small{height:220px;min-height:0;margin:10px 0 4px}
+.mapnote{font-size:13px;color:var(--text-muted)}
+.mp{display:flex;gap:10px;width:230px;font-family:var(--serif)}
+.mp .ph{flex:0 0 64px;width:64px;height:64px;background:var(--rose-pale);overflow:hidden;font-size:11px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;text-align:center}
+.mp .ph img{width:100%;height:100%;object-fit:cover}
+.mp .bd{min-width:0;flex:1;font-size:13px;line-height:1.6;color:var(--text)}
+.mp .bd .t{font-size:14px;color:var(--navy);overflow-wrap:anywhere}
+.mp .bd a{display:inline-block;min-height:32px;line-height:32px}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
@@ -1915,6 +1929,7 @@ var rid = 0;
 var T = {
 ja: {
   title:'迷子ペットSOS',
+  viewList:'一覧', viewMap:'地図', mapApprox:'おおよその位置です', mapView:'投稿を見る', mapFail:'地図を読み込めませんでした。一覧をご利用ください。',
   tagline:'大切な家族が、帰ってくるまで。',
   homeEyebrow:'Lost Pet SOS', homeTitle:'迷子ペットSOS',
   homeLead:'全国の迷子ペット掲示板。いなくなった子・保護された子を、都道府県と市区町村で探せます。無料です。',
@@ -1999,6 +2014,7 @@ ja: {
 },
 en: {
   title:'Lost Pet SOS',
+  viewList:'List', viewMap:'Map', mapApprox:'Approximate location', mapView:'View post', mapFail:'The map could not be loaded. Please use the list.',
   tagline:'Until your family comes home.',
   homeEyebrow:'Nationwide', homeTitle:'Lost Pet SOS',
   homeLead:'A nationwide bulletin board for lost pets in Japan. Search for lost and found animals by prefecture and city. Free to use.',
@@ -2182,6 +2198,7 @@ function animalTitle(p){ return (spName(p.species))+(p.name?'　'+p.name:''); }
 /* ---------- routes ---------- */
 function route(){
   var r=parseHash(), p=r.parts, my=++rid;
+  killMaps();
   window.scrollTo(0,0);
   if(!p.length) return viewHome(my);
   var k=p[0];
@@ -2194,6 +2211,56 @@ function route(){
   if(k==='guide') return viewGuide(p[1],r.q.city);
   if(k==='subscribe') return viewSubscribe(r.q.area);
   viewHome(my);
+}
+
+/* ---------- map ---------- */
+var maps=[];
+function killMaps(){ maps.forEach(function(m){ try{ m.remove(); }catch(e){} }); maps=[]; }
+function ll(p){ var a=parseFloat(p.lat), b=parseFloat(p.lng); return (isFinite(a)&&isFinite(b))?[a,b]:null; }
+function pinColor(p){ return p.type==='lost'?'#9e4e68':'#c9a882'; }
+function popupHtml(p){
+  var ph=firstPhoto(p);
+  return '<div class="mp"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="">':esc(t('noPhoto')))+'</div><div class="bd"><div>'+badge(p)+'</div><div class="t">'+esc(animalTitle(p))+'</div><div>'+esc(p.city||'')+'</div><div>'+esc(p.datetime||'')+'</div><a href="#/post/'+esc(p.id)+'">'+esc(t('mapView'))+'</a></div></div>';
+}
+function newMap(el){
+  if(typeof L==='undefined'){ el.innerHTML='<p class="msg">'+esc(t('mapFail'))+'</p>'; return null; }
+  var m=L.map(el,{scrollWheelZoom:false}).setView([36.5,137.5],5);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(m);
+  maps.push(m);
+  return m;
+}
+// 一覧／地図の切替。戻り値 update(list, fit) を絞り込みのたびに呼ぶ
+function listMapView(swEl,mapEl,listEl,fitDefault){
+  var mode='list', map=null, layer=null, last=null;
+  try{ if(localStorage.getItem('maigo_view')==='map') mode='map'; }catch(e){}
+  swEl.innerHTML='<button type="button" data-v="list">'+esc(t('viewList'))+'</button><button type="button" data-v="map">'+esc(t('viewMap'))+'</button>';
+  function paint(){
+    var b=swEl.querySelectorAll('button');
+    for(var i=0;i<b.length;i++){ var on=b[i].getAttribute('data-v')===mode; b[i].className=on?'on':''; b[i].setAttribute('aria-pressed',on?'true':'false'); }
+    listEl.style.display=mode==='map'?'none':''; mapEl.style.display=mode==='map'?'':'none';
+    if(mode==='map') drawMap();
+  }
+  function drawMap(){
+    if(!map){ map=newMap(mapEl); if(!map) return; layer=L.layerGroup().addTo(map); }
+    map.invalidateSize();
+    layer.clearLayers();
+    if(!last) return;
+    var pts=[];
+    last.list.forEach(function(p){
+      var c=ll(p); if(!c) return;
+      pts.push(c);
+      L.circleMarker(c,{radius:9,color:'#fff',weight:2,fillColor:pinColor(p),fillOpacity:.95}).bindPopup(popupHtml(p)).addTo(layer);
+    });
+    if(pts.length&&(last.fit||fitDefault)) map.fitBounds(L.latLngBounds(pts),{padding:[30,30],maxZoom:13});
+    else map.setView([36.5,137.5],5);
+  }
+  swEl.addEventListener('click',function(e){
+    var v=e.target&&e.target.getAttribute&&e.target.getAttribute('data-v'); if(!v) return;
+    mode=v; try{ localStorage.setItem('maigo_view',v); }catch(er){}
+    paint();
+  });
+  paint();
+  return function(list,fit){ last={list:list,fit:fit}; if(mode==='map') drawMap(); };
 }
 
 function cardHtml(p,showArea){
@@ -2210,7 +2277,7 @@ function viewHome(my){
   h+='<select id="f_area"><option value="">'+esc(t('fArea'))+'</option>';
   regions().forEach(function(r){ h+='<optgroup label="'+esc(rname(r))+'">'; openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<option value="'+a.id+'">'+esc(pname(a))+'</option>'; }); h+='</optgroup>'; });
   h+='</select><input type="text" id="f_city" placeholder="'+esc(t('fCityPh'))+'" autocomplete="off"></div>';
-  h+='<div id="home_list">'+loading()+'</div>';
+  h+='<div class="viewsw" id="home_sw" role="group"></div><div class="mapbox" id="home_map" style="display:none"></div><div id="home_list">'+loading()+'</div>';
   h+='<h2>'+esc(t('pickArea'))+'</h2>';
   regions().forEach(function(r){
     h+='<h3 class="region">'+esc(rname(r))+'</h3><div class="areas">';
@@ -2224,9 +2291,11 @@ function viewHome(my){
     var box=document.getElementById('home_list'); if(!box) return;
     if(!r.ok){ box.innerHTML=errHtml(r.error); return; }
     var all=r.posts||[];
+    var upd=listMapView(document.getElementById('home_sw'),document.getElementById('home_map'),box,false);
     function draw(){
       var tp=val('f_type'), sp=val('f_species'), ar=val('f_area'), q=val('f_city');
       var list=all.filter(function(p){ return (!tp||p.type===tp)&&(!sp||p.species===sp)&&(!ar||p.area===ar)&&(!q||String(p.city||'').indexOf(q)>=0); });
+      upd(list,!!ar);
       if(!list.length){ box.innerHTML='<p class="msg">'+esc(all.length?t('noneFiltered'):t('noneAll'))+'</p>'; return; }
       box.innerHTML=list.slice(0,30).map(function(p){return cardHtml(p,true);}).join('')+(list.length>30?'<p class="msg">'+esc(t('more',{n:list.length-30}))+'</p>':'');
     }
@@ -2242,16 +2311,18 @@ function viewArea(id,q,my){
   var tab=q.tab==='found'?'found':'lost';
   var h=crumb('#/',t('pickArea'))+'<div class="eyebrow">'+esc(rname(a.region))+'</div><h1>'+esc(pname(a))+'</h1>';
   h+='<div class="btns"><a class="btn" href="#/new?area='+a.id+'">'+esc(t('post'))+'</a><a class="btn ghost" href="#/guide/'+a.id+'">'+esc(t('guideBtn'))+'</a><a class="btn ghost" href="#/subscribe?area='+a.id+'">'+esc(t('subscribeBtn'))+'</a></div>';
-  h+='<div class="tabs"><a href="#/area/'+a.id+'" class="'+(tab==='lost'?'on':'')+'">'+esc(t('tabLost'))+'</a><a href="#/area/'+a.id+'?tab=found" class="'+(tab==='found'?'on':'')+'">'+esc(t('tabFound'))+'</a></div><div class="field"><label class="l" for="cityq">'+esc(t('cityFilter'))+'</label><input type="text" id="cityq" placeholder="'+esc(t('cityFilterPh'))+'" autocomplete="off"></div><div id="list">'+loading()+'</div>';
+  h+='<div class="tabs"><a href="#/area/'+a.id+'" class="'+(tab==='lost'?'on':'')+'">'+esc(t('tabLost'))+'</a><a href="#/area/'+a.id+'?tab=found" class="'+(tab==='found'?'on':'')+'">'+esc(t('tabFound'))+'</a></div><div class="field"><label class="l" for="cityq">'+esc(t('cityFilter'))+'</label><input type="text" id="cityq" placeholder="'+esc(t('cityFilterPh'))+'" autocomplete="off"></div><div class="viewsw" id="area_sw" role="group"></div><div class="mapbox" id="area_map" style="display:none"></div><div id="list">'+loading()+'</div>';
   app.innerHTML=h;
   api('GET',{action:'listPosts',area:a.id}).then(function(r){
     if(my!==rid) return;
     var box=document.getElementById('list'); if(!box) return;
     if(!r.ok){ box.innerHTML=errHtml(r.error); return; }
     var all=(r.posts||[]).filter(function(p){ return tab==='lost'?p.type==='lost':p.type!=='lost'; });
+    var upd=listMapView(document.getElementById('area_sw'),document.getElementById('area_map'),box,true);
     function draw(){
       var q=(document.getElementById('cityq').value||'').trim();
       var list=q?all.filter(function(p){ return String(p.city||'').indexOf(q)>=0; }):all;
+      upd(list,true);
       if(!list.length){ box.innerHTML='<p class="msg">'+esc(q?t('noneCity'):t('nonePref'))+'</p>'; return; }
       box.innerHTML=list.map(function(p){ return cardHtml(p,false); }).join('');
     }
@@ -2271,12 +2342,14 @@ function viewPost(id,my){
     else if(closed) h+='<div class="band">'+esc(stName(p.status)||t('bandClosed'))+'</div>';
     h+='<div>'+badge(p)+'</div><h1 style="margin-top:8px">'+esc(animalTitle(p))+'</h1>';
     if(ph.length) h+='<div class="gallery" style="margin-top:16px">'+ph.map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
-    h+='<dl class="facts"><dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc(whereText(p))+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd>';
+    h+='<dl class="facts"><dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc(whereText(p))+(ll(p)?'<div class="mapbox small" id="post_map"></div><div class="mapnote">'+esc(t('mapApprox'))+'</div>':'')+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd>';
     if(p.description) h+='<dt>'+esc(t('fDesc'))+'</dt><dd>'+esc(p.description)+'</dd>';
     h+='<dt>'+esc(t('fPosted'))+'</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>'+esc(t('fStatus'))+'</dt><dd>'+esc(closed?(stName(p.status)||t('stEnded')):t('stOpen'))+'</dd></dl>';
     if(!closed) h+='<p class="nudge">'+t('nudge')+'</p>';
     h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">'+esc(t('contactBtn'))+'</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">'+esc(t('flyerBtn'))+'</a><a class="btn ghost" href="#/guide/'+esc(p.area)+'?city='+encodeURIComponent(p.city||'')+'">'+esc(t('guideBtn'))+'</a></div>'+noticeHtml();
     app.innerHTML=h;
+    var pm=document.getElementById('post_map'), c=ll(p);
+    if(pm&&c){ var m=newMap(pm); if(m){ m.setView(c,14); L.circleMarker(c,{radius:9,color:'#fff',weight:2,fillColor:pinColor(p),fillOpacity:.95}).addTo(m); } }
   });
 }
 
