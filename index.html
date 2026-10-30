@@ -1889,7 +1889,7 @@ footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8
 @media print{.flyer .qr,.flyer .qr svg{width:42mm;height:42mm;flex-basis:42mm}}
 @media (min-width:600px){.areas{grid-template-columns:repeat(3,1fr)}}
 @media print{
-  @page{size:A4 portrait;margin:8mm}
+  @page{size:A4 portrait;margin:6mm}
   .flyer{page-break-inside:avoid;break-inside:avoid}
   .flyer .big{font-size:44pt;margin-bottom:6mm}
   .flyer .main{max-height:95mm !important}
@@ -2061,20 +2061,27 @@ footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
 .p4-qrt{font-size:11px;font-weight:700;color:#e8407c;text-align:center;line-height:1.4}
 .p4-site{text-align:center;font-size:12px;color:#b08a94;padding:0 0 10px;letter-spacing:.08em}
 @media print{
-  .p4{max-width:none;border-width:2mm;border-radius:0;page-break-inside:avoid;break-inside:avoid}
-  .p4-head{padding:4mm}
-  .p4-title{font-size:26pt;border-width:1.2mm;padding:3mm 6mm}
-  .p4-body{padding:4mm;gap:4mm}
-  .p4-photo{min-height:96mm}
-  .p4-photo img{max-height:110mm}
-  .p4-name{font-size:22pt}
-  .p4-v{font-size:13pt}.p4-feats li{font-size:11.5pt}
-  .p4-bv{font-size:14pt}.p4-bk{font-size:10pt}
-  .p4-call{font-size:14pt;padding:3mm}
-  .p4-foot{padding:4mm;gap:4mm}
-  .p4-ask li{font-size:10pt}.p4-askt{font-size:11pt}
-  .p4-qrbox{width:46mm}.p4-qrbox .qr{width:36mm;height:36mm}
-  .p4-qrt{font-size:8pt}
+  /* A4より一回り小さい固定高さ（iPhoneのヘッダー/フッター余白込みでも1枚に収まる）。写真の欄だけ伸縮 */
+  .p4{max-width:none;border-width:2mm;border-radius:0;height:238mm;display:flex;flex-direction:column;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+  .p4-head{padding:3mm 4mm;flex:0 0 auto}
+  .p4-title{font-size:22pt;border-width:1.2mm;padding:2mm 6mm}
+  .p4-body{padding:3mm 4mm;gap:4mm;flex:1 1 auto;min-height:0;grid-template-rows:minmax(0,1fr)}
+  .p4-photo{min-height:0;height:100%}
+  .p4-photo img{max-height:100%;height:100%}
+  .p4-info{min-height:0;overflow:hidden}
+  .p4-name{font-size:18pt;padding:1.5mm 3mm}
+  .p4-v{font-size:12pt}.p4-feats li{font-size:10.5pt;line-height:1.4}
+  .p4-yellow{padding:0 4mm 3mm;flex:0 0 auto;gap:3mm}
+  .p4-box{padding:2mm 3mm;border-width:0.8mm}
+  .p4-bv{font-size:12.5pt}.p4-bk{font-size:9pt}
+  .p4-call{font-size:12.5pt;padding:2.5mm;flex:0 0 auto}
+  .p4-foot{padding:3mm 4mm;gap:4mm;flex:0 0 auto}
+  .p4-ask{padding:2mm 3mm}
+  .p4-ask li{font-size:9.5pt;line-height:1.45}.p4-askt{font-size:10.5pt;margin-bottom:1mm}
+  .p4-qrbox{width:42mm;padding:2mm;gap:1mm}.p4-qrbox .qr{width:32mm;height:32mm}
+  .p4-qrt{font-size:7.5pt}
+  .p4-site{padding:0 0 2mm;font-size:8pt;flex:0 0 auto}
+}
 }
 .legal h1{font-size:22px;margin-bottom:6px}.legal h2{font-size:17px;margin:22px 0 6px}.legal p,.legal li{font-size:15px;line-height:1.9;font-family:var(--serif)}.legal ul{padding-left:20px;margin:4px 0}.agree{text-align:center;margin:-6px 0 14px}
 </style>
