@@ -2027,6 +2027,55 @@ dl.facts dd.voice{border-radius:12px;background:#fff8d6;border-color:#ffd84d}
 .copybox{border-radius:12px}
 footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
 .about{font-family:var(--serif)}
+
+/* poster v4：ニラーさんのチラシ型 */
+.p4{background:#fff;border:3px solid #e8407c;border-radius:10px;overflow:hidden;padding:0;width:100%;max-width:600px;margin:0 auto;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN',sans-serif;color:#3a2a2e;text-align:left}
+.p4-head{background:#e8407c;padding:16px 14px;text-align:center}
+.p4-title{display:inline-block;background:#fff;color:#e8407c;font-size:30px;font-weight:900;line-height:1.25;padding:10px 18px;border-radius:14px;border:4px solid #ffd84d;letter-spacing:.02em}
+.p4-body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;padding:12px}
+.p4-photo{background:#fff5f8;border:2px solid #ffd84d;border-radius:10px;min-height:260px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.p4-photo img{width:100%;height:100%;max-height:360px;object-fit:contain;display:block}
+.p4-nophoto{color:#b08a94}
+.p4-info{display:flex;flex-direction:column;gap:8px;min-width:0}
+.p4-name{background:#ffd84d;color:#3a2a2e;font-size:30px;font-weight:900;text-align:center;border-radius:12px;padding:6px 10px;letter-spacing:.06em;overflow-wrap:anywhere}
+.p4-row{display:flex;gap:8px;align-items:flex-start;min-width:0}
+.p4-k{flex:0 0 auto;background:#e8407c;color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;margin-top:3px}
+.p4-v{font-size:17px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+.p4-feats{list-style:none;margin:0;padding:0;min-width:0}
+.p4-feats li{font-size:15px;line-height:1.5;padding:2px 0 2px 14px;position:relative;overflow-wrap:anywhere}
+.p4-feats li:before{content:'';position:absolute;left:0;top:10px;width:7px;height:7px;border-radius:50%;background:#e8407c}
+.p4-yellow{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px 12px}
+.p4-box{background:#fff2a8;border:3px solid #ffd84d;border-radius:12px;padding:10px 12px}
+.p4-bk{font-size:13px;font-weight:900;color:#c2185b;letter-spacing:.06em}
+.p4-bv{font-size:19px;font-weight:900;line-height:1.4;margin-top:2px;overflow-wrap:anywhere}
+.p4-call{background:#e8407c;color:#fff;text-align:center;font-size:18px;font-weight:900;padding:10px 12px;letter-spacing:.04em}
+.p4-foot{display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px;align-items:stretch}
+.p4-ask{background:#e9f7e6;border:2px solid #9ad38f;border-radius:12px;padding:10px 12px}
+.p4-askt{font-weight:900;color:#2e7d32;font-size:15px;margin-bottom:4px}
+.p4-ask ul{list-style:none;margin:0;padding:0}
+.p4-ask li{font-size:13px;line-height:1.55;padding-left:14px;position:relative}
+.p4-ask li:before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:#2e7d32}
+.p4-qrbox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#fff;border:3px solid #e8407c;border-radius:12px;padding:10px;width:170px}
+.p4-qrbox .qr{width:130px;height:130px}
+.p4-qrbox .qr svg{width:100%;height:100%;display:block}
+.p4-qrt{font-size:11px;font-weight:700;color:#e8407c;text-align:center;line-height:1.4}
+.p4-site{text-align:center;font-size:12px;color:#b08a94;padding:0 0 10px;letter-spacing:.08em}
+@media print{
+  .p4{max-width:none;border-width:2mm;border-radius:0;page-break-inside:avoid;break-inside:avoid}
+  .p4-head{padding:4mm}
+  .p4-title{font-size:26pt;border-width:1.2mm;padding:3mm 6mm}
+  .p4-body{padding:4mm;gap:4mm}
+  .p4-photo{min-height:96mm}
+  .p4-photo img{max-height:110mm}
+  .p4-name{font-size:22pt}
+  .p4-v{font-size:13pt}.p4-feats li{font-size:11.5pt}
+  .p4-bv{font-size:14pt}.p4-bk{font-size:10pt}
+  .p4-call{font-size:14pt;padding:3mm}
+  .p4-foot{padding:4mm;gap:4mm}
+  .p4-ask li{font-size:10pt}.p4-askt{font-size:11pt}
+  .p4-qrbox{width:46mm}.p4-qrbox .qr{width:36mm;height:36mm}
+  .p4-qrt{font-size:8pt}
+}
 </style>
 </head>
 <body>
@@ -2106,7 +2155,7 @@ ja: {
   updFail:'更新できませんでした。', doneEyebrow2:'Done', doneFound:'見つかって、よかったです', doneCancel:'取り下げました', doneLead2:'投稿の状態を更新しました。',
   /* flyer */
   flyLost:'迷子の{sp}を\nさがしています', flyFound:'{sp}を\n保護しています', flySighting:'{sp}を\n見かけました', headLost:'迷子の{sp}', headFound:'保護した{sp}', headSighting:'見かけた{sp}',
-  ctaLost:'いなくなった', ctaLostSub:'迷子を投稿する', ctaFound:'見つけた・保護した', ctaFoundSub:'目撃・保護を投稿する', kw:'キーワード（名前・特徴・市区町村・場所）', openPrefs:'都道府県の一覧を開く', noPhoto:'写真なし', editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', flyAnimal:'動物',
+  lBreed:'種類（わかれば）', phBreed:'例：ウロコインコ／柴犬／雑種の黒猫', pTitleLost:'迷子の{sp}を探しています！', pTitleFound:'{sp}を保護しています', pTitleSight:'{sp}を見かけました', pName:'名前', pKind:'種類', pFeat:'特徴', pPlaceLost:'いなくなった場所', pWhenLost:'いなくなった日時', pPlaceFound:'見つけた場所', pWhenFound:'見つけた日時', pCall:'見かけた方・保護された方はご連絡ください', pQr:'このQRを読み取ると連絡フォームが開きます', pAsk:'見かけた時のお願い', pAsk1:'追いかけたり、大声を出さないでください', pAsk2:'ゆっくり落ち着いて見守ってください', pAsk3:'できれば写真や動画を撮ってご連絡ください', pAsk4:'小さなことでも、どうぞお知らせください', pSite:'迷子ペットSOS　maigo-sos.github.io', ctaLost:'いなくなった', ctaLostSub:'迷子を投稿する', ctaFound:'見つけた・保護した', ctaFoundSub:'目撃・保護を投稿する', kw:'キーワード（名前・特徴・市区町村・場所）', openPrefs:'都道府県の一覧を開く', noPhoto:'写真なし', editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', flyAnimal:'動物',
   qrText:'見かけた方は、このQRを読み取って<br>フォームからご連絡ください',
   /* guide */
   gEyebrow:'Guide', gTitle:'{0}の届け先', gEnLine:'',
@@ -2189,7 +2238,7 @@ en: {
   mEyebrow:'Manage', mTitle:'Manage your post', btnFound:'Found', btnCancel:'Withdraw',
   updFail:'Could not update.', doneEyebrow2:'Done', doneFound:'We are glad it was found', doneCancel:'Withdrawn', doneLead2:'The post has been updated.',
   flyLost:'LOST {sp}', flyFound:'FOUND {sp}', flySighting:'{sp} SIGHTED', headLost:'Lost {sp}', headFound:'Found {sp}', headSighting:'{sp} sighted',
-  ctaLost:'My pet is missing', ctaLostSub:'Post a lost pet', ctaFound:'I found or saw one', ctaFoundSub:'Post a sighting or found pet', kw:'Keyword (name, features, city, place)', openPrefs:'Open the list of prefectures', noPhoto:'No photo', editBtn:'Edit this post', editTitle:'Edit post', editLead:'Fields left empty stay as they are. Photos are replaced only if you choose new ones.', todKeep:'Keep as is', secretKeep:'Leave empty to keep the current one', save:'Save', savedTitle:'Updated', savedLead:'Your post has been updated.', print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', flyAnimal:'Animal',
+  lBreed:'Breed / kind (optional)', phBreed:'e.g. Green-cheeked conure, Shiba Inu', pTitleLost:'LOST {sp} — please help', pTitleFound:'FOUND {sp}', pTitleSight:'{sp} SIGHTED', pName:'Name', pKind:'Kind', pFeat:'Features', pPlaceLost:'Last seen at', pWhenLost:'Last seen on', pPlaceFound:'Found at', pWhenFound:'Found on', pCall:'If you have seen or found this animal, please contact us', pQr:'Scan this QR to open the contact form', pAsk:'If you see it', pAsk1:'Please do not chase or shout', pAsk2:'Stay calm and keep watching', pAsk3:'Take a photo or video if you can', pAsk4:'Even a small detail helps', pSite:'Lost Pet SOS  maigo-sos.github.io', ctaLost:'My pet is missing', ctaLostSub:'Post a lost pet', ctaFound:'I found or saw one', ctaFoundSub:'Post a sighting or found pet', kw:'Keyword (name, features, city, place)', openPrefs:'Open the list of prefectures', noPhoto:'No photo', editBtn:'Edit this post', editTitle:'Edit post', editLead:'Fields left empty stay as they are. Photos are replaced only if you choose new ones.', todKeep:'Keep as is', secretKeep:'Leave empty to keep the current one', save:'Save', savedTitle:'Updated', savedLead:'Your post has been updated.', print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', flyAnimal:'Animal',
   qrText:'If you have seen this animal,<br>scan this QR code and send a message through the form',
   gEyebrow:'Guide', gTitle:'Where to report in {0}',
   gEnLine:'Call the prefectural animal welfare center below (Japanese). In an emergency, call 110 (police).',
@@ -2463,7 +2512,7 @@ function viewPost(id,my){
     else if(closed) h+='<div class="band">'+esc(stName(p.status)||t('bandClosed'))+'</div>';
     var hk=p.type==='found'?'headFound':(p.type==='sighting'?'headSighting':'headLost'); h+='<div>'+badge(p)+'</div><h1 style="margin-top:8px">'+esc(t(hk,{sp:spName(p.species)||''})+(p.name?'　'+p.name:''))+'</h1>';
     if(ph.length) h+='<div class="gallery" style="margin-top:16px">'+ph.map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
-    h+='<dl class="facts"><dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc(whereText(p))+(ll(p)?'<div class="mapbox small" id="post_map"></div><div class="mapnote">'+esc(t('mapApprox'))+'</div>':'')+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd>';
+    h+='<dl class="facts">'+(p.breed?'<dt>'+esc(t('pKind'))+'</dt><dd>'+esc(p.breed)+'</dd>':'')+'<dt>'+esc(t('fFeatures'))+'</dt><dd>'+esc(p.features)+'</dd><dt>'+esc(t('fPlace'))+'</dt><dd>'+esc(whereText(p))+(ll(p)?'<div class="mapbox small" id="post_map"></div><div class="mapnote">'+esc(t('mapApprox'))+'</div>':'')+'</dd><dt>'+esc(t('fWhen'))+'</dt><dd>'+esc(p.datetime)+'</dd>';
     if(p.description) h+='<dt>'+esc(t(p.type==='lost'?'fDescLost':(p.type==='found'?'fDescFound':'fDescSight')))+'</dt><dd class="voice">'+esc(p.description)+'</dd>';
     h+='<dt>'+esc(t('fPosted'))+'</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>'+esc(t('fStatus'))+'</dt><dd>'+esc(closed?(stName(p.status)||t('stEnded')):t('stOpen'))+'</dd></dl>';
     if(!closed) h+='<p class="nudge">'+t('nudge')+'</p>';
@@ -2534,6 +2583,7 @@ function viewNew(areaId,edit,preType){
   h+='<div class="field"><label class="l" for="city">'+esc(t('lCity'))+req()+'</label><div class="help">'+esc(t('hCity'))+'</div><input type="text" id="city" maxlength="40" placeholder="'+esc(t('phCity'))+'" value="'+esc(v('city'))+'"></div>';
   h+='<div class="field"><label class="l">'+esc(t('lSpecies'))+req()+'</label>'+opts('species',SPECIES,P.species||'dog')+'</div>';
   h+='<div class="field"><label class="l" for="name">'+esc(t('lName'))+'</label><input type="text" id="name" maxlength="60" value="'+esc(v('name'))+'"></div>';
+  h+='<div class="field"><label class="l" for="breed">'+esc(t('lBreed'))+'</label><input type="text" id="breed" maxlength="40" placeholder="'+esc(t('phBreed'))+'" value="'+esc(v('breed'))+'"></div>';
   h+='<div class="field"><label class="l" for="features">'+esc(t('lFeatures'))+req()+'</label><div class="help">'+esc(t('hFeatures'))+'</div><textarea id="features" maxlength="500">'+esc(v('features'))+'</textarea></div>';
   h+='<div class="field"><label class="l" for="place">'+esc(t('lPlace'))+req()+'</label><div class="help">'+esc(t('hPlace'))+'</div><input type="text" id="place" maxlength="120" value="'+esc(v('place'))+'"></div>';
   var today=new Date(), ymd=today.getFullYear()+'-'+('0'+(today.getMonth()+1)).slice(-2)+'-'+('0'+today.getDate()).slice(-2);
@@ -2557,7 +2607,7 @@ function viewNew(areaId,edit,preType){
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault();
     showErr('');
-    var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:dateText(),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:edit?'updatePost':'createPost'};
+    var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),breed:val('breed'),features:val('features'),place:val('place'),datetime:dateText(),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:edit?'updatePost':'createPost'};
     if(edit){ d.id=edit.id; d.token=edit.token; delete d.ownerEmail; if(!d.datetime) delete d.datetime; }
     if(!edit && (!d.features||!d.city||!d.place||!d.datetime||!d.ownerEmail||!d.secret)) return showErr(t('needAll'));
     if(edit && (!d.features||!d.city||!d.place)) return showErr(t('needAll'));
@@ -2633,16 +2683,22 @@ function viewFlyer(id,my){
     if(my!==rid) return;
     if(!r.ok){ app.innerHTML=crumb('#/',t('pickArea'))+errHtml(r.error); return; }
     var p=r.post, ph=photos(p);
-    var spn=spName(p.species)||''; var title=(p.type==='found'?t('flyFound',{sp:spn}):(p.type==='sighting'?t('flySighting',{sp:spn}):t('flyLost',{sp:spn})));
-    var h=crumb('#/post/'+esc(id),t('backPost'))+'<div class="btns noprint"><button class="btn" id="sv">'+esc(t('saveImg'))+'</button><button class="btn ghost" id="pr">'+esc(t('print'))+'</button></div><div id="imgout" class="noprint"></div>';
-    var feats=String(p.features||'').split(/\n+|[。．]/).map(function(x){return x.replace(/^[・●\-\s]+/,'').trim();}).filter(Boolean).slice(0,3).map(function(x){return x.length>30?x.slice(0,29)+'…':x;});
+    var spn=p.breed||spName(p.species)||'';
+    var title=(p.type==='found'?t('pTitleFound',{sp:spn}):(p.type==='sighting'?t('pTitleSight',{sp:spn}):t('pTitleLost',{sp:spn})));
+    var feats=String(p.features||'').split(/\n+|[。．]/).map(function(x){return x.replace(/^[・●\-\s]+/,'').trim();}).filter(Boolean).slice(0,5).map(function(x){return x.length>26?x.slice(0,25)+'…':x;});
     var curl=pageUrl('/contact/'+p.id);
-    h+='<div class="flyer fl2">';
-    h+='<div class="fl-head"><div class="fl-big">'+esc(title).replace(/\n/g,'<br>')+'</div>'+(p.name?'<div class="fl-sub">'+esc(p.name)+'</div>':'')+'</div>';
-    h+='<div class="fl-photo">'+(ph.length?'<img src="'+esc(ph[0])+'" alt="">':'<div class="fl-nophoto">'+esc(t('noPhoto'))+'</div>')+'</div>';
-    h+='<div class="fl-grid"><div class="fl-cell"><div class="fl-k">'+esc(t('fPlace'))+'</div><div class="fl-v">'+esc((p.city?p.city+' ':'')+p.place)+'</div></div><div class="fl-cell"><div class="fl-k">'+esc(t('fWhen'))+'</div><div class="fl-v">'+esc(p.datetime)+'</div></div></div>';
-    if(feats.length) h+='<div class="fl-feats"><div class="fl-k">'+esc(t('fFeatures'))+'</div><ul>'+feats.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
-    h+='<div class="fl-foot"><div id="qr" class="qr"></div><div class="fl-call"><div class="fl-call1">'+t('qrText')+'</div><div class="url">'+esc(curl)+'</div><div class="fl-brand">'+esc(t('title'))+'　'+esc(location.host)+'</div></div></div>';
+    var isLost=p.type==='lost';
+    var h=crumb('#/post/'+esc(id),t('backPost'))+'<div class="btns noprint"><button class="btn" id="sv">'+esc(t('saveImg'))+'</button><button class="btn ghost" id="pr">'+esc(t('print'))+'</button></div><div id="imgout" class="noprint"></div>';
+    h+='<div class="flyer p4">';
+    h+='<div class="p4-head"><div class="p4-title">'+esc(title)+'</div></div>';
+    h+='<div class="p4-body"><div class="p4-photo">'+(ph.length?'<img src="'+esc(ph[0])+'" alt="">':'<div class="p4-nophoto">'+esc(t('noPhoto'))+'</div>')+'</div>';
+    h+='<div class="p4-info">'+(p.name?'<div class="p4-name">'+esc(p.name)+'</div>':'')+(p.breed?'<div class="p4-row"><span class="p4-k">'+esc(t('pKind'))+'</span><span class="p4-v">'+esc(p.breed)+'</span></div>':'');
+    if(feats.length) h+='<div class="p4-row"><span class="p4-k">'+esc(t('pFeat'))+'</span><ul class="p4-feats">'+feats.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>';
+    h+='</div></div>';
+    h+='<div class="p4-yellow"><div class="p4-box"><div class="p4-bk">'+esc(isLost?t('pPlaceLost'):t('pPlaceFound'))+'</div><div class="p4-bv">'+esc((p.city?p.city+' ':'')+p.place)+'</div></div><div class="p4-box"><div class="p4-bk">'+esc(isLost?t('pWhenLost'):t('pWhenFound'))+'</div><div class="p4-bv">'+esc(p.datetime)+'</div></div></div>';
+    h+='<div class="p4-call">'+esc(t('pCall'))+'</div>';
+    h+='<div class="p4-foot"><div class="p4-ask"><div class="p4-askt">'+esc(t('pAsk'))+'</div><ul><li>'+esc(t('pAsk1'))+'</li><li>'+esc(t('pAsk2'))+'</li><li>'+esc(t('pAsk3'))+'</li><li>'+esc(t('pAsk4'))+'</li></ul></div><div class="p4-qrbox"><div id="qr" class="qr"></div><div class="p4-qrt">'+esc(t('pQr'))+'</div></div></div>';
+    h+='<div class="p4-site">'+esc(t('pSite'))+'</div>';
     h+='</div>';
     app.innerHTML=h;
     try{ if(window.qrcode){ var q=qrcode(0,'M'); q.addData(curl); q.make(); document.getElementById('qr').innerHTML=q.createSvgTag({cellSize:5,margin:0,scalable:true}); } }catch(e){}
