@@ -1927,26 +1927,26 @@ footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8
 .mp .bd a{display:inline-block;min-height:32px;line-height:32px}
 
 /* flyer v3（明るいチラシ） */
-.fl2{background:#fff;border:1px solid #f3d5dd;border-radius:10px;overflow:hidden;padding:0;text-align:left;width:100%;max-width:600px;margin:0 auto;font-family:'Zen Maru Gothic','Noto Serif JP',sans-serif;color:#3a2a2e}
-.fl2 .fl-head{background:#c9557c;color:#fff;padding:20px 20px 16px;text-align:center}
+.fl2{background:#fff;border:3px solid #e8407c;border-radius:10px;overflow:hidden;padding:0;text-align:left;width:100%;max-width:600px;margin:0 auto;font-family:'Zen Maru Gothic','Noto Serif JP',sans-serif;color:#3a2a2e}
+.fl2 .fl-head{background:#e8407c;color:#fff;padding:20px 20px 16px;text-align:center}
 .fl2 .fl-big{font-size:48px;letter-spacing:.12em;font-weight:900;line-height:1.15;text-shadow:0 2px 0 rgba(0,0,0,.08)}
-.fl2 .fl-sub{font-size:24px;font-weight:700;letter-spacing:.08em;margin-top:8px;background:#fff;color:#c9557c;display:inline-block;padding:4px 18px;border-radius:999px}
+.fl2 .fl-sub{font-size:24px;font-weight:700;letter-spacing:.08em;margin-top:8px;background:#ffd84d;color:#5a3f00;display:inline-block;padding:4px 18px;border-radius:999px}
 .fl2 .fl-photo{background:#fff6f8;height:340px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .fl2 .fl-photo img{width:100%;height:100%;object-fit:contain}
 .fl2 .fl-nophoto{color:#b08a94;font-size:18px}
 .fl2 .fl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px 0}
-.fl2 .fl-cell{background:#fff3c4;border-radius:8px;padding:10px 14px}
-.fl2 .fl-k{font-size:12px;letter-spacing:.14em;color:#b5642f;font-weight:700}
+.fl2 .fl-cell{background:#fff2a8;border-radius:8px;padding:10px 14px;border:2px solid #ffd84d}
+.fl2 .fl-k{font-size:12px;letter-spacing:.14em;color:#c2185b;font-weight:700}
 .fl2 .fl-v{font-size:19px;font-weight:700;line-height:1.45;color:#3a2a2e;overflow-wrap:anywhere}
 .fl2 .fl-feats{padding:12px 16px 4px}
-.fl2 .fl-feats .fl-k{color:#c9557c}
+.fl2 .fl-feats .fl-k{color:#e8407c}
 .fl2 .fl-feats ul{list-style:none;margin:4px 0 0;padding:0}
 .fl2 .fl-feats li{font-size:18px;font-weight:500;line-height:1.55;padding:3px 0 3px 20px;position:relative}
-.fl2 .fl-feats li:before{content:'';position:absolute;left:2px;top:13px;width:9px;height:9px;border-radius:50%;background:#f2a9bf}
-.fl2 .fl-foot{display:flex;gap:16px;align-items:center;padding:14px 16px 16px;margin-top:10px;background:#fff0f4}
+.fl2 .fl-feats li:before{content:'';position:absolute;left:2px;top:13px;width:9px;height:9px;border-radius:50%;background:#e8407c}
+.fl2 .fl-foot{display:flex;gap:16px;align-items:center;padding:14px 16px 16px;margin-top:10px;background:#ffe1ec}
 .fl2 .qr{width:128px;height:128px;flex:0 0 128px;background:#fff;padding:6px;border-radius:8px}
 .fl2 .qr svg{width:100%;height:100%;display:block}
-.fl2 .fl-call1{font-size:17px;font-weight:700;line-height:1.55;color:#c9557c}
+.fl2 .fl-call1{font-size:17px;font-weight:900;line-height:1.55;color:#d6286a}
 .fl2 .url{font-size:11px;color:#9a7f86;word-break:break-all;margin-top:6px}
 .fl2 .fl-brand{font-size:12px;letter-spacing:.1em;color:#b08a94;margin-top:6px}
 @media print{
@@ -1987,21 +1987,21 @@ details.prefs[open] summary:before{transform:rotate(45deg)}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 
 /* ===== bright theme（まさみ「HPも明るく」2026-10-30）===== */
-:root{--bg:#fffafb;--rose:#c9557c;--rose-deep:#b8456c;--rose-light:#f2a9bf;--rose-pale:#fde3ea;--gold:#e0a63a;--text:#3a2a2e;--text-muted:#8a7278;--navy:#3a2a2e;--maru:'Zen Maru Gothic','Hiragino Maru Gothic ProN',sans-serif}
+:root{--bg:#fff5f8;--rose:#e8407c;--rose-deep:#d6286a;--rose-light:#f7a3c0;--rose-pale:#ffe1ec;--gold:#f5b800;--text:#3a2a2e;--text-muted:#8a7278;--navy:#3a2a2e;--maru:'Zen Maru Gothic','Hiragino Maru Gothic ProN',sans-serif}
 body{background:var(--bg)}
 header.site{background:#fff;border-bottom:2px solid var(--rose-pale)}
-.brand-en{color:var(--rose-light)}
+.brand-en{color:var(--rose)}
 .brand-ja,h1,h2,h3,.tagline,.btn,.cta,.areas a,.tabs a,.badge,.viewsw button,details.prefs summary,.region,.eyebrow{font-family:var(--maru)}
 h1{font-weight:900;letter-spacing:.06em}
 h2{font-weight:700}
 .tagline{font-weight:700;color:var(--rose);font-size:24px}
-.eyebrow{letter-spacing:.22em;color:var(--rose-light)}
+.eyebrow{letter-spacing:.22em;color:var(--rose)}
 .lead{color:var(--text-muted)}
 .btn{border-radius:999px;font-weight:700;letter-spacing:.06em;border-width:2px}
 .btn.ghost{background:#fff}
 .cta{border-radius:16px;box-shadow:0 4px 0 rgba(0,0,0,.06)}
 .cta.lost{background:var(--rose);color:#fff}
-.cta.found{background:#fff8e1;color:#8a5a14;border:2px solid var(--gold)}
+.cta.found{background:#ffd84d;color:#5a3f00;border:2px solid #ffd84d}
 .cta .c1{font-weight:900}
 .areas a{border-radius:12px;border-color:var(--rose-pale);font-weight:700;color:var(--rose-deep);background:#fff}
 .areas span{border-radius:12px}
@@ -2012,18 +2012,18 @@ h2{font-weight:700}
 .card .t{font-family:var(--maru);font-weight:700}
 .badge{border-radius:999px;font-weight:700;padding:0 12px;background:var(--rose-pale);border-color:transparent;color:var(--rose-deep)}
 .badge.found{background:var(--rose);color:#fff}
-.badge.sighting{background:#fff3c4;color:#8a5a14;border-color:transparent}
+.badge.sighting{background:#ffd84d;color:#5a3f00;border-color:transparent}
 .badge.done{background:#eee;color:#777}
 .notice{border-radius:14px;background:#fff;border-color:var(--rose-pale)}
 .nudge{font-family:var(--maru);font-weight:700;color:var(--rose)}
-.band{border-radius:999px;font-family:var(--maru);font-weight:700;background:#fff3c4;color:#8a5a14}
+.band{border-radius:999px;font-family:var(--maru);font-weight:700;background:#ffd84d;color:#5a3f00}
 input[type=text],input[type=email],input[type=date],textarea,select{border-radius:12px;border-color:var(--rose-light);background:#fff}
 .opts span{border-radius:999px;font-family:var(--maru);font-weight:700}
 .opts input:checked+span{background:var(--rose);border-color:var(--rose)}
 .filters select,.filters input{border-radius:12px}
 .viewsw button{border-radius:999px}
 dl.facts dt{color:var(--rose);font-family:var(--maru);font-weight:700;letter-spacing:.1em}
-dl.facts dd.voice{border-radius:12px;background:#fff8e1;border-color:#f3dd9a}
+dl.facts dd.voice{border-radius:12px;background:#fff8d6;border-color:#ffd84d}
 .copybox{border-radius:12px}
 footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
 .about{font-family:var(--serif)}
@@ -2070,7 +2070,7 @@ ja: {
   fFeatures:'特徴', fPlace:'場所', fWhen:'日時', fDescLost:'飼い主さんより', fDescFound:'保護した方より', fDescSight:'見かけた方より', fPosted:'投稿日', fStatus:'状態',
   stOpen:'受付中', stEnded:'終了',
   nudge:'小さなことでも、教えてください。<br>「似た子を見た気がする」だけで、手がかりになります。',
-  contactBtn:'連絡する', flyerBtn:'チラシを作る',
+  contactBtn:'連絡する', flyerBtn:'ポスターを作る',
   dateFmt:'{y}年{m}月{d}日',
   wd:['日','月','火','水','木','金','土'],
   mdFmt:'{m}月{d}日（{w}）',
@@ -2157,7 +2157,7 @@ en: {
   fFeatures:'Features', fPlace:'Place', fWhen:'Date and time', fDescLost:'From the owner', fDescFound:'From the finder', fDescSight:'From the person who saw it', fPosted:'Posted', fStatus:'Status',
   stOpen:'Open', stEnded:'Closed',
   nudge:'Even a small clue helps.<br>"I think I saw a similar animal" is enough to be a lead.',
-  contactBtn:'Contact', flyerBtn:'Make a flyer',
+  contactBtn:'Contact', flyerBtn:'Make a poster',
   dateFmt:'{mon} {d}, {y}',
   wd:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
   mdFmt:'{mon} {d} ({w})',
