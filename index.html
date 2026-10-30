@@ -1785,6 +1785,7 @@ var AREAS = [
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
@@ -2085,6 +2086,33 @@ footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
   .p4-site{padding:0 0 2mm;font-size:8pt;flex:0 0 auto}
 }
 }
+/* A4のPDF用（画面外で同じ形に組んで撮る） */
+.capwrap{position:fixed;left:0;top:0;width:198mm;z-index:-1;pointer-events:none}
+.p4.cap{width:198mm;margin:0}
+.cap .p4-head{padding:3mm 4mm 5mm !important}.cap .p4-title{position:relative;top:-.18em}.cap .p4-bv,.cap .p4-name{position:relative;top:-.15em}.cap .p4-k{padding:0 3mm 1.6mm !important;line-height:1.5}
+.cap .p4-feats li,.cap .p4-ask li{padding-left:0 !important}
+.cap .p4-feats li:before,.cap .p4-ask li:before{content:'●';position:static !important;display:inline;width:auto;height:auto;background:none !important;border-radius:0;color:#fc1e62;font-size:.7em;margin-right:1.5mm;vertical-align:.15em}
+.cap .p4-ask li:before{color:#410b0d}
+.p4.cap{max-width:none;border-width:2mm;border-radius:0;height:238mm;display:flex;flex-direction:column;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+.cap .p4-head{padding:3mm 4mm;flex:0 0 auto}
+.cap .p4-title{font-size:24pt}
+.cap .p4-body{padding:3mm 4mm;gap:4mm;flex:1 1 auto;min-height:0;grid-template-rows:minmax(0,1fr)}
+.cap .p4-photo{min-height:0;height:100%;border-width:1.5mm}
+.cap .p4-photo img{max-height:100%;height:100%}
+.cap .p4-info{min-height:0;overflow:hidden}
+.cap .p4-name{font-size:20pt;padding:0 3mm 1.5mm;border-bottom-width:.8mm}
+.cap .p4-info{gap:3mm}
+.cap .p4-v{font-size:13pt}.cap .p4-feats li{font-size:12.5pt;line-height:1.6;padding:1.2mm 0 1.2mm 4mm}.cap .p4-feats li:before{top:3.2mm}
+.cap .p4-yellow{padding:0 4mm 3mm;flex:0 0 auto;gap:3mm}
+.cap .p4-box{padding:2mm 3mm}
+.cap .p4-bv{font-size:12.5pt}.cap .p4-bk{font-size:9pt}
+.cap .p4-call{font-size:12.5pt;padding:2.5mm;flex:0 0 auto}
+.cap .p4-foot{padding:3mm 4mm;gap:4mm;flex:0 0 auto}
+.cap .p4-ask{padding:3mm 4mm;display:flex;flex-direction:column;justify-content:center}
+.cap .p4-ask li{font-size:11.5pt;line-height:1.75}.cap .p4-ask li:before{top:2.6mm}.cap .p4-askt{font-size:13pt;margin-bottom:1.5mm}
+.cap .p4-qrbox{width:46mm;padding:3mm;gap:2mm}.cap .p4-qrbox .qr{width:33mm;height:33mm;padding:1.5mm}
+.cap .p4-qrt{font-size:9pt}
+.cap .p4-site{padding:0 0 2mm;font-size:8pt;flex:0 0 auto}
 .legal h1{font-size:22px;margin-bottom:6px}.legal h2{font-size:17px;margin:22px 0 6px}.legal p,.legal li{font-size:15px;line-height:1.9;font-family:var(--serif)}.legal ul{padding-left:20px;margin:4px 0}.agree{text-align:center;margin:-6px 0 14px}
 </style>
 </head>
@@ -2167,7 +2195,7 @@ ja: {
   updFail:'更新できませんでした。', doneEyebrow2:'Done', doneFound:'見つかって、よかったです', doneCancel:'取り下げました', doneLead2:'投稿の状態を更新しました。',
   /* flyer */
   flyLost:'迷子の{sp}を\nさがしています', flyFound:'{sp}を\n保護しています', flySighting:'{sp}を\n見かけました', headLost:'迷子の{sp}', headFound:'保護した{sp}', headSighting:'見かけた{sp}',
-  lBreed:'種類（わかれば）', phBreed:'例：ウロコインコ／柴犬／雑種の黒猫', pTitleLost:'迷子の{sp}を探しています！', pTitleFound:'{sp}を保護しています', pTitleSight:'{sp}を見かけました', pName:'名前', pKind:'種類', pFeat:'特徴', pPlaceLost:'いなくなった場所', pWhenLost:'いなくなった日時', pPlaceFound:'見つけた場所', pWhenFound:'見つけた日時', pCall:'見かけた方・保護された方はご連絡ください', pQr:'このQRを読み取ると連絡フォームが開きます', pAsk:'見かけた時のお願い', pAsk1:'追いかけたり、大声を出さないでください', pAsk2:'ゆっくり落ち着いて見守ってください', pAsk3:'できれば写真や動画を撮ってご連絡ください', pAsk4:'小さなことでも、どうぞお知らせください', pSite:'迷子ペットSOS　maigo-sos.github.io', ctaLost:'いなくなった', ctaLostSub:'迷子を投稿する', ctaFound:'見つけた・保護した', ctaFoundSub:'目撃・保護を投稿する', kw:'キーワード（名前・特徴・市区町村・場所）', openPrefs:'都道府県の一覧を開く', noPhoto:'写真なし', editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', flyAnimal:'動物',
+  lBreed:'種類（わかれば）', phBreed:'例：ウロコインコ／柴犬／雑種の黒猫', pTitleLost:'迷子の{sp}を探しています！', pTitleFound:'{sp}を保護しています', pTitleSight:'{sp}を見かけました', pName:'名前', pKind:'種類', pFeat:'特徴', pPlaceLost:'いなくなった場所', pWhenLost:'いなくなった日時', pPlaceFound:'見つけた場所', pWhenFound:'見つけた日時', pCall:'見かけた方・保護された方はご連絡ください', pQr:'このQRを読み取ると連絡フォームが開きます', pAsk:'見かけた時のお願い', pAsk1:'追いかけたり、大声を出さないでください', pAsk2:'ゆっくり落ち着いて見守ってください', pAsk3:'できれば写真や動画を撮ってご連絡ください', pAsk4:'小さなことでも、どうぞお知らせください', pSite:'迷子ペットSOS　maigo-sos.github.io', ctaLost:'いなくなった', ctaLostSub:'迷子を投稿する', ctaFound:'見つけた・保護した', ctaFoundSub:'目撃・保護を投稿する', kw:'キーワード（名前・特徴・市区町村・場所）', openPrefs:'都道府県の一覧を開く', noPhoto:'写真なし', editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', pdfBusy:'A4のPDFを作っています…', pdfHint:'PDFができました。開いた画面の共有ボタンから「プリント」を選ぶと、A4の1枚で印刷できます。', pdfOpen:'PDFを開く', pdfFail:'PDFを作れませんでした。時間をおいてもう一度お試しください。', flyAnimal:'動物',
   qrText:'見かけた方は、このQRを読み取って<br>フォームからご連絡ください',
   /* guide */
   gEyebrow:'Guide', gTitle:'{0}の届け先', gEnLine:'',
@@ -2251,7 +2279,7 @@ en: {
   mEyebrow:'Manage', mTitle:'Manage your post', btnFound:'Found', btnCancel:'Withdraw',
   updFail:'Could not update.', doneEyebrow2:'Done', doneFound:'We are glad it was found', doneCancel:'Withdrawn', doneLead2:'The post has been updated.',
   flyLost:'LOST {sp}', flyFound:'FOUND {sp}', flySighting:'{sp} SIGHTED', headLost:'Lost {sp}', headFound:'Found {sp}', headSighting:'{sp} sighted',
-  lBreed:'Breed / kind (optional)', phBreed:'e.g. Green-cheeked conure, Shiba Inu', pTitleLost:'LOST {sp} — please help', pTitleFound:'FOUND {sp}', pTitleSight:'{sp} SIGHTED', pName:'Name', pKind:'Kind', pFeat:'Features', pPlaceLost:'Last seen at', pWhenLost:'Last seen on', pPlaceFound:'Found at', pWhenFound:'Found on', pCall:'If you have seen or found this animal, please contact us', pQr:'Scan this QR to open the contact form', pAsk:'If you see it', pAsk1:'Please do not chase or shout', pAsk2:'Stay calm and keep watching', pAsk3:'Take a photo or video if you can', pAsk4:'Even a small detail helps', pSite:'Lost Pet SOS  maigo-sos.github.io', ctaLost:'My pet is missing', ctaLostSub:'Post a lost pet', ctaFound:'I found or saw one', ctaFoundSub:'Post a sighting or found pet', kw:'Keyword (name, features, city, place)', openPrefs:'Open the list of prefectures', noPhoto:'No photo', editBtn:'Edit this post', editTitle:'Edit post', editLead:'Fields left empty stay as they are. Photos are replaced only if you choose new ones.', todKeep:'Keep as is', secretKeep:'Leave empty to keep the current one', save:'Save', savedTitle:'Updated', savedLead:'Your post has been updated.', print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', flyAnimal:'Animal',
+  lBreed:'Breed / kind (optional)', phBreed:'e.g. Green-cheeked conure, Shiba Inu', pTitleLost:'LOST {sp} — please help', pTitleFound:'FOUND {sp}', pTitleSight:'{sp} SIGHTED', pName:'Name', pKind:'Kind', pFeat:'Features', pPlaceLost:'Last seen at', pWhenLost:'Last seen on', pPlaceFound:'Found at', pWhenFound:'Found on', pCall:'If you have seen or found this animal, please contact us', pQr:'Scan this QR to open the contact form', pAsk:'If you see it', pAsk1:'Please do not chase or shout', pAsk2:'Stay calm and keep watching', pAsk3:'Take a photo or video if you can', pAsk4:'Even a small detail helps', pSite:'Lost Pet SOS  maigo-sos.github.io', ctaLost:'My pet is missing', ctaLostSub:'Post a lost pet', ctaFound:'I found or saw one', ctaFoundSub:'Post a sighting or found pet', kw:'Keyword (name, features, city, place)', openPrefs:'Open the list of prefectures', noPhoto:'No photo', editBtn:'Edit this post', editTitle:'Edit post', editLead:'Fields left empty stay as they are. Photos are replaced only if you choose new ones.', todKeep:'Keep as is', secretKeep:'Leave empty to keep the current one', save:'Save', savedTitle:'Updated', savedLead:'Your post has been updated.', print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', pdfBusy:'Making an A4 PDF…', pdfHint:'Your PDF is ready. Open it and use Share → Print to print it on one A4 sheet.', pdfOpen:'Open the PDF', pdfFail:'Could not make the PDF. Please try again later.', flyAnimal:'Animal',
   qrText:'If you have seen this animal,<br>scan this QR code and send a message through the form',
   gEyebrow:'Guide', gTitle:'Where to report in {0}',
   gEnLine:'Call the prefectural animal welfare center below (Japanese). In an emergency, call 110 (police).',
@@ -2717,7 +2745,36 @@ function viewFlyer(id,my){
     h+='</div>';
     app.innerHTML=h;
     try{ if(window.qrcode){ var q=qrcode(0,'M'); q.addData(curl); q.make(); document.getElementById('qr').innerHTML=q.createSvgTag({cellSize:5,margin:0,scalable:true}); } }catch(e){}
-    document.getElementById('pr').onclick=function(){window.print();};
+    function inlinePhotos(root){
+      var imgs=Array.prototype.slice.call(root.querySelectorAll('img'));
+      return Promise.all(imgs.map(function(im){
+        if(/^data:/.test(im.getAttribute('src')||'')) return Promise.resolve();
+        var m=/[?&]id=([\w-]+)/.exec(im.getAttribute('src')||''); if(!m) return Promise.resolve();
+        return api('GET',{action:'photoData',id:m[1]}).then(function(r){ if(r.ok&&r.dataUrl){ return new Promise(function(res){ im.onload=function(){res();}; im.onerror=function(){res();}; im.src=r.dataUrl; }); } });
+      }));
+    }
+    document.getElementById('pr').onclick=function(){
+      var out=document.getElementById('imgout'), btn=document.getElementById('pr'); btn.disabled=true; out.innerHTML='<p class="msg">'+esc(t('pdfBusy'))+'</p>';
+      var fl=document.querySelector('.flyer'), wrap=null;
+      inlinePhotos(fl).then(function(){
+        if(!window.html2canvas||!window.jspdf) throw new Error('lib');
+        wrap=document.createElement('div'); wrap.className='capwrap';
+        var cl=fl.cloneNode(true); cl.classList.add('cap'); wrap.appendChild(cl); document.body.appendChild(wrap);
+        return new Promise(function(r){ setTimeout(r,150); }).then(function(){ return html2canvas(cl,{scale:2.5,backgroundColor:'#ffffff',useCORS:true,logging:false}); });
+      }).then(function(c){
+        if(wrap) wrap.remove();
+        var pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+        var w=190, hh=w*c.height/c.width; if(hh>277){ hh=277; w=hh*c.width/c.height; }
+        pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',(210-w)/2,(297-hh)/2,w,hh);
+        var blob=pdf.output('blob'), name='maigo-poster-'+p.id+'.pdf', url=URL.createObjectURL(blob);
+        var file=null; try{ file=new File([blob],name,{type:'application/pdf'}); }catch(e){}
+        out.innerHTML='<p class="help">'+esc(t('pdfHint'))+'</p><div class="btns"><a class="btn" id="pdfopen" href="'+url+'" target="_blank" rel="noopener" download="'+name+'">'+esc(t('pdfOpen'))+'</a></div>';
+        if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+          document.getElementById('pdfopen').onclick=function(ev){ ev.preventDefault(); navigator.share({files:[file]}).catch(function(){ window.open(url,'_blank'); }); };
+        }
+        btn.disabled=false; out.scrollIntoView({block:'start'});
+      }).catch(function(){ if(wrap) wrap.remove(); out.innerHTML='<p class="err">'+esc(t('pdfFail'))+'</p>'; btn.disabled=false; });
+    };
     document.getElementById('sv').onclick=function(){
       var out=document.getElementById('imgout'), btn=document.getElementById('sv'); btn.disabled=true; out.innerHTML='<p class="msg">'+esc(t('saveBusy'))+'</p>';
       var fl=document.querySelector('.flyer'); var imgs=Array.prototype.slice.call(fl.querySelectorAll('img'));
