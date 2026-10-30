@@ -3,68 +3,1783 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>迷子ペット掲示板</title>
+<title>迷子ペットSOS</title>
 <script>
 var API_URL = 'https://script.google.com/macros/s/AKfycbyZLGM0iacd32at5tN5f3hz3iQsWAzNUKTGNBMts4UHBzus2BastvBKneBBn69BN-JH/exec';
+// ==AREAS-START==
+// 迷子ペットSOS 地域マスタ（正本）。生成: ops/maigo-build.sh がこの中身を Code.gs と index.html のマーカー間へ流し込む。
+// 連絡先の出典・取得日 2026-10-30：各都道府県公式サイト（url 欄）。
 var AREAS = [
-  { id: 'bunkyo', name: '文京区', group: '東京23区', open: true,
-    patrolWords: ['文京', '本駒込', '駒込', '千石', '白山', '本郷', '小石川', '茗荷谷', '護国寺', '根津', '千駄木', '湯島', '後楽園', '春日', '六義園', '播磨坂'],
-    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
-      { label: '文京保健所 生活衛生課 環境衛生担当', tel: '03-5803-1227' },
-      { label: '富坂警察署', tel: '03-3817-0110' }, { label: '大塚警察署', tel: '03-3941-0110' },
-      { label: '本富士警察署', tel: '03-3818-0110' }, { label: '駒込警察署', tel: '03-3944-0110' }] },
-  { id: 'toshima', name: '豊島区', group: '東京23区', open: true,
-    patrolWords: ['豊島', '池袋', '巣鴨', '大塚', '目白', '駒込', '千川', '要町', '長崎', '雑司が谷', '雑司ヶ谷', '高田', '西巣鴨', '椎名町', '上池袋'],
-    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
-            { label: '池袋警察署', tel: '03-3986-0110' }, { label: '巣鴨警察署', tel: '03-3910-0110' },
-      { label: '大塚警察署', tel: '03-3941-0110' }, { label: '目白警察署', tel: '03-3987-0110' }] },
-  { id: 'kita', name: '北区', group: '東京23区', open: true,
-    patrolWords: ['北区', '赤羽', '王子', '田端', '十条', '滝野川', '上中里', '志茂', '神谷', '浮間', '西ケ原', '西ヶ原', '飛鳥山', '岩淵', '東十条'],
-    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
-      { label: '北区保健所 生活衛生課 生活衛生係', tel: '03-3919-0431' },
-      { label: '赤羽警察署', tel: '03-3903-0110' }, { label: '王子警察署', tel: '03-3911-0110' },
-      { label: '滝野川警察署', tel: '03-3940-0110' }] },
-  { id: 'arakawa', name: '荒川区', group: '東京23区', open: true,
-    patrolWords: ['荒川', '日暮里', '町屋', '尾久', '南千住', '西日暮里', '三河島', '東日暮里', '西尾久', '東尾久', '小台', '宮前'],
-    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
-      { label: '荒川区 生活衛生課（区役所代表・内線422）', tel: '03-3802-3111' },
-      { label: '荒川警察署', tel: '03-3801-0110' }, { label: '尾久警察署', tel: '03-3810-0110' },
-      { label: '南千住警察署', tel: '03-3805-0110' }] },
-  { id: 'taito', name: '台東区', group: '東京23区', open: true,
-    patrolWords: ['台東', '上野', '浅草', '蔵前', '御徒町', '鶯谷', '入谷', '三ノ輪', '竜泉', '谷中', '根岸', '浅草橋', '秋葉原', '下谷', '東上野'],
-    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
-      { label: '台東保健所 生活衛生課 愛護動物管理担当', tel: '03-3847-9437' },
-      { label: '上野警察署', tel: '03-3847-0110' }, { label: '浅草警察署', tel: '03-3871-0110' },
-      { label: '蔵前警察署', tel: '03-3864-0110' }, { label: '下谷警察署', tel: '03-3872-0110' }] },
-  { id: 'shinjuku', name: '新宿区', group: '東京23区', open: true,
-    patrolWords: ['新宿', '歌舞伎町', '高田馬場', '神楽坂', '四谷', '早稲田', '落合', '大久保', '西新宿', '牛込', '市谷', '中井', '戸山', '信濃町', '戸塚'],
-    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
-      { label: '新宿区保健所 衛生課 管理係', tel: '03-5273-3148' },
-      { label: '新宿警察署', tel: '03-3346-0110' }, { label: '四谷警察署', tel: '03-3357-0110' },
-      { label: '牛込警察署', tel: '03-3269-0110' }, { label: '戸塚警察署', tel: '03-3207-0110' }] },
-  { id: 'chiyoda', name: '千代田区', group: '東京23区', open: true,
-    patrolWords: ['千代田', '神田', '秋葉原', '麹町', '丸の内', '大手町', '九段', '飯田橋', '御茶ノ水', '永田町', '有楽町', '番町', '市ヶ谷', '市谷', '半蔵門', '紀尾井'],
-    contacts: [{ label: '東京都動物愛護相談センター（収容は7日間）', tel: '03-3302-3507' },
-      { label: '千代田保健所 動物愛護担当', tel: '03-6256-8177' },
-      { label: '麹町警察署', tel: '03-3234-0110' }, { label: '丸の内警察署', tel: '03-3213-0110' },
-      { label: '神田警察署', tel: '03-3295-0110' }, { label: '万世橋警察署', tel: '03-3257-0110' }] },
-  { id: 'minato', name: '港区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'chuo', name: '中央区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'shinagawa', name: '品川区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'meguro', name: '目黒区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'ota', name: '大田区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'setagaya', name: '世田谷区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'shibuya', name: '渋谷区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'nakano', name: '中野区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'suginami', name: '杉並区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'nerima', name: '練馬区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'itabashi', name: '板橋区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'adachi', name: '足立区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'katsushika', name: '葛飾区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'edogawa', name: '江戸川区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'sumida', name: '墨田区', group: '東京23区', open: false, patrolWords: [], contacts: [] },
-  { id: 'koto', name: '江東区', group: '東京23区', open: false, patrolWords: [], contacts: [] }
+ {
+  "id": "hokkaido",
+  "name": "北海道",
+  "region": "北海道・東北",
+  "open": true,
+  "patrolWords": [
+   "北海道",
+   "札幌",
+   "旭川",
+   "函館",
+   "小樽",
+   "帯広",
+   "釧路",
+   "苫小牧",
+   "江別"
+  ],
+  "contacts": [
+   {
+    "label": "北海道動物愛護センター（基幹センター・迷い犬猫は各振興局の保健所が窓口）",
+    "tel": "011-398-9011",
+    "url": "https://www.pref.hokkaido.lg.jp/ks/awc/"
+   },
+   {
+    "label": "北海道江別保健所 生活衛生課（石狩管内）",
+    "tel": "011-382-3054",
+    "url": "https://www.ishikari.pref.hokkaido.lg.jp/hk/hgc/se/inu-neko-newpage.html"
+   },
+   {
+    "label": "札幌市動物愛護管理センター（あいまる さっぽろ）",
+    "tel": "011-736-6134",
+    "url": "https://www.city.sapporo.jp/inuneko/syuuyou_doubutsu/maigoinuneko.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "aomori",
+  "name": "青森県",
+  "region": "北海道・東北",
+  "open": true,
+  "patrolWords": [
+   "青森",
+   "青森",
+   "八戸",
+   "弘前"
+  ],
+  "contacts": [
+   {
+    "label": "青森県動物愛護センター（本所）",
+    "tel": "017-726-6100",
+    "url": "https://www.aomori-animal.jp/z_madoguchi_2hirosaki.html"
+   },
+   {
+    "label": "青森県動物愛護センター 弘前窓口（中南保健所内）",
+    "tel": "0172-33-6664",
+    "url": "https://www.aomori-animal.jp/z_madoguchi_2hirosaki.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "iwate",
+  "name": "岩手県",
+  "region": "北海道・東北",
+  "open": true,
+  "patrolWords": [
+   "岩手",
+   "盛岡",
+   "一関",
+   "奥州",
+   "花巻"
+  ],
+  "contacts": [
+   {
+    "label": "盛岡市保健所 生活衛生課（盛岡市内）",
+    "tel": "019-603-8312",
+    "url": "https://www.pref.iwate.jp/kurashikankyou/anzenanshin/pet/1004615.html"
+   },
+   {
+    "label": "岩手県県央保健所 環境衛生課（県はセンター未設置・他の地域は管轄保健所へ）",
+    "tel": "019-629-6588",
+    "url": "https://www.pref.iwate.jp/morioka/hoken/1012494.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "miyagi",
+  "name": "宮城県",
+  "region": "北海道・東北",
+  "open": true,
+  "patrolWords": [
+   "宮城",
+   "仙台",
+   "石巻",
+   "大崎",
+   "名取"
+  ],
+  "contacts": [
+   {
+    "label": "宮城県動物愛護センター（富谷市）",
+    "tel": "022-358-7888",
+    "url": "https://www.pref.miyagi.jp/soshiki/doubutuaigo/shisetu-gaiyo.html"
+   },
+   {
+    "label": "仙台市動物管理センター（アニパル仙台）",
+    "tel": "022-258-1626",
+    "url": "https://www.city.sendai.jp/dobutsu/kurashi/shizen/petto/hogodobutsu/pethogo.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "akita",
+  "name": "秋田県",
+  "region": "北海道・東北",
+  "open": true,
+  "patrolWords": [
+   "秋田",
+   "秋田",
+   "横手",
+   "大仙",
+   "大館"
+  ],
+  "contacts": [
+   {
+    "label": "秋田県動物愛護センター「ワンニャピアあきた」（本所）",
+    "tel": "018-827-5051",
+    "url": "https://www.pref.akita.lg.jp/pages/archive/41009"
+   },
+   {
+    "label": "秋田県動物愛護センター 県北支所（大館保健所内）",
+    "tel": "0186-52-3953",
+    "url": "https://www.pref.akita.lg.jp/pages/archive/41009"
+   },
+   {
+    "label": "秋田県動物愛護センター 県南支所（大仙保健所内）",
+    "tel": "0187-73-6330",
+    "url": "https://www.pref.akita.lg.jp/pages/archive/41009"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "yamagata",
+  "name": "山形県",
+  "region": "北海道・東北",
+  "open": true,
+  "patrolWords": [
+   "山形",
+   "山形",
+   "鶴岡",
+   "酒田",
+   "米沢"
+  ],
+  "contacts": [
+   {
+    "label": "山形県村山保健所 生活衛生課",
+    "tel": "023-627-1187",
+    "url": "https://www.pref.yamagata.jp/301025/kenfuku/doubutsuaigo/aigo/inunekojouhou/murahoseikatsu_mayoiinu2016.html"
+   },
+   {
+    "label": "山形県庄内保健所 生活衛生課",
+    "tel": "0235-66-4748",
+    "url": "https://www.pref.yamagata.jp/337023/kenfuku/doubutsuaigo/aigo/inunekojouhou/yokuryufusyou.html"
+   },
+   {
+    "label": "山形市動物愛護センター（わんにゃんポート・山形市内）",
+    "tel": "023-681-1210",
+    "url": "https://www.city.yamagata-yamagata.lg.jp/kurashi/pet/1006550/index.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "fukushima",
+  "name": "福島県",
+  "region": "北海道・東北",
+  "open": true,
+  "patrolWords": [
+   "福島",
+   "福島",
+   "郡山",
+   "いわき",
+   "会津"
+  ],
+  "contacts": [
+   {
+    "label": "福島県動物愛護センター 本所「ハピまるふくしま」（三春町）",
+    "tel": "024-953-6400",
+    "url": "https://www.pref.fukushima.lg.jp/sec/21620a/maigo-dog-cat.html"
+   },
+   {
+    "label": "福島県動物愛護センター 会津支所",
+    "tel": "0242-29-5517",
+    "url": "https://www.pref.fukushima.lg.jp/sec/21620a/maigo-dog-cat.html"
+   },
+   {
+    "label": "福島県動物愛護センター 相双支所",
+    "tel": "0244-26-1351",
+    "url": "https://www.pref.fukushima.lg.jp/sec/21620a/maigo-dog-cat.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "ibaraki",
+  "name": "茨城県",
+  "region": "関東",
+  "open": true,
+  "patrolWords": [
+   "茨城",
+   "水戸",
+   "つくば",
+   "日立",
+   "土浦"
+  ],
+  "contacts": [
+   {
+    "label": "茨城県動物指導センター（笠間市）",
+    "tel": "0296-72-1200",
+    "url": "https://www.pref.ibaraki.jp/hokenfukushi/doshise/hogo/shoukai.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "tochigi",
+  "name": "栃木県",
+  "region": "関東",
+  "open": true,
+  "patrolWords": [
+   "栃木",
+   "宇都宮",
+   "小山",
+   "栃木",
+   "足利"
+  ],
+  "contacts": [
+   {
+    "label": "栃木県動物愛護指導センター（宇都宮市を除く）",
+    "tel": "028-684-5458",
+    "url": "https://www.douai.pref.tochigi.lg.jp/contact-information/"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "gunma",
+  "name": "群馬県",
+  "region": "関東",
+  "open": true,
+  "patrolWords": [
+   "群馬",
+   "前橋",
+   "高崎",
+   "太田",
+   "伊勢崎"
+  ],
+  "contacts": [
+   {
+    "label": "群馬県動物愛護センター 本所（玉村町）",
+    "tel": "0270-75-1718",
+    "url": "https://www.pref.gunma.jp/page/660168.html"
+   },
+   {
+    "label": "群馬県動物愛護センター 東部出張所（太田市）",
+    "tel": "0276-55-0731",
+    "url": "https://www.pref.gunma.jp/page/660168.html"
+   },
+   {
+    "label": "前橋市保健所（前橋市内）",
+    "tel": "027-220-5781",
+    "url": "https://www.pref.gunma.jp/page/660168.html"
+   },
+   {
+    "label": "高崎市動物愛護センター（高崎市内）",
+    "tel": "027-381-6111",
+    "url": "https://www.pref.gunma.jp/page/660168.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "saitama",
+  "name": "埼玉県",
+  "region": "関東",
+  "open": true,
+  "patrolWords": [
+   "埼玉",
+   "さいたま",
+   "川口",
+   "川越",
+   "所沢",
+   "越谷",
+   "浦和",
+   "大宮"
+  ],
+  "contacts": [
+   {
+    "label": "埼玉県動物指導センター 本所（熊谷市）",
+    "tel": "048-536-2465",
+    "url": "https://www.pref.saitama.lg.jp/soshiki/b0716/index.html"
+   },
+   {
+    "label": "埼玉県動物指導センター 南支所（さいたま市桜区）",
+    "tel": "048-855-0484",
+    "url": "https://www.pref.saitama.lg.jp/soshiki/b0716/index.html"
+   },
+   {
+    "label": "埼玉県 迷子動物検索テレホンサービス（平日9〜17時）",
+    "tel": "048-824-2170",
+    "url": "https://www.pref.saitama.lg.jp/b0704/seiei-yakuji/dog-miss.html"
+   },
+   {
+    "label": "さいたま市動物愛護ふれあいセンター",
+    "tel": "048-840-4150",
+    "url": "https://www.city.saitama.lg.jp/008/004/003/004/p054703.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "chiba",
+  "name": "千葉県",
+  "region": "関東",
+  "open": true,
+  "patrolWords": [
+   "千葉",
+   "千葉",
+   "船橋",
+   "松戸",
+   "市川",
+   "柏",
+   "浦安"
+  ],
+  "contacts": [
+   {
+    "label": "千葉県動物愛護センター 本所（富里市）",
+    "tel": "0476-93-5711",
+    "url": "https://www.pref.chiba.lg.jp/aigo/"
+   },
+   {
+    "label": "千葉県動物愛護センター 東葛飾支所（柏市）",
+    "tel": "04-7191-0050",
+    "url": "https://www.pref.chiba.lg.jp/aigo/"
+   },
+   {
+    "label": "千葉市動物保護指導センター",
+    "tel": "043-258-7817",
+    "url": "https://www.city.chiba.jp/hokenfukushi/iryoeisei/seikatsueisei/dobutsuhogo/index.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "tokyo",
+  "name": "東京都",
+  "region": "関東",
+  "open": true,
+  "patrolWords": [
+   "東京",
+   "東京",
+   "文京",
+   "豊島",
+   "北区",
+   "荒川",
+   "台東",
+   "新宿",
+   "千代田",
+   "中央区",
+   "港区",
+   "墨田",
+   "江東",
+   "品川",
+   "目黒",
+   "大田",
+   "世田谷",
+   "渋谷",
+   "中野",
+   "杉並",
+   "練馬",
+   "板橋",
+   "足立",
+   "葛飾",
+   "江戸川",
+   "八王子",
+   "町田",
+   "立川",
+   "武蔵野",
+   "三鷹",
+   "府中",
+   "調布",
+   "駒込",
+   "池袋",
+   "上野",
+   "本郷",
+   "千石",
+   "白山",
+   "巣鴨"
+  ],
+  "contacts": [
+   {
+    "label": "東京都動物愛護相談センター（本所・23区／収容は7日間）",
+    "tel": "03-3302-3507",
+    "url": "https://www.hokeniryo.metro.tokyo.lg.jp/douso/sissou/sissou.html"
+   },
+   {
+    "label": "東京都動物愛護相談センター 多摩支所（多摩地域）",
+    "tel": "042-581-7435",
+    "url": "https://www.hokeniryo.metro.tokyo.lg.jp/douso/sissou/sissou.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ],
+  "wards": {
+   "文京区": [
+    {
+     "label": "文京保健所 生活衛生課 環境衛生担当",
+     "tel": "03-5803-1227"
+    },
+    {
+     "label": "富坂警察署",
+     "tel": "03-3817-0110"
+    },
+    {
+     "label": "大塚警察署",
+     "tel": "03-3941-0110"
+    },
+    {
+     "label": "本富士警察署",
+     "tel": "03-3818-0110"
+    },
+    {
+     "label": "駒込警察署",
+     "tel": "03-3944-0110"
+    }
+   ],
+   "豊島区": [
+    {
+     "label": "池袋警察署",
+     "tel": "03-3986-0110"
+    },
+    {
+     "label": "巣鴨警察署",
+     "tel": "03-3910-0110"
+    },
+    {
+     "label": "大塚警察署",
+     "tel": "03-3941-0110"
+    },
+    {
+     "label": "目白警察署",
+     "tel": "03-3987-0110"
+    }
+   ],
+   "北区": [
+    {
+     "label": "北区保健所 生活衛生課 生活衛生係",
+     "tel": "03-3919-0431"
+    },
+    {
+     "label": "赤羽警察署",
+     "tel": "03-3903-0110"
+    },
+    {
+     "label": "王子警察署",
+     "tel": "03-3911-0110"
+    },
+    {
+     "label": "滝野川警察署",
+     "tel": "03-3940-0110"
+    }
+   ],
+   "荒川区": [
+    {
+     "label": "荒川区 生活衛生課（区役所代表・内線422）",
+     "tel": "03-3802-3111"
+    },
+    {
+     "label": "荒川警察署",
+     "tel": "03-3801-0110"
+    },
+    {
+     "label": "尾久警察署",
+     "tel": "03-3810-0110"
+    },
+    {
+     "label": "南千住警察署",
+     "tel": "03-3805-0110"
+    }
+   ],
+   "台東区": [
+    {
+     "label": "台東保健所 生活衛生課 愛護動物管理担当",
+     "tel": "03-3847-9437"
+    },
+    {
+     "label": "上野警察署",
+     "tel": "03-3847-0110"
+    },
+    {
+     "label": "浅草警察署",
+     "tel": "03-3871-0110"
+    },
+    {
+     "label": "蔵前警察署",
+     "tel": "03-3864-0110"
+    },
+    {
+     "label": "下谷警察署",
+     "tel": "03-3872-0110"
+    }
+   ],
+   "新宿区": [
+    {
+     "label": "新宿区保健所 衛生課 管理係",
+     "tel": "03-5273-3148"
+    },
+    {
+     "label": "新宿警察署",
+     "tel": "03-3346-0110"
+    },
+    {
+     "label": "四谷警察署",
+     "tel": "03-3357-0110"
+    },
+    {
+     "label": "牛込警察署",
+     "tel": "03-3269-0110"
+    },
+    {
+     "label": "戸塚警察署",
+     "tel": "03-3207-0110"
+    }
+   ],
+   "千代田区": [
+    {
+     "label": "千代田保健所 動物愛護担当",
+     "tel": "03-6256-8177"
+    },
+    {
+     "label": "麹町警察署",
+     "tel": "03-3234-0110"
+    },
+    {
+     "label": "丸の内警察署",
+     "tel": "03-3213-0110"
+    },
+    {
+     "label": "神田警察署",
+     "tel": "03-3295-0110"
+    },
+    {
+     "label": "万世橋警察署",
+     "tel": "03-3257-0110"
+    }
+   ]
+  }
+ },
+ {
+  "id": "kanagawa",
+  "name": "神奈川県",
+  "region": "関東",
+  "open": true,
+  "patrolWords": [
+   "神奈川",
+   "横浜",
+   "川崎",
+   "相模原",
+   "藤沢",
+   "横須賀",
+   "平塚",
+   "茅ヶ崎",
+   "鎌倉"
+  ],
+  "contacts": [
+   {
+    "label": "神奈川県動物愛護センター（平塚市）",
+    "tel": "0463-58-3411",
+    "url": "https://www.pref.kanagawa.jp/osirase/1594/awc/protect/"
+   },
+   {
+    "label": "横浜市動物愛護センター",
+    "tel": "045-471-2111",
+    "url": "https://www.city.yokohama.lg.jp/kurashi/sumai-kurashi/pet-dobutsu/aigo/maigo/20121004094818.html"
+   },
+   {
+    "label": "川崎市動物愛護センター",
+    "tel": "044-589-7137",
+    "url": "https://www.city.kawasaki.jp/templates/faq/350/0000013333.html"
+   },
+   {
+    "label": "相模原市 動物愛護センター準備室",
+    "tel": "042-769-8347",
+    "url": "https://www.city.sagamihara.kanagawa.jp/kosodate/kenko/1026628/pet/1007469.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "niigata",
+  "name": "新潟県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "新潟",
+   "新潟",
+   "長岡",
+   "上越"
+  ],
+  "contacts": [
+   {
+    "label": "新潟県動物愛護センター（長岡市）",
+    "tel": "0258-21-5501",
+    "url": "https://www.pref.niigata.lg.jp/sec/seikatueisei/1211907692495.html"
+   },
+   {
+    "label": "新潟県 下越動物保護管理センター",
+    "tel": "0254-24-0207",
+    "url": "https://www.pref.niigata.lg.jp/sec/seikatueisei/1211907692495.html"
+   },
+   {
+    "label": "新潟県 上越動物保護管理センター",
+    "tel": "025-525-9263",
+    "url": "https://www.pref.niigata.lg.jp/sec/seikatueisei/1211907692495.html"
+   },
+   {
+    "label": "新潟市動物愛護センター",
+    "tel": "025-288-0017",
+    "url": "https://www.pref.niigata.lg.jp/sec/seikatueisei/1211907692495.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "toyama",
+  "name": "富山県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "富山",
+   "富山",
+   "高岡"
+  ],
+  "contacts": [
+   {
+    "label": "富山県動物管理センター（立山町）",
+    "tel": "076-462-3467",
+    "url": "https://www.pref.toyama.jp/1207/kurashi/seikatsu/seikatsu/doubutsuaigo/about/index.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "ishikawa",
+  "name": "石川県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "石川",
+   "金沢",
+   "小松",
+   "白山市"
+  ],
+  "contacts": [
+   {
+    "label": "いしかわ動物愛護センター（津幡町・本所）",
+    "tel": "076-204-8622",
+    "url": "https://www.pref.ishikawa.lg.jp/shisetsu/08/0270.html"
+   },
+   {
+    "label": "いしかわ動物愛護センター 南加賀支所",
+    "tel": "0761-22-0795",
+    "url": "https://www.pref.ishikawa.lg.jp/yakuji/doubutsu/hogoinuneko.html"
+   },
+   {
+    "label": "いしかわ動物愛護センター 石川中央支所",
+    "tel": "076-275-2642",
+    "url": "https://www.pref.ishikawa.lg.jp/yakuji/doubutsu/hogoinuneko.html"
+   },
+   {
+    "label": "いしかわ動物愛護センター 能登中部支所",
+    "tel": "0767-53-2482",
+    "url": "https://www.pref.ishikawa.lg.jp/yakuji/doubutsu/hogoinuneko.html"
+   },
+   {
+    "label": "いしかわ動物愛護センター 能登北部支所",
+    "tel": "0768-22-2028",
+    "url": "https://www.pref.ishikawa.lg.jp/yakuji/doubutsu/hogoinuneko.html"
+   },
+   {
+    "label": "金沢市動物愛護管理センター",
+    "tel": "076-258-9070",
+    "url": "https://www.pref.ishikawa.lg.jp/yakuji/doubutsu/hogoinuneko.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "fukui",
+  "name": "福井県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "福井",
+   "福井",
+   "敦賀"
+  ],
+  "contacts": [
+   {
+    "label": "福井県動物愛護センター 本所（福井市）",
+    "tel": "0776-38-2212",
+    "url": "https://www.pref.fukui.lg.jp/doc/doukansi/doubutukanrisidou/doubutuaigo-center.html"
+   },
+   {
+    "label": "福井県動物愛護センター 嶺南支所（二州健康福祉センター内）",
+    "tel": "0770-22-3747",
+    "url": "https://www.pref.fukui.lg.jp/doc/doukansi/doubutukanrisidou/doubutuaigo-center.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "yamanashi",
+  "name": "山梨県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "山梨",
+   "甲府",
+   "富士吉田"
+  ],
+  "contacts": [
+   {
+    "label": "山梨県動物愛護指導センター（中央市）",
+    "tel": "055-273-5034",
+    "url": "https://www.pref.yamanashi.jp/doubutsu/no_missing_1.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "nagano",
+  "name": "長野県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "長野",
+   "長野",
+   "松本",
+   "上田",
+   "飯田"
+  ],
+  "contacts": [
+   {
+    "label": "長野県動物愛護センター「ハローアニマル」（小諸市・迷い犬の収容は各保健福祉事務所）",
+    "tel": "0267-24-5071",
+    "url": "https://www.pref.nagano.lg.jp/dobutsuaigo/shisetsu/annai/index.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "gifu",
+  "name": "岐阜県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "岐阜",
+   "岐阜",
+   "大垣",
+   "各務原"
+  ],
+  "contacts": [
+   {
+    "label": "岐阜県 生活衛生課 動物愛護係（迷い犬は各保健所が収容）",
+    "tel": "058-272-1986",
+    "url": "https://www.pref.gifu.lg.jp/page/1638.html"
+   },
+   {
+    "label": "岐阜県動物愛護センター（美濃市・譲渡中心）",
+    "tel": "0575-34-0050",
+    "url": "https://www.pref.gifu.lg.jp/page/11545.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "shizuoka",
+  "name": "静岡県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "静岡",
+   "静岡",
+   "浜松",
+   "沼津",
+   "富士"
+  ],
+  "contacts": [
+   {
+    "label": "静岡県動物愛護センター（富士市）",
+    "tel": "0545-30-6875",
+    "url": "https://www.pref.shizuoka.jp/kensei/shisetsu/kenkoiryofukushi/1008931.html"
+   },
+   {
+    "label": "静岡市動物愛護センター",
+    "tel": "054-278-6409",
+    "url": "https://www.pref.shizuoka.jp/kenkofukushi/eiseiyakuji/dobutsuaigo/1066835/index.html"
+   },
+   {
+    "label": "浜松市動物愛護教育センター",
+    "tel": "053-487-1616",
+    "url": "https://www.city.hamamatsu.shizuoka.jp/maps/n-dou-aigo.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "aichi",
+  "name": "愛知県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "愛知",
+   "名古屋",
+   "豊田",
+   "岡崎",
+   "一宮",
+   "豊橋"
+  ],
+  "contacts": [
+   {
+    "label": "愛知県動物愛護センター 本所（豊田市）",
+    "tel": "0565-58-2323",
+    "url": "https://www.pref.aichi.jp/soshiki/doukan-c/inugainakunatta.html"
+   },
+   {
+    "label": "愛知県動物愛護センター 尾張支所（一宮市）",
+    "tel": "0586-78-2595",
+    "url": "https://www.pref.aichi.jp/soshiki/doukan-c/inugainakunatta.html"
+   },
+   {
+    "label": "愛知県動物愛護センター 知多支所（半田市）",
+    "tel": "0569-21-5567",
+    "url": "https://www.pref.aichi.jp/soshiki/doukan-c/inugainakunatta.html"
+   },
+   {
+    "label": "愛知県動物愛護センター 東三河支所（豊橋市）",
+    "tel": "0532-33-3777",
+    "url": "https://www.pref.aichi.jp/soshiki/doukan-c/inugainakunatta.html"
+   },
+   {
+    "label": "名古屋市動物愛護センター",
+    "tel": "052-762-0380",
+    "url": "https://www.city.nagoya.jp/kurashi/pet/1015473/1015489/1015490.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "mie",
+  "name": "三重県",
+  "region": "中部",
+  "open": true,
+  "patrolWords": [
+   "三重",
+   "津",
+   "四日市",
+   "鈴鹿",
+   "桑名"
+  ],
+  "contacts": [
+   {
+    "label": "三重県動物愛護推進センター「あすまいる」（津市・迷い犬の届出は管轄保健所へ）",
+    "tel": "059-253-1238",
+    "url": "https://www.pref.mie.lg.jp/ASMILE/91035000001_00001.htm"
+   },
+   {
+    "label": "三重県桑名保健所 衛生指導課",
+    "tel": "0594-24-3623",
+    "url": "https://www.pref.mie.lg.jp/WHOKEN/HP/000032479.htm"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "shiga",
+  "name": "滋賀県",
+  "region": "近畿",
+  "open": true,
+  "patrolWords": [
+   "滋賀",
+   "大津",
+   "草津",
+   "長浜"
+  ],
+  "contacts": [
+   {
+    "label": "滋賀県動物保護管理センター（大津市を除く県内）",
+    "tel": "0748-75-1911",
+    "url": "https://www.pref.shiga.lg.jp/doubutsuhogo/azukari/102881.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "kyoto",
+  "name": "京都府",
+  "region": "近畿",
+  "open": true,
+  "patrolWords": [
+   "京",
+   "京都",
+   "宇治",
+   "亀岡"
+  ],
+  "contacts": [
+   {
+    "label": "京都動物愛護センター（動物愛ランド・京都／府市共同）",
+    "tel": "075-671-0336",
+    "url": "https://www.call3755.city.kyoto.lg.jp/faq_p/P200.aspx?FAQID=0101482"
+   },
+   {
+    "label": "京都市 医療衛生センター 北東部（北区・上京区・左京区・東山区）",
+    "tel": "075-746-7211",
+    "url": "https://www.call3755.city.kyoto.lg.jp/faq_p/P200.aspx?FAQID=0101482"
+   },
+   {
+    "label": "京都市 医療衛生センター 中部（中京区・下京区）",
+    "tel": "075-746-7212",
+    "url": "https://www.call3755.city.kyoto.lg.jp/faq_p/P200.aspx?FAQID=0101482"
+   },
+   {
+    "label": "京都市 医療衛生センター 南東部（山科区・南区・伏見区）",
+    "tel": "075-746-7213",
+    "url": "https://www.call3755.city.kyoto.lg.jp/faq_p/P200.aspx?FAQID=0101482"
+   },
+   {
+    "label": "京都市 医療衛生センター 西部（右京区・西京区）",
+    "tel": "075-746-7214",
+    "url": "https://www.call3755.city.kyoto.lg.jp/faq_p/P200.aspx?FAQID=0101482"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "osaka",
+  "name": "大阪府",
+  "region": "近畿",
+  "open": true,
+  "patrolWords": [
+   "大阪",
+   "大阪",
+   "堺",
+   "東大阪",
+   "枚方",
+   "豊中",
+   "吹田",
+   "高槻"
+  ],
+  "contacts": [
+   {
+    "label": "大阪府動物愛護管理センター",
+    "tel": "072-958-8212",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "大阪市動物管理センター（おおさかワンニャンセンター）",
+    "tel": "06-6685-3700",
+    "url": "https://www.city.osaka.lg.jp/kenko/page/0000224249.html"
+   },
+   {
+    "label": "堺市動物指導センター",
+    "tel": "072-228-0168",
+    "url": "https://www.city.sakai.lg.jp/kurashi/dobutsu/dogcat/komarigoto/mayoisodan.html"
+   },
+   {
+    "label": "東大阪市動物指導センター",
+    "tel": "072-963-6211",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "豊中市保健所",
+    "tel": "06-6152-7321",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "高槻市保健所",
+    "tel": "072-661-9333",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "枚方市保健所",
+    "tel": "072-807-7624",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "八尾市保健所",
+    "tel": "072-994-6643",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "寝屋川市保健所",
+    "tel": "072-829-7771",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "吹田市保健所",
+    "tel": "06-6339-2226",
+    "url": "https://www.pref.osaka.lg.jp/o120200/doaicenter/doaicenter/maigoken.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "hyogo",
+  "name": "兵庫県",
+  "region": "近畿",
+  "open": true,
+  "patrolWords": [
+   "兵庫",
+   "神戸",
+   "姫路",
+   "西宮",
+   "尼崎",
+   "明石"
+  ],
+  "contacts": [
+   {
+    "label": "兵庫県動物愛護センター（尼崎市）",
+    "tel": "06-6432-4599",
+    "url": "https://web.pref.hyogo.lg.jp/shisetsu/kurashi/shisetsu_052.html"
+   },
+   {
+    "label": "神戸市動物管理センター（生活衛生ダイヤル）",
+    "tel": "078-771-7497",
+    "url": "https://www.city.kobe.lg.jp/a84140/kenko/health/hygiene/animal/zmenu/index.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "nara",
+  "name": "奈良県",
+  "region": "近畿",
+  "open": true,
+  "patrolWords": [
+   "奈良",
+   "奈良",
+   "橿原",
+   "生駒"
+  ],
+  "contacts": [
+   {
+    "label": "奈良県 中和保健所動物愛護センター",
+    "tel": "0745-83-2631",
+    "url": "https://www.pref.nara.jp/1734.htm"
+   },
+   {
+    "label": "奈良市保健所 保健衛生課（奈良市内）",
+    "tel": "0742-93-8395",
+    "url": "https://www.city.nara.lg.jp/soshiki/97/8478.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "wakayama",
+  "name": "和歌山県",
+  "region": "近畿",
+  "open": true,
+  "patrolWords": [
+   "和歌山",
+   "和歌山",
+   "田辺"
+  ],
+  "contacts": [
+   {
+    "label": "和歌山県動物愛護センター",
+    "tel": "073-489-6500",
+    "url": "https://www.pref.wakayama.lg.jp/prefg/031601/animal.html"
+   },
+   {
+    "label": "和歌山県橋本保健所 衛生環境課",
+    "tel": "0736-42-5443",
+    "url": "https://www.pref.wakayama.lg.jp/prefg/130300/30/doubutsu/inu-neko.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "tottori",
+  "name": "鳥取県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "鳥取",
+   "鳥取",
+   "米子"
+  ],
+  "contacts": [
+   {
+    "label": "鳥取市保健所 生活安全課（東部）",
+    "tel": "0857-30-8551",
+    "url": "https://www.pref.tottori.lg.jp/221001.htm"
+   },
+   {
+    "label": "鳥取県倉吉保健所 生活安全課（中部）",
+    "tel": "0858-23-3149",
+    "url": "https://www.pref.tottori.lg.jp/221001.htm"
+   },
+   {
+    "label": "鳥取県米子保健所 生活安全課（西部）",
+    "tel": "0859-31-9320",
+    "url": "https://www.pref.tottori.lg.jp/221001.htm"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "shimane",
+  "name": "島根県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "島根",
+   "松江",
+   "出雲"
+  ],
+  "contacts": [
+   {
+    "label": "島根県松江保健所 動物愛護推進課（松江市・安来市）",
+    "tel": "0852-61-8875",
+    "url": "https://www.pref.shimane.lg.jp/infra/nature/animal/matsue_hoken/dobutu/doubutuaigokannrennzyouhou.html"
+   },
+   {
+    "label": "島根県出雲保健所 動物管理課",
+    "tel": "0853-21-8788",
+    "url": "https://www.pref.shimane.lg.jp/infra/nature/animal/izumo_hoken/maigodoubutuzyouhouitirann.html"
+   },
+   {
+    "label": "島根県浜田保健所（代表）",
+    "tel": "0855-29-5537",
+    "url": "https://www.pref.shimane.lg.jp/infra/nature/animal/hamada_hoken/syuyou.html"
+   },
+   {
+    "label": "島根県益田保健所 衛生指導課",
+    "tel": "0856-31-9552",
+    "url": "https://www.pref.shimane.lg.jp/infra/nature/animal/masuda_hoken/doubutuaigo/hogosyudoubutu.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "okayama",
+  "name": "岡山県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "岡山",
+   "岡山",
+   "倉敷"
+  ],
+  "contacts": [
+   {
+    "label": "岡山県動物愛護センター（岡山市・倉敷市を除く）",
+    "tel": "086-724-9512",
+    "url": "https://www.pref.okayama.jp/page/859555.html"
+   },
+   {
+    "label": "岡山市保健所 衛生課 動物衛生係",
+    "tel": "086-803-1259",
+    "url": "https://www.city.okayama.jp/faq/faq_detail.php?frmId=1174"
+   },
+   {
+    "label": "倉敷市保健所",
+    "tel": "086-434-9829",
+    "url": "https://www.pref.okayama.jp/page/859555.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "hiroshima",
+  "name": "広島県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "広島",
+   "広島",
+   "福山",
+   "呉",
+   "東広島"
+  ],
+  "contacts": [
+   {
+    "label": "広島県動物愛護センター（広島市・呉市・福山市を除く）",
+    "tel": "0848-60-8511",
+    "url": "https://www.pref.hiroshima.lg.jp/site/apc/contents-yukuehumei.html"
+   },
+   {
+    "label": "広島市動物愛護センター",
+    "tel": "082-243-6058",
+    "url": "https://www.city.hiroshima.lg.jp/living/pet-doubutsu/1021301/1026245/1023096.html"
+   },
+   {
+    "label": "呉市動物愛護センター",
+    "tel": "0823-70-3711",
+    "url": "https://www.city.kure.lg.jp/soshiki/127/"
+   },
+   {
+    "label": "福山市動物愛護センター",
+    "tel": "084-970-1201",
+    "url": "https://www.city.fukuyama.hiroshima.jp/soshiki/dobutsuaigo/"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "yamaguchi",
+  "name": "山口県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "山口",
+   "山口",
+   "下関",
+   "宇部",
+   "周南"
+  ],
+  "contacts": [
+   {
+    "label": "山口県動物愛護センター",
+    "tel": "083-973-8315",
+    "url": "https://www.pref.yamaguchi.lg.jp/site/doubutuaigo/10012.html"
+   },
+   {
+    "label": "山口健康福祉センター（山口市）",
+    "tel": "083-934-2535",
+    "url": "https://www.pref.yamaguchi.lg.jp/site/doubutuaigo/10012.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "tokushima",
+  "name": "徳島県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "徳島",
+   "徳島",
+   "鳴門"
+  ],
+  "contacts": [
+   {
+    "label": "徳島県動物愛護管理センター（神山町）",
+    "tel": "088-636-6122",
+    "url": "https://www.pref.tokushima.lg.jp/kenseijoho/soshiki/seikatsukankyoubu/doubutsuaigo/"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "kagawa",
+  "name": "香川県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "香川",
+   "高松",
+   "丸亀"
+  ],
+  "contacts": [
+   {
+    "label": "さぬき動物愛護センター しっぽの森（県・高松市共同）",
+    "tel": "087-849-1011",
+    "url": "https://www.pref.kagawa.lg.jp/s-doubutuaigo/sanukidouaicenter/"
+   },
+   {
+    "label": "香川県 生活衛生課",
+    "tel": "087-832-3179",
+    "url": "https://www.pref.kagawa.lg.jp/eisei/doubutsuaigo/kfvn.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "ehime",
+  "name": "愛媛県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "愛媛",
+   "松山",
+   "今治",
+   "新居浜"
+  ],
+  "contacts": [
+   {
+    "label": "愛媛県動物愛護センター",
+    "tel": "089-977-9200",
+    "url": "https://www.pref.ehime.jp/page/16976.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "kochi",
+  "name": "高知県",
+  "region": "中国・四国",
+  "open": true,
+  "patrolWords": [
+   "高知",
+   "高知",
+   "南国"
+  ],
+  "contacts": [
+   {
+    "label": "高知県 中央小動物管理センター",
+    "tel": "088-831-7939",
+    "url": "https://www.pref.kochi.lg.jp/doc/2019120600180/"
+   },
+   {
+    "label": "高知県 中村小動物管理センター（幡多地区）",
+    "tel": "0880-34-6252",
+    "url": "https://www.pref.kochi.lg.jp/doc/2019120600180/"
+   },
+   {
+    "label": "高知市保健所 生活食品課（高知市内）",
+    "tel": "088-822-0588",
+    "url": "https://www.pref.kochi.lg.jp/doc/2019120600180/"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "fukuoka",
+  "name": "福岡県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "福岡",
+   "福岡",
+   "北九州",
+   "久留米",
+   "飯塚"
+  ],
+  "contacts": [
+   {
+    "label": "福岡県 生活衛生課 動物愛護・乳肉衛生係（県域は各保健福祉環境事務所へ）",
+    "tel": "092-643-3281",
+    "url": "https://www.pref.fukuoka.lg.jp/contents/dog.html"
+   },
+   {
+    "label": "福岡県筑紫保健福祉環境事務所 保健衛生課",
+    "tel": "092-513-5599",
+    "url": "https://www.pref.fukuoka.lg.jp/contents/dog.html"
+   },
+   {
+    "label": "福岡市 東部動物愛護管理センター（あにまるぽーと）",
+    "tel": "092-691-0131",
+    "url": "https://www.wannyan.city.fukuoka.lg.jp/yokanet/lost_animal"
+   },
+   {
+    "label": "北九州市動物愛護センター",
+    "tel": "093-581-1800",
+    "url": "https://www.city.kitakyushu.lg.jp/contents/division185.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "saga",
+  "name": "佐賀県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "佐賀",
+   "佐賀",
+   "唐津"
+  ],
+  "contacts": [
+   {
+    "label": "佐賀中部保健福祉事務所 衛生対策課",
+    "tel": "0952-30-1350",
+    "url": "https://www.pref.saga.lg.jp/kiji00314829/index.html"
+   },
+   {
+    "label": "鳥栖保健福祉事務所 衛生対策課",
+    "tel": "0942-83-2162",
+    "url": "https://www.pref.saga.lg.jp/kiji00314829/index.html"
+   },
+   {
+    "label": "唐津保健福祉事務所 衛生対策課",
+    "tel": "0955-73-1131",
+    "url": "https://www.pref.saga.lg.jp/kiji00314829/index.html"
+   },
+   {
+    "label": "伊万里保健福祉事務所 衛生対策課",
+    "tel": "0955-23-2101",
+    "url": "https://www.pref.saga.lg.jp/kiji00314829/index.html"
+   },
+   {
+    "label": "杵藤保健福祉事務所 衛生対策課",
+    "tel": "0954-23-3501",
+    "url": "https://www.pref.saga.lg.jp/kiji00314829/index.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "nagasaki",
+  "name": "長崎県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "長崎",
+   "長崎",
+   "佐世保"
+  ],
+  "contacts": [
+   {
+    "label": "長崎市動物愛護管理センター",
+    "tel": "095-844-2961",
+    "url": "https://www.city.nagasaki.lg.jp/site/doubutsuaigo/2793.html"
+   },
+   {
+    "label": "長崎県 生活衛生課（長崎市以外は各保健所へ）",
+    "tel": "095-895-2364",
+    "url": "https://www.pref.nagasaki.jp/shared/uploads/2024/07/1720420040.pdf"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "kumamoto",
+  "name": "熊本県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "熊本",
+   "熊本",
+   "八代"
+  ],
+  "contacts": [
+   {
+    "label": "熊本市動物愛護センター",
+    "tel": "096-380-2153",
+    "url": "https://www.city.kumamoto.jp/kiji00341131/index.html"
+   },
+   {
+    "label": "熊本県動物愛護センター（相談専用・迷子の収容は保護地の保健所へ）",
+    "tel": "0964-27-8778",
+    "url": "https://www.pref.kumamoto.jp/soshiki/217/"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "oita",
+  "name": "大分県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "大分",
+   "大分",
+   "別府"
+  ],
+  "contacts": [
+   {
+    "label": "おおいた動物愛護センター（音声案内で1）",
+    "tel": "097-588-1122",
+    "url": "https://www.pref.oita.jp/site/doubutuaigo/maigo-syokuan.html"
+   },
+   {
+    "label": "大分市保健所（大分市動物愛護センター）",
+    "tel": "097-588-2200",
+    "url": "https://www.pref.oita.jp/site/doubutuaigo/maigo-syokuan.html"
+   },
+   {
+    "label": "大分県西部保健所",
+    "tel": "0973-23-3133",
+    "url": "https://www.pref.oita.jp/site/doubutuaigo/maigo-syokuan.html"
+   },
+   {
+    "label": "大分県北部保健所",
+    "tel": "0979-22-2210",
+    "url": "https://www.pref.oita.jp/site/doubutuaigo/maigo-syokuan.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "miyazaki",
+  "name": "宮崎県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "宮崎",
+   "宮崎",
+   "都城",
+   "延岡"
+  ],
+  "contacts": [
+   {
+    "label": "みやざき動物愛護センター（県・宮崎市共同）",
+    "tel": "0985-84-2600",
+    "url": "https://dog.pref.miyazaki.lg.jp/"
+   },
+   {
+    "label": "宮崎県延岡保健所",
+    "tel": "0982-33-5373",
+    "url": "https://www.pref.miyazaki.lg.jp/desaki/kurashi/hoken/nobeokahc/dogs-cats.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "kagoshima",
+  "name": "鹿児島県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "鹿児島",
+   "鹿児島",
+   "霧島",
+   "鹿屋"
+  ],
+  "contacts": [
+   {
+    "label": "鹿児島県動物愛護センター（霧島市）",
+    "tel": "0995-44-6301",
+    "url": "http://dogcat.pref.kagoshima.jp/dogcat/center/index.html"
+   },
+   {
+    "label": "鹿児島市動物愛護管理センター",
+    "tel": "099-264-1237",
+    "url": "https://www.city.kagoshima.lg.jp/kenkofukushi/hokenjo/seiei-jueki/shisetsu/hoken/014.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ },
+ {
+  "id": "okinawa",
+  "name": "沖縄県",
+  "region": "九州・沖縄",
+  "open": true,
+  "patrolWords": [
+   "沖縄",
+   "那覇",
+   "沖縄市",
+   "うるま",
+   "浦添"
+  ],
+  "contacts": [
+   {
+    "label": "沖縄県動物愛護管理センター",
+    "tel": "098-945-3043",
+    "url": "https://www.pref.okinawa.jp/kurashikankyo/petgaiju/1018720/1005063.html"
+   },
+   {
+    "label": "沖縄県宮古保健所",
+    "tel": "0980-72-3501",
+    "url": "https://www.pref.okinawa.jp/kurashikankyo/petgaiju/1018720/1005063.html"
+   },
+   {
+    "label": "沖縄県八重山保健所",
+    "tel": "0980-82-3243",
+    "url": "https://www.pref.okinawa.jp/kurashikankyo/petgaiju/1018720/1005063.html"
+   },
+   {
+    "label": "那覇市 環境衛生課",
+    "tel": "098-951-1530",
+    "url": "https://www.pref.okinawa.jp/kurashikankyo/petgaiju/1018720/1005063.html"
+   },
+   {
+    "label": "最寄りの警察署（遺失物届）",
+    "tel": "",
+    "url": "https://www.google.com/maps/search/警察署"
+   }
+  ]
+ }
 ];
+// ==AREAS-END==
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,6 +1818,7 @@ h3{font-size:17px;margin:20px 0 6px}
 .areas{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0 28px}
 .areas a,.areas span{display:flex;align-items:center;justify-content:center;min-height:56px;border:1px solid var(--rose-light);background:#fff;color:var(--navy);text-decoration:none;letter-spacing:.12em;border-radius:2px;text-align:center}
 .areas span{border-color:var(--rose-pale);background:transparent;color:var(--text-muted);opacity:.7;font-size:15px}
+.region{font-size:16px;letter-spacing:.14em;color:#8a6d45;margin:22px 0 4px}
 .areas small{display:block;font-size:12px;color:var(--text-muted);letter-spacing:.05em}
 .tabs{display:flex;border-bottom:1px solid var(--rose-pale);margin:20px 0}
 .tabs a{flex:1;text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-muted);letter-spacing:.1em;border-bottom:2px solid transparent;margin-bottom:-1px}
@@ -172,12 +1888,12 @@ footer.site a{display:inline-flex;align-items:center;min-height:44px;padding:0 8
 </head>
 <body>
 <header class="site">
-  <a href="#/"><span class="brand-en">Lost &amp; Found</span><span class="brand-ja">迷子ペット掲示板</span></a>
+  <a href="#/"><span class="brand-en">Lost Pet SOS</span><span class="brand-ja">迷子ペットSOS</span></a>
 </header>
 <main id="app"></main>
 <footer class="site">
-  <div>運営：cura（在宅ケア・文京区）</div>
-    <div><a href="mailto:honeypots.m@gmail.com?subject=%E3%80%90%E8%BF%B7%E5%AD%90%E3%83%9A%E3%83%83%E3%83%88%E6%8E%B2%E7%A4%BA%E6%9D%BF%E3%80%91%E5%89%8A%E9%99%A4%E4%BE%9D%E9%A0%BC">投稿の削除依頼</a></div>
+  <div>運営：cura（在宅ケア・東京）</div>
+    <div><a href="mailto:honeypots.m@gmail.com?subject=%E3%80%90%E8%BF%B7%E5%AD%90%E3%83%9A%E3%83%83%E3%83%88SOS%E3%80%91%E5%89%8A%E9%99%A4%E4%BE%9D%E9%A0%BC">投稿の削除依頼</a></div>
 </footer>
 
 <script>
@@ -186,7 +1902,7 @@ var app = document.getElementById('app');
 var TYPES = {lost:'迷子', found:'保護しました', sighting:'見かけました'};
 var SPECIES = {dog:'犬', cat:'猫', bird:'鳥', other:'その他'};
 var STATUS = {open:'', closed_found:'見つかりました', closed_cancel:'取り下げ済み'};
-var NOTICE = '迷子の動物を保護した方は、警察署か東京都動物愛護相談センター（03-3302-3507）へご連絡ください。1週間以内に届けないと、お礼を受け取る権利などがなくなります。電話番号や住所は投稿しないでください。連絡は当サイトのフォームでお願いします。「先に送料や治療費を振り込んで」という連絡は詐欺の可能性があります。お金を払う前に、必ず動物本人を確認してください。';
+var NOTICE = '迷子の動物を保護した方は、警察署か、お住まいの都道府県の動物愛護センター（届け先一覧）へご連絡ください。1週間以内に届けないと、お礼を受け取る権利などがなくなります。電話番号や住所は投稿しないでください。連絡は当サイトのフォームでお願いします。「先に送料や治療費を振り込んで」という連絡は詐欺の可能性があります。お金を払う前に、必ず動物本人を確認してください。';
 var rid = 0;
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
@@ -225,11 +1941,21 @@ function parseHash(){
   if(qi>=0){ h.slice(qi+1).split('&').forEach(function(kv){var a=kv.split('=');if(a[0])q[decodeURIComponent(a[0])]=decodeURIComponent(a[1]||'');}); h=h.slice(0,qi); }
   return {parts:h.split('/').filter(Boolean), q:q};
 }
+function regions(){
+  var order=[];
+  openAreas().forEach(function(a){ if(order.indexOf(a.region)<0) order.push(a.region); });
+  return order;
+}
 function areaSelect(id,sel){
   var h='<select id="'+id+'">';
-  openAreas().forEach(function(a){ h+='<option value="'+a.id+'"'+(a.id===sel?' selected':'')+'>'+esc(a.name)+'</option>'; });
+  regions().forEach(function(r){
+    h+='<optgroup label="'+esc(r)+'">';
+    openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<option value="'+a.id+'"'+(a.id===sel?' selected':'')+'>'+esc(a.name)+'</option>'; });
+    h+='</optgroup>';
+  });
   return h+'</select>';
 }
+function whereText(p){ return (p.city?p.city+(p.place?' ・ ':''):'')+(p.place||''); }
 
 /* ---------- routes ---------- */
 function route(){
@@ -243,57 +1969,65 @@ function route(){
   if(k==='contact') return viewContact(p[1],my);
   if(k==='manage') return viewManage(p[1],p[2],my);
   if(k==='flyer') return viewFlyer(p[1],my);
-  if(k==='guide') return viewGuide(p[1]);
+  if(k==='guide') return viewGuide(p[1],r.q.city);
   if(k==='subscribe') return viewSubscribe(r.q.area);
   viewHome();
 }
 
 function viewHome(){
-  var h='<div class="eyebrow">Tokyo</div><h1>迷子ペット掲示板</h1><p class="lead">地域ごとに、いなくなった子と、保護された子を探せます。無料です。</p>';
-  h+='<h2 style="margin-top:8px">地域をえらぶ</h2><div class="areas">';
-  openAreas().forEach(function(a){ h+='<a href="#/area/'+a.id+'">'+esc(a.name)+'</a>'; });
-  h+='</div><h3>準備中の地域</h3><div class="areas">';
-  AREAS.filter(function(a){return !a.open;}).forEach(function(a){ h+='<span>'+esc(a.name)+'<small>準備中</small></span>'; });
-  h+='</div>'+noticeHtml();
+  var h='<div class="eyebrow">Lost Pet SOS</div><h1>迷子ペットSOS</h1><p class="lead">全国の迷子ペット掲示板。いなくなった子・保護された子を、都道府県と市区町村で探せます。無料です。</p>';
+  h+='<h2 style="margin-top:8px">都道府県をえらぶ</h2>';
+  regions().forEach(function(r){
+    h+='<h3 class="region">'+esc(r)+'</h3><div class="areas">';
+    openAreas().filter(function(a){return a.region===r;}).forEach(function(a){ h+='<a href="#/area/'+a.id+'">'+esc(a.name)+'</a>'; });
+    h+='</div>';
+  });
+  h+=noticeHtml();
   app.innerHTML=h;
 }
 
 function viewArea(id,q,my){
   var a=area(id);
-  if(!a||!a.open){ app.innerHTML=crumb('#/','地域をえらぶ')+'<p class="msg">この地域は準備中です。</p>'; return; }
+  if(!a||!a.open){ app.innerHTML=crumb('#/','都道府県をえらぶ')+'<p class="msg">この都道府県は準備中です。</p>'; return; }
   var tab=q.tab==='found'?'found':'lost';
-  var h=crumb('#/','地域をえらぶ')+'<div class="eyebrow">Area</div><h1>'+esc(a.name)+'</h1>';
+  var h=crumb('#/','都道府県をえらぶ')+'<div class="eyebrow">'+esc(a.region)+'</div><h1>'+esc(a.name)+'</h1>';
   h+='<div class="btns"><a class="btn" href="#/new?area='+a.id+'">投稿する</a><a class="btn ghost" href="#/guide/'+a.id+'">届け先と注意</a><a class="btn ghost" href="#/subscribe?area='+a.id+'">新着を受け取る</a></div>';
-  h+='<div class="tabs"><a href="#/area/'+a.id+'" class="'+(tab==='lost'?'on':'')+'">迷子</a><a href="#/area/'+a.id+'?tab=found" class="'+(tab==='found'?'on':'')+'">保護・目撃</a></div><div id="list">'+loading()+'</div>';
+  h+='<div class="tabs"><a href="#/area/'+a.id+'" class="'+(tab==='lost'?'on':'')+'">迷子</a><a href="#/area/'+a.id+'?tab=found" class="'+(tab==='found'?'on':'')+'">保護・目撃</a></div><div class="field"><label class="l" for="cityq">市区町村でしぼる</label><input type="text" id="cityq" placeholder="例：文京区／横浜市" autocomplete="off"></div><div id="list">'+loading()+'</div>';
   app.innerHTML=h;
   api('GET',{action:'listPosts',area:a.id}).then(function(r){
     if(my!==rid) return;
     var box=document.getElementById('list'); if(!box) return;
     if(!r.ok){ box.innerHTML=errHtml(r.error); return; }
-    var list=(r.posts||[]).filter(function(p){ return tab==='lost'?p.type==='lost':p.type!=='lost'; });
-    if(!list.length){ box.innerHTML='<p class="msg">この地域の投稿はまだありません</p>'; return; }
-    box.innerHTML=list.map(function(p){
-      var ph=firstPhoto(p), st=STATUS[p.status]||'';
-      return '<a class="card" href="#/post/'+esc(p.id)+'"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="" loading="lazy">':'写真なし')+'</div><div class="bd"><div>'+badge(p)+(st?'<span class="badge done">'+esc(st)+'</span>':'')+'</div><div class="t">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</div><div class="m">'+esc(p.place)+'<br>'+esc(p.datetime)+'</div></div></a>';
-    }).join('');
+    var all=(r.posts||[]).filter(function(p){ return tab==='lost'?p.type==='lost':p.type!=='lost'; });
+    function draw(){
+      var q=(document.getElementById('cityq').value||'').trim();
+      var list=q?all.filter(function(p){ return String(p.city||'').indexOf(q)>=0; }):all;
+      if(!list.length){ box.innerHTML='<p class="msg">'+(q?'この市区町村の投稿はまだありません':'この都道府県の投稿はまだありません')+'</p>'; return; }
+      box.innerHTML=list.map(function(p){
+        var ph=firstPhoto(p), st=STATUS[p.status]||'';
+        return '<a class="card" href="#/post/'+esc(p.id)+'"><div class="ph">'+(ph?'<img src="'+esc(ph)+'" alt="" loading="lazy">':'写真なし')+'</div><div class="bd"><div>'+badge(p)+(st?'<span class="badge done">'+esc(st)+'</span>':'')+'</div><div class="t">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</div><div class="m">'+esc(whereText(p))+'<br>'+esc(p.datetime)+'</div></div></a>';
+      }).join('');
+    }
+    document.getElementById('cityq').addEventListener('input',draw);
+    draw();
   });
 }
 
 function viewPost(id,my){
-  app.innerHTML=crumb('#/','地域をえらぶ')+loading();
+  app.innerHTML=crumb('#/','都道府県をえらぶ')+loading();
   api('GET',{action:'getPost',id:id}).then(function(r){
     if(my!==rid) return;
-    if(!r.ok){ app.innerHTML=crumb('#/','地域をえらぶ')+errHtml(r.error); return; }
+    if(!r.ok){ app.innerHTML=crumb('#/','都道府県をえらぶ')+errHtml(r.error); return; }
     var p=r.post, ph=photos(p), closed=p.status&&p.status!=='open';
     var h=crumb('#/area/'+esc(p.area),areaName(p.area)+'の一覧');
     if(p.status==='closed_found') h+='<div class="band">見つかりました</div>';
     else if(closed) h+='<div class="band">'+esc(STATUS[p.status]||'受付を終了しました')+'</div>';
     h+='<div>'+badge(p)+'</div><h1 style="margin-top:8px">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</h1>';
     if(ph.length) h+='<div class="gallery" style="margin-top:16px">'+ph.map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
-    h+='<dl class="facts"><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc(p.place)+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd>';
+    h+='<dl class="facts"><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc(whereText(p))+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd>';
     if(p.description) h+='<dt>説明</dt><dd>'+esc(p.description)+'</dd>';
     h+='<dt>投稿日</dt><dd>'+esc(fmtDate(p.createdAt))+'</dd><dt>状態</dt><dd>'+esc(closed?(STATUS[p.status]||'終了'):'受付中')+'</dd></dl>';
-    h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">連絡する</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">チラシを作る</a></div>'+noticeHtml();
+    h+='<div class="btns"><a class="btn" href="#/contact/'+esc(p.id)+'">連絡する</a><a class="btn ghost" href="#/flyer/'+esc(p.id)+'">チラシを作る</a><a class="btn ghost" href="#/guide/'+esc(p.area)+'?city='+encodeURIComponent(p.city||'')+'">届け先と注意</a></div>'+noticeHtml();
     app.innerHTML=h;
   });
 }
@@ -327,13 +2061,14 @@ function showErr(msg){ var e=document.getElementById('formerr'); if(e){ e.textCo
 function validEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 
 function viewNew(areaId){
-  var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'bunkyo';
+  var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'tokyo';
   var photoData=[];
   function opts(name,map,def){ return '<div class="opts">'+Object.keys(map).map(function(k){return '<label><input type="radio" name="'+name+'" value="'+k+'"'+(k===def?' checked':'')+'><span>'+esc(map[k])+'</span></label>';}).join('')+'</div>'; }
   var h=crumb('#/area/'+sel,'一覧にもどる')+'<div class="eyebrow">Post</div><h1>投稿する</h1><p class="lead">電話番号と住所は書かないでください。連絡はこのサイトのフォームで届きます。</p>';
   h+='<form id="f" novalidate autocomplete="off">';
   h+='<div class="field"><label class="l">種別<em>必須</em></label>'+opts('type',TYPES,'lost')+'</div>';
-  h+='<div class="field"><label class="l" for="area">地域<em>必須</em></label>'+areaSelect('area',sel)+'</div>';
+  h+='<div class="field"><label class="l" for="area">都道府県<em>必須</em></label>'+areaSelect('area',sel)+'</div>';
+  h+='<div class="field"><label class="l" for="city">市区町村<em>必須</em></label><div class="help">市区町村名だけで大丈夫です（番地は書かなくて構いません）</div><input type="text" id="city" maxlength="40" placeholder="例：文京区／横浜市青葉区"></div>';
   h+='<div class="field"><label class="l">動物<em>必須</em></label>'+opts('species',SPECIES,'dog')+'</div>';
   h+='<div class="field"><label class="l" for="name">名前（わかれば）</label><input type="text" id="name" maxlength="60"></div>';
   h+='<div class="field"><label class="l" for="features">特徴<em>必須</em></label><div class="help">種類・色・大きさ・首輪など</div><textarea id="features" maxlength="500"></textarea></div>';
@@ -357,10 +2092,10 @@ function viewNew(areaId){
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault();
     showErr('');
-    var d={type:checked('type'),area:val('area'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:val('datetime'),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:'createPost'};
-    if(!d.features||!d.place||!d.datetime||!d.ownerEmail||!d.secret) return showErr('必須の項目をすべて入力してください。');
+    var d={type:checked('type'),area:val('area'),city:val('city'),species:checked('species'),name:val('name'),features:val('features'),place:val('place'),datetime:val('datetime'),description:val('description'),ownerEmail:val('ownerEmail'),secret:val('secret'),hp:val('hp'),photos:photoData,action:'createPost'};
+    if(!d.features||!d.city||!d.place||!d.datetime||!d.ownerEmail||!d.secret) return showErr('必須の項目をすべて入力してください。');
     if(!validEmail(d.ownerEmail)) return showErr('メールアドレスの形式をご確認ください。');
-    if(hasPhone(d.features)||hasPhone(d.description)||hasPhone(d.name)||hasPhone(d.place)) return showErr('電話番号は書けません。連絡はこのサイトのフォームで届きます');
+    if(hasPhone(d.features)||hasPhone(d.description)||hasPhone(d.name)||hasPhone(d.place)||hasPhone(d.city)) return showErr('電話番号は書けません。連絡はこのサイトのフォームで届きます');
     var b=document.getElementById('go'); b.disabled=true; b.textContent='送信しています…';
     api('POST',null,d).then(function(r){
       if(!r.ok){ b.disabled=false; b.textContent='投稿する'; return showErr(r.error||'送信できませんでした。'); }
@@ -369,7 +2104,7 @@ function viewNew(areaId){
         +'<h3>管理リンク</h3><p class="help">見つかったとき、取り下げるときに使います。他の人には教えないでください。</p><div class="copybox">'+esc(link)+'</div>'
         +'<h3>合言葉の控え</h3><div class="copybox">'+esc(d.secret)+'</div>'
         +noticeHtml()
-        +'<div class="btns"><a class="btn" href="#/post/'+esc(r.id)+'">投稿を見る</a><a class="btn ghost" href="#/flyer/'+esc(r.id)+'">チラシを作る</a><a class="btn ghost" href="#/guide/'+esc(d.area)+'">届け先を見る</a></div>';
+        +'<div class="btns"><a class="btn" href="#/post/'+esc(r.id)+'">投稿を見る</a><a class="btn ghost" href="#/flyer/'+esc(r.id)+'">チラシを作る</a><a class="btn ghost" href="#/guide/'+esc(d.area)+'?city='+encodeURIComponent(d.city)+'">届け先を見る</a></div>';
       window.scrollTo(0,0);
     });
   });
@@ -397,10 +2132,10 @@ function viewContact(id,my){
 }
 
 function viewManage(id,token,my){
-  app.innerHTML=crumb('#/','地域をえらぶ')+loading();
+  app.innerHTML=crumb('#/','都道府県をえらぶ')+loading();
   api('GET',{action:'getPost',id:id}).then(function(r){
     if(my!==rid) return;
-    if(!r.ok){ app.innerHTML=crumb('#/','地域をえらぶ')+errHtml(r.error); return; }
+    if(!r.ok){ app.innerHTML=crumb('#/','都道府県をえらぶ')+errHtml(r.error); return; }
     var p=r.post, closed=p.status&&p.status!=='open';
     var h=crumb('#/post/'+esc(id),'投稿を見る')+'<div class="eyebrow">Manage</div><h1>投稿の管理</h1><p class="lead">'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'　／　'+esc(p.place)+'</p>';
     if(closed) h+='<div class="band">'+esc(STATUS[p.status]||'受付を終了しました')+'</div>';
@@ -411,7 +2146,7 @@ function viewManage(id,token,my){
       var b1=document.getElementById('bf'),b2=document.getElementById('bc'); b1.disabled=b2.disabled=true;
       api('POST',null,{action:'closePost',id:id,token:token,outcome:outcome}).then(function(r){
         if(!r.ok){ b1.disabled=b2.disabled=false; return showErr(r.error||'更新できませんでした。'); }
-        app.innerHTML=crumb('#/','地域をえらぶ')+'<div class="eyebrow">Done</div><h1>'+(outcome==='found'?'見つかって、よかったです':'取り下げました')+'</h1><p class="lead">投稿の状態を更新しました。</p>';
+        app.innerHTML=crumb('#/','都道府県をえらぶ')+'<div class="eyebrow">Done</div><h1>'+(outcome==='found'?'見つかって、よかったです':'取り下げました')+'</h1><p class="lead">投稿の状態を更新しました。</p>';
       });
     }
     if(!closed){
@@ -425,41 +2160,45 @@ function viewFlyer(id,my){
   app.innerHTML=crumb('#/post/'+esc(id),'投稿にもどる')+loading();
   api('GET',{action:'getPost',id:id}).then(function(r){
     if(my!==rid) return;
-    if(!r.ok){ app.innerHTML=crumb('#/','地域をえらぶ')+errHtml(r.error); return; }
+    if(!r.ok){ app.innerHTML=crumb('#/','都道府県をえらぶ')+errHtml(r.error); return; }
     var p=r.post, ph=photos(p);
     var title=p.type==='found'?'保護しています':(p.type==='sighting'?'見かけました':'さがしています');
     var h=crumb('#/post/'+esc(id),'投稿にもどる')+'<div class="btns noprint"><button class="btn" id="pr">PDFにする／印刷</button></div>';
     h+='<div class="flyer"><div class="big">'+esc(title)+'</div>';
     if(ph.length) h+='<img class="main" src="'+esc(ph[0])+'" alt="">';
     if(ph.length>1) h+='<div class="sub">'+ph.slice(1).map(function(u){return '<img src="'+esc(u)+'" alt="">';}).join('')+'</div>';
-    h+='<dl><dt>動物</dt><dd>'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</dd><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc(p.place)+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd></dl>';
+    h+='<dl><dt>動物</dt><dd>'+esc((SPECIES[p.species]||'')+(p.name?'　'+p.name:''))+'</dd><dt>特徴</dt><dd>'+esc(p.features)+'</dd><dt>場所</dt><dd>'+esc((p.city?p.city+'　':'')+p.place)+'</dd><dt>日時</dt><dd>'+esc(p.datetime)+'</dd></dl>';
     h+='<div class="how">連絡は、このURLから（検索しても出ません。そのまま入力してください）<div class="url">'+esc(pageUrl('/contact/'+p.id))+'</div></div></div>';
     app.innerHTML=h;
     document.getElementById('pr').onclick=function(){window.print();};
   });
 }
 
-function viewGuide(id){
-  var a=area(id)||area('bunkyo');
-  var h=crumb('#/area/'+a.id,a.name+'の一覧')+'<div class="eyebrow">Guide</div><h1>'+esc(a.name)+'の届け先</h1>';
-  if(a.contacts&&a.contacts.length){
-    h+='<div class="notice" style="padding:6px 20px">'+a.contacts.map(function(c){
-      var telHtml = c.tel ? '<a href="tel:'+esc(c.tel.replace(/[^0-9+]/g,''))+'" style="display:inline-flex;align-items:center;min-height:44px">'+esc(c.tel)+'</a>' : '<span class="help" style="display:inline-flex;align-items:center;min-height:44px">番号は公式サイトでご確認ください</span>';
-      return '<div style="padding:12px 0;border-bottom:1px solid var(--rose-pale)">'+esc(c.label)+'<br>'+telHtml+'</div>';
-    }).join('')+'</div>';
-  } else {
-    h+='<div class="notice">この地域の届け先は準備中です。まずは東京都動物愛護相談センター（<a href="tel:0333023507">03-3302-3507</a>）と、お近くの警察署へご連絡ください。</div>';
+function viewGuide(id,city){
+  var a=area(id)||area('tokyo');
+  function row(c){
+    var telHtml = c.tel ? '<a href="tel:'+esc(c.tel.replace(/[^0-9+]/g,''))+'" style="display:inline-flex;align-items:center;min-height:44px">'+esc(c.tel)+'</a>'
+      : (c.url ? '<a href="'+esc(c.url)+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px">地図で検索</a>' : '<span class="help" style="display:inline-flex;align-items:center;min-height:44px">番号は公式サイトでご確認ください</span>');
+    return '<div style="padding:12px 0;border-bottom:1px solid var(--rose-pale)">'+esc(c.label)+'<br>'+telHtml+'</div>';
   }
-  h+='<h2>保護した方へ</h2><p>動物を見つけたら、まず安全な場所で落ち着かせてください。警察署か東京都動物愛護相談センターに届けたうえで、この掲示板に「保護しました」と投稿すると、飼い主の方が見つけやすくなります。</p>';
-  h+='<h2>飼い主の方へ</h2><p>いなくなったら、5日以内に東京都動物愛護相談センターへ電話してください。収容されても7日間で扱いが変わります。あわせて、最寄りの警察署に遺失物届を出してください。</p>';
+  var cs=a.contacts||[];
+  var main=cs.filter(function(c){return c.tel;}), fixed=cs.filter(function(c){return !c.tel;});
+  var wards=[];
+  if(a.wards&&city){ Object.keys(a.wards).forEach(function(k){ if(String(city).indexOf(k)>=0) wards=wards.concat(a.wards[k]); }); }
+  var h=crumb('#/area/'+a.id,a.name+'の一覧')+'<div class="eyebrow">Guide</div><h1>'+esc(a.name)+'の届け先</h1>';
+  if(!fixed.length) fixed=[{label:'最寄りの警察署（遺失物届）',tel:'',url:'https://www.google.com/maps/search/警察署'}];
+  h+='<div class="notice" style="padding:6px 20px">'+main.concat(wards).concat(fixed).map(row).join('')+'</div>';
+  var center=main.length?main[0].label:'お住まいの都道府県の動物愛護センター';
+  h+='<h2>保護した方へ</h2><p>動物を見つけたら、まず安全な場所で落ち着かせてください。警察署か、上の動物愛護センターに届けたうえで、この掲示板に「保護しました」と投稿すると、飼い主の方が見つけやすくなります。</p>';
+  h+='<h2>飼い主の方へ</h2><p>いなくなったら、5日以内に'+esc(center)+'へ電話してください。収容されても、一定の日数で扱いが変わります（東京都は7日間。ほかの地域は各センターにご確認ください）。あわせて、最寄りの警察署に遺失物届を出してください。</p>';
   h+=noticeHtml()+'<div class="btns"><a class="btn" href="#/new?area='+a.id+'">投稿する</a></div>';
   app.innerHTML=h;
 }
 
 function viewSubscribe(areaId){
-  var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'bunkyo';
-  app.innerHTML=crumb('#/area/'+sel,'一覧にもどる')+'<div class="eyebrow">Notify</div><h1>新着を受け取る</h1><p class="lead">選んだ地域に新しい投稿があると、メールでお知らせします。解除はメール内のリンクからできます。</p>'
-  +'<form id="f" novalidate><div class="field"><label class="l" for="area">地域</label>'+areaSelect('area',sel)+'</div>'
+  var sel=areaId&&area(areaId)&&area(areaId).open?areaId:'tokyo';
+  app.innerHTML=crumb('#/area/'+sel,'一覧にもどる')+'<div class="eyebrow">Notify</div><h1>新着を受け取る</h1><p class="lead">選んだ都道府県に新しい投稿があると、メールでお知らせします。解除はメール内のリンクからできます。</p>'
+  +'<form id="f" novalidate><div class="field"><label class="l" for="area">都道府県</label>'+areaSelect('area',sel)+'</div>'
   +'<div class="field"><label class="l" for="email">メールアドレス</label><input type="email" id="email" inputmode="email" autocapitalize="off" autocorrect="off"></div>'
   +'<p class="err" id="formerr" role="alert"></p><button type="submit" class="btn block" id="go">登録する</button></form>';
   document.getElementById('f').addEventListener('submit',function(ev){
