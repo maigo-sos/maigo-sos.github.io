@@ -2085,6 +2085,9 @@ footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
 .p4-ctt{flex:1;min-width:0;color:#fff;line-height:1.4;margin:-.125em 0;text-shadow:1.60px 0.00px 0 var(--po),1.29px 0.94px 0 var(--po),0.49px 1.52px 0 var(--po),-0.49px 1.52px 0 var(--po),-1.29px 0.94px 0 var(--po),-1.60px 0.00px 0 var(--po),-1.29px -0.94px 0 var(--po),-0.49px -1.52px 0 var(--po),0.49px -1.52px 0 var(--po),1.29px -0.94px 0 var(--po),0 2px 0 var(--po),0 3px 4px rgba(0,0,0,.2)}
 .p4-ctp{flex:1;min-height:0;background:#fff;border-radius:12px;display:flex;align-items:center;gap:10px;padding:6px 10px 6px 14px}
 .p4-ctq{flex:1;min-width:0;font-size:15px;line-height:1.35;color:var(--po)}
+.p4-tel{display:none;color:var(--pm1);font-weight:900;font-size:24px;line-height:1.15;letter-spacing:.02em;white-space:nowrap;margin-bottom:4px}
+.p4-tel.on{display:block}.p4-tel small{display:block;font-size:11px;font-weight:700;color:var(--po);letter-spacing:0}
+.p4-ctq.has{font-size:13px}
 .p4-bdg{flex:none;width:64px;height:64px;border-radius:50%;border:3px solid var(--pm1);background:var(--pl);color:var(--pm1);display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;line-height:1.25}
 .p4-qp{flex:0 0 136px;background:#fff;border-radius:12px;padding:5px}
 .p4-qr{width:126px;height:126px}
@@ -2206,7 +2209,7 @@ ja: {
   updFail:'更新できませんでした。', doneEyebrow2:'Done', doneFound:'見つかって、よかったです', doneCancel:'取り下げました', doneLead2:'投稿の状態を更新しました。',
   /* flyer */
   flyLost:'迷子の{sp}を\nさがしています', flyFound:'{sp}を\n保護しています', flySighting:'{sp}を\n見かけました', headLost:'迷子の{sp}', headFound:'保護した{sp}', headSighting:'見かけた{sp}',
-  adjH:'ポスターの調整', adjNote:'この画面のポスターだけが変わります。投稿の内容は変わりません。', adjMain:'メインの写真', adjSecond:'小さな写真（3枚まで・ポスター右側に載せます）', adjNone:'なし', adjUp:'端末の写真を使う', adjCrop:'範囲を切り取る', adjDo:'切り取る', adjCancel:'やめる', adjColor:'配色', adjBusy:'写真を準備しています…', adjFail:'写真を読み込めませんでした。', adjCropFail:'切り取り機能を読み込めませんでした。通信を確認してもう一度お試しください。', adjCropHint:'四角の枠をドラッグして、使う範囲を決めてください。', cPink:'ピンク', cRed:'赤', cBlue:'青', cGreen:'緑', cOrange:'オレンジ',
+  adjH:'ポスターの調整', adjTel:'電話番号（入れたい人だけ）', adjTelHelp:'ポスターにだけ印刷されます。掲示板には保存されず、誰にも送られません。', pTelLbl:'お電話でも', adjNote:'この画面のポスターだけが変わります。投稿の内容は変わりません。', adjMain:'メインの写真', adjSecond:'小さな写真（3枚まで・ポスター右側に載せます）', adjNone:'なし', adjUp:'端末の写真を使う', adjCrop:'範囲を切り取る', adjDo:'切り取る', adjCancel:'やめる', adjColor:'配色', adjBusy:'写真を準備しています…', adjFail:'写真を読み込めませんでした。', adjCropFail:'切り取り機能を読み込めませんでした。通信を確認してもう一度お試しください。', adjCropHint:'四角の枠をドラッグして、使う範囲を決めてください。', cPink:'ピンク', cRed:'赤', cBlue:'青', cGreen:'緑', cOrange:'オレンジ',
   lBreed:'種類（わかれば）', phBreed:'例：ウロコインコ／柴犬／雑種の黒猫', pTitleLost:'迷子の{sp}を探しています！', pTitleFound:'{sp}を保護しています', pTitleSight:'{sp}を見かけました', pName:'名前', pKind:'種類', pFeat:'特徴', pPlaceLost:'いなくなった場所', pWhenLost:'いなくなった日時', pPlaceFound:'見つけた場所', pWhenFound:'見つけた日時', pCall:'見かけた方・保護された方はご連絡ください', pQr:'このQRを読み取ると\n連絡フォームが開きます', pAsk:'見かけた時のお願い', pAsk1:'追いかけたり、大声を出さないでください', pAsk2:'ゆっくり落ち着いて見守ってください', pAsk3:'できれば写真や動画を撮ってご連絡ください', pAsk4:'どんな小さなことでも、お知らせをお願いします', pBigLost:'迷子', pBigFound:'保護', pBigSight:'目撃', pR1Lost:'の{sp}', pR1Found:'{sp}を', pR1Sight:'{sp}を', pR2Lost:'を探しています！', pR2Found:'預かっています！', pR2Sight:'見かけました！', pVoice:'ひとこと', pBubble:'「{n}」と呼ぶと反応することがあります', pBubbleGen:'どうか力を貸してください', pNote:'※{c}周辺での目撃情報を探しています', pQr2:'スマホでQRを読み取ると\n連絡フォームが開きます', pAnytime:'24時間\nいつでも', pAnySmall:'どんな小さな情報でも\n構いません', pSiteName:'迷子ペットSOS', pAskBird:'高い場所（電線・木・屋根・ベランダ）に止まっている可能性があります', pAskGround:'物陰や車の下に隠れていることがあります', pSite:'迷子ペットSOS　maigo-sos.github.io', ctaLost:'いなくなった', ctaLostSub:'迷子を投稿する', ctaFound:'見つけた・保護した', ctaFoundSub:'目撃・保護を投稿する', kw:'キーワード（名前・特徴・市区町村・場所）', openPrefs:'都道府県の一覧を開く', noPhoto:'写真なし', editBtn:'内容を直す', editTitle:'投稿を直す', editLead:'空のままの項目は変わりません。写真は選び直した時だけ差し替わります。', todKeep:'変えない', secretKeep:'変えない場合は空のまま', save:'保存する', savedTitle:'直しました', savedLead:'投稿を更新しました。', print:'PDFにする／印刷', saveImg:'画像で保存（スマホ向け）', saveHint:'下の画像を長押しして「写真に保存」。そのままLINEやXにも送れます。', saveBusy:'画像を作っています…', saveFail:'画像にできませんでした。上の「PDFにする／印刷」をお試しください。', pdfBusy:'A4のPDFを作っています…', pdfHint:'PDFができました。開いた画面の共有ボタンから「プリント」を選ぶと、A4の1枚で印刷できます。', pdfOpen:'PDFを開く', pdfFail:'PDFを作れませんでした。時間をおいてもう一度お試しください。', flyAnimal:'動物',
   qrText:'見かけた方は、このQRを読み取って<br>フォームからご連絡ください',
   /* guide */
@@ -2291,7 +2294,7 @@ en: {
   mEyebrow:'Manage', mTitle:'Manage your post', btnFound:'Found', btnCancel:'Withdraw',
   updFail:'Could not update.', doneEyebrow2:'Done', doneFound:'We are glad it was found', doneCancel:'Withdrawn', doneLead2:'The post has been updated.',
   flyLost:'LOST {sp}', flyFound:'FOUND {sp}', flySighting:'{sp} SIGHTED', headLost:'Lost {sp}', headFound:'Found {sp}', headSighting:'{sp} sighted',
-  adjH:'Adjust the poster', adjNote:'This changes only the poster on this screen. Your post is not changed.', adjMain:'Main photo', adjSecond:'Small photos (up to 3, shown on the right)', adjNone:'None', adjUp:'Use a photo from this device', adjCrop:'Crop', adjDo:'Crop', adjCancel:'Cancel', adjColor:'Color', adjBusy:'Preparing the photo...', adjFail:'Could not load the photo.', adjCropFail:'Could not load the crop tool. Please check your connection and try again.', adjCropHint:'Drag the box to choose the area to use.', cPink:'Pink', cRed:'Red', cBlue:'Blue', cGreen:'Green', cOrange:'Orange',
+  adjH:'Adjust the poster', adjTel:'Phone number (optional)', adjTelHelp:'Printed on the poster only. It is not saved to the board or sent anywhere.', pTelLbl:'Or call', adjNote:'This changes only the poster on this screen. Your post is not changed.', adjMain:'Main photo', adjSecond:'Small photos (up to 3, shown on the right)', adjNone:'None', adjUp:'Use a photo from this device', adjCrop:'Crop', adjDo:'Crop', adjCancel:'Cancel', adjColor:'Color', adjBusy:'Preparing the photo...', adjFail:'Could not load the photo.', adjCropFail:'Could not load the crop tool. Please check your connection and try again.', adjCropHint:'Drag the box to choose the area to use.', cPink:'Pink', cRed:'Red', cBlue:'Blue', cGreen:'Green', cOrange:'Orange',
   lBreed:'Breed / kind (optional)', phBreed:'e.g. Green-cheeked conure, Shiba Inu', pTitleLost:'LOST {sp} — please help', pTitleFound:'FOUND {sp}', pTitleSight:'{sp} SIGHTED', pName:'Name', pKind:'Kind', pFeat:'Features', pPlaceLost:'Last seen at', pWhenLost:'Last seen on', pPlaceFound:'Found at', pWhenFound:'Found on', pCall:'If you have seen or found this animal, please contact us', pQr:'Scan this QR to open the contact form', pAsk:'If you see it', pAsk1:'Please do not chase or shout', pAsk2:'Stay calm and keep watching', pAsk3:'Take a photo or video if you can', pAsk4:'Even a small detail helps', pBigLost:'LOST', pBigFound:'FOUND', pBigSight:'SEEN', pR1Lost:'{sp}', pR1Found:'{sp}', pR1Sight:'{sp}', pR2Lost:'Please help find it!', pR2Found:'It is safe with me', pR2Sight:'Spotted here', pVoice:'Note', pBubble:'It may respond to the name "{n}"', pBubbleGen:'Please help us find them', pNote:'Looking for sightings around {c}', pQr2:'Scan the QR with your phone\nto open the contact form', pAnytime:'Any time\n24 hours', pAnySmall:'Even the smallest\ndetail helps', pSiteName:'Lost Pet SOS', pAskBird:'It may be perched high up (wires, trees, roofs, balconies)', pAskGround:'It may be hiding in shade or under a car', pSite:'Lost Pet SOS  maigo-sos.github.io', ctaLost:'My pet is missing', ctaLostSub:'Post a lost pet', ctaFound:'I found or saw one', ctaFoundSub:'Post a sighting or found pet', kw:'Keyword (name, features, city, place)', openPrefs:'Open the list of prefectures', noPhoto:'No photo', editBtn:'Edit this post', editTitle:'Edit post', editLead:'Fields left empty stay as they are. Photos are replaced only if you choose new ones.', todKeep:'Keep as is', secretKeep:'Leave empty to keep the current one', save:'Save', savedTitle:'Updated', savedLead:'Your post has been updated.', print:'Save as PDF / Print', saveImg:'Save as image (phone)', saveHint:'Press and hold the image below and choose Save to Photos. You can also share it to LINE or X.', saveBusy:'Making the image…', saveFail:'Could not make the image. Try Save as PDF / Print above.', pdfBusy:'Making an A4 PDF…', pdfHint:'Your PDF is ready. Open it and use Share → Print to print it on one A4 sheet.', pdfOpen:'Open the PDF', pdfFail:'Could not make the PDF. Please try again later.', flyAnimal:'Animal',
   qrText:'If you have seen this animal,<br>scan this QR code and send a message through the form',
   gEyebrow:'Guide', gTitle:'Where to report in {0}',
@@ -2795,6 +2798,7 @@ function viewFlyer(id,my){
         +'<div class="adjk">'+esc(t('adjSecond'))+'</div><div class="thumbs" id="th2"></div>'
         +'<div class="adjb"><button type="button" class="btn ghost sm" id="up2">'+esc(t('adjUp'))+'</button></div>'
         +'<div class="adjk">'+esc(t('adjColor'))+'</div><div class="sws" id="sws">'+sw+'</div>'
+        +'<div class="adjk"><label for="ptel">'+esc(t('adjTel'))+'</label></div><input type="text" inputmode="tel" id="ptel" maxlength="20" autocomplete="off" placeholder="090-1234-5678" style="max-width:260px"><p class="help">'+esc(t('adjTelHelp'))+'</p>'
         +'<input type="file" accept="image/*" id="fin" hidden><p class="help" id="adjmsg" role="status"></p></div>';
     }
     /* header text */
@@ -2833,7 +2837,7 @@ function viewFlyer(id,my){
     /* contact band */
     var ctt=t('pCall'), ctW=p4Wlen(ctt);
     var ct='<div class="p4-ct"><div class="p4-ctl"><div class="p4-cth">'+p4Phone(36)+'<div class="p4-ctt" style="font-size:'+(ctW>24?15:p4Fs(ctt,330,19,14))+'px">'+esc(ctt)+'</div></div>'
-      +'<div class="p4-ctp"><div class="p4-ctq">'+p4Br(t('pQr2'))+'</div><div class="p4-bdg"><div>'+p4Br(t('pAnytime'))+'</div></div></div></div>'
+      +'<div class="p4-ctp"><div class="p4-ctq"><div class="p4-tel" id="p4tel"></div>'+p4Br(t('pQr2'))+'</div><div class="p4-bdg"><div>'+p4Br(t('pAnytime'))+'</div></div></div></div>'
       +'<div class="p4-qp"><div id="qr" class="p4-qr"></div></div>'+p4Heart(18,'left:4px;bottom:3px')+p4Heart(14,'right:150px;top:4px',true)+'</div>';
     /* footer */
     var asks=[t('pAsk1'),t('pAsk2'),t('pAsk3'),t(isBird?'pAskBird':'pAskGround'),t('pAsk4')];
@@ -2994,6 +2998,13 @@ function viewFlyer(id,my){
         if(upSlot===1){ st.main=i; setMain(u); } else { if(st.secs.length>=3) st.secs.pop(); st.secs.push(i); renderSide(); }
         adjMsg(''); drawAdj();
       }).catch(function(){ adjMsg(t('adjFail')); });
+    };
+    document.getElementById('ptel').oninput=function(){
+      var v=this.value.replace(/[０-９]/g,function(c){ return String.fromCharCode(c.charCodeAt(0)-0xFEE0); }).replace(/[^0-9+()\- ]/g,'').slice(0,20);
+      if(v!==this.value) this.value=v;
+      var el=document.getElementById('p4tel'); if(!el) return;
+      el.innerHTML=v?'<small>'+esc(t('pTelLbl'))+'</small>'+esc(v):''; el.className='p4-tel'+(v?' on':''); el.parentNode.className='p4-ctq'+(v?' has':'');
+      el.style.fontSize=(v.length>14?19:24)+'px';
     };
     document.getElementById('sws').onclick=function(ev){
       var b=ev.target; while(b&&b!==this&&b.tagName!=='BUTTON') b=b.parentNode;
