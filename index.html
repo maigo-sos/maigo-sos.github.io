@@ -3003,8 +3003,16 @@ function viewFlyer(id,my){
       var v=this.value.replace(/[０-９]/g,function(c){ return String.fromCharCode(c.charCodeAt(0)-0xFEE0); }).replace(/[^0-9+()\- ]/g,'').slice(0,20);
       if(v!==this.value) this.value=v;
       var el=document.getElementById('p4tel'); if(!el) return;
-      el.innerHTML=v?'<small>'+esc(t('pTelLbl'))+'</small>'+esc(v):''; el.className='p4-tel'+(v?' on':''); el.parentNode.className='p4-ctq'+(v?' has':'');
-      el.style.fontSize=(v.length>14?19:24)+'px';
+      var d=v.replace(/\D/g,''), f=v;
+      /* 数字だけなら日本の番号の形でハイフンを入れる（携帯/050/070: 3-4-4、0120: 4-3-3、03/06: 2-4-4、他の10桁: 3-3-4） */
+      if(/^\d+$/.test(v)){
+        if(d.length===11&&/^0[5789]0/.test(d)) f=d.slice(0,3)+'-'+d.slice(3,7)+'-'+d.slice(7);
+        else if(d.length===10&&/^0120/.test(d)) f=d.slice(0,4)+'-'+d.slice(4,7)+'-'+d.slice(7);
+        else if(d.length===10&&/^0[36]/.test(d)) f=d.slice(0,2)+'-'+d.slice(2,6)+'-'+d.slice(6);
+        else if(d.length===10) f=d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6);
+      }
+      el.innerHTML=v?'<small>'+esc(t('pTelLbl'))+'</small>'+esc(f):''; el.className='p4-tel'+(v?' on':''); el.parentNode.className='p4-ctq'+(v?' has':'');
+      el.style.fontSize=(f.length>14?19:24)+'px';
     };
     document.getElementById('sws').onclick=function(ev){
       var b=ev.target; while(b&&b!==this&&b.tagName!=='BUTTON') b=b.parentNode;
