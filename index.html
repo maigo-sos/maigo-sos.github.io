@@ -2035,7 +2035,7 @@ footer.site{background:#fff;border-top:2px solid var(--rose-pale)}
 .p4-title{display:block;color:#fff;font-size:32px;font-weight:900;line-height:1.25;letter-spacing:.04em;text-shadow:0 1px 0 rgba(0,0,0,.25)}
 .p4-body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;padding:12px}
 .p4-photo{background:#fff;border:5px solid var(--pa);border-radius:14px;min-height:260px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.p4-photo img{width:100%;height:100%;max-height:360px;object-fit:contain;display:block}
+.p4-photo img{width:100%;height:100%;max-height:360px;object-fit:contain;display:block;background:#fff}
 .p4-nophoto{color:#b08a94}
 .p4-info{display:flex;flex-direction:column;gap:8px;min-width:0}
 .p4-name{color:var(--pi);font-size:32px;font-weight:900;text-align:center;border-bottom:3px solid var(--pm);padding:2px 10px 6px;letter-spacing:.06em;overflow-wrap:anywhere}
@@ -2882,7 +2882,7 @@ function viewFlyer(id,my){
       inlinePhotos(fl).then(function(){
         if(!window.html2canvas||!window.jspdf) throw new Error('lib');
         wrap=document.createElement('div'); wrap.className='capwrap';
-        var cl=fl.cloneNode(true); cl.classList.add('cap'); wrap.appendChild(cl); document.body.appendChild(wrap);
+        var cl=fl.cloneNode(true); cl.classList.add('cap'); wrap.appendChild(cl); document.body.appendChild(wrap); Array.prototype.forEach.call(cl.querySelectorAll('.p4-photo img,.p4-photo2 img'),function(im){var d=document.createElement('div');d.style.cssText='width:100%;height:100%;background:#fff url('+im.src+') center/'+(im.parentNode.className==='p4-photo'?'contain':'cover')+' no-repeat';im.parentNode.replaceChild(d,im);});
         return new Promise(function(r){ setTimeout(r,150); }).then(function(){ return html2canvas(cl,{scale:2.5,backgroundColor:'#ffffff',useCORS:true,logging:false}); });
       }).then(function(c){
         if(wrap) wrap.remove();
@@ -2904,7 +2904,7 @@ function viewFlyer(id,my){
       inlinePhotos(fl).then(function(){
         if(!window.html2canvas) throw new Error('no html2canvas');
         wrap=document.createElement('div'); wrap.className='capwrap';
-        var cl=fl.cloneNode(true); cl.classList.add('cap'); wrap.appendChild(cl); document.body.appendChild(wrap);
+        var cl=fl.cloneNode(true); cl.classList.add('cap'); wrap.appendChild(cl); document.body.appendChild(wrap); Array.prototype.forEach.call(cl.querySelectorAll('.p4-photo img,.p4-photo2 img'),function(im){var d=document.createElement('div');d.style.cssText='width:100%;height:100%;background:#fff url('+im.src+') center/'+(im.parentNode.className==='p4-photo'?'contain':'cover')+' no-repeat';im.parentNode.replaceChild(d,im);});
         return new Promise(function(r){ setTimeout(r,150); }).then(function(){ return html2canvas(cl,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}); });
       }).then(function(c){
         if(wrap) wrap.remove();
