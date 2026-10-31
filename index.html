@@ -3066,14 +3066,35 @@ function viewFlyer(id,my){
         if(!window.html2canvas) throw new Error('lib');
         wrap=document.createElement('div'); wrap.className='capwrap';
         var cl=fl.cloneNode(true); cl.removeAttribute('id'); cl.classList.add('cap'); cl.style.transform='none'; wrap.appendChild(cl); document.body.appendChild(wrap);
-        if(noSvg){ Array.prototype.slice.call(cl.querySelectorAll('svg')).forEach(function(x){ if(x.parentNode) x.parentNode.removeChild(x); }); }
-        return new Promise(function(r){ setTimeout(r,200); }).then(function(){ return html2canvas(cl,{scale:scale,backgroundColor:'#ffffff',useCORS:true,logging:false,width:620,height:877,windowWidth:620}); });
+        return prepClone(cl,noSvg).then(function(){ return new Promise(function(r){ setTimeout(r,200); }); }).then(function(){ return html2canvas(cl,{scale:scale,backgroundColor:'#ffffff',useCORS:true,logging:false,width:620,height:877,windowWidth:620}); });
       }).then(function(c){ clean(); c.toDataURL('image/jpeg',0.5); return c; },function(e){ clean(); throw e; });
+    }
+    /* iPhoneのSafariはSVGをcanvasに描くと「insecure」になることがあるので、写す用の複製ではSVGを全部PNGに置き換える。
+       noSvg=1 なら飾りのSVGを消す（QRだけ残す）、noSvg=2 なら背景画像も全部消す（切り分け用） */
+    function stripePng(){ var c=document.createElement('canvas'); c.width=28; c.height=28; var x=c.getContext('2d'); x.strokeStyle='rgba(192,0,60,.045)'; x.lineWidth=7; [[-6,6,6,-6],[0,28,28,0],[22,34,34,22]].forEach(function(a){ x.beginPath(); x.moveTo(a[0],a[1]); x.lineTo(a[2],a[3]); x.stroke(); }); return c.toDataURL('image/png'); }
+    function svgToImg(sv){
+      return new Promise(function(res){
+        var r=sv.getBoundingClientRect(), w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+        var im=new Image(), done=false; function out(u){ if(done) return; done=true; var g=document.createElement('img'); g.alt=''; g.style.cssText=sv.getAttribute('style')||''; g.style.display='block'; g.style.width=w+'px'; g.style.height=h+'px'; if(u) g.src=u; if(sv.parentNode){ if(u) sv.parentNode.replaceChild(g,sv); else sv.parentNode.removeChild(sv); } res(); }
+        try{
+          var cp=sv.cloneNode(true); cp.setAttribute('xmlns','http://www.w3.org/2000/svg'); cp.setAttribute('width',w); cp.setAttribute('height',h);
+          im.onload=function(){ try{ var c=document.createElement('canvas'); c.width=w*3; c.height=h*3; c.getContext('2d').drawImage(im,0,0,c.width,c.height); out(c.toDataURL('image/png')); }catch(e){ out(''); } };
+          im.onerror=function(){ out(''); }; setTimeout(function(){ out(''); },3000);
+          im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(cp));
+        }catch(e){ out(''); }
+      });
+    }
+    function prepClone(cl,noSvg){
+      try{ cl.style.backgroundImage='url('+stripePng()+')'; cl.style.backgroundSize='14px 14px'; }catch(e){ cl.style.backgroundImage='none'; }
+      var svs=Array.prototype.slice.call(cl.querySelectorAll('svg'));
+      if(noSvg){ svs=svs.filter(function(x){ if(x.closest&&x.closest('#qr')) return true; if(x.parentNode) x.parentNode.removeChild(x); return false; }); }
+      if(noSvg===2){ Array.prototype.slice.call(cl.querySelectorAll('[style*="background"]')).forEach(function(x){ x.style.backgroundImage='none'; }); cl.style.backgroundImage='none'; }
+      return Promise.all(svs.map(svgToImg));
     }
     /* iPhoneで失敗する時のため、重い設定から順に3回まで試す。最後の失敗理由は lastErr に残す */
     var lastErr='';
     function capture(scale){
-      var plan=[[scale,false],[2,false],[1.6,true]];
+      var plan=[[scale,0],[2,1],[1.6,2]];
       function go(i){ return capture1(plan[i][0],plan[i][1]).catch(function(e){ lastErr=String(e&&(e.message||e.name)||e).slice(0,160); if(i+1<plan.length) return go(i+1); throw e; }); }
       return go(0);
     }
@@ -3094,6 +3115,15 @@ function viewFlyer(id,my){
         btn.disabled=false; out.scrollIntoView({block:'start'});
       }).catch(function(e){ if(!lastErr) lastErr=String(e&&(e.message||e.name)||e).slice(0,160); out.innerHTML=failMsg('pdfFail'); btn.disabled=false; });
     };
+    if(/dbg/.test(location.search)){
+      var db=document.createElement('button'); db.type='button'; db.className='btn ghost sm'; db.textContent='診断'; document.getElementById('sv').parentNode.appendChild(db);
+      db.onclick=function(){
+        var out=document.getElementById('imgout'), plan=[['A そのまま',1,0],['B 飾りSVGなし',1,1],['C 背景画像もなし',1,2]], lines=[];
+        out.innerHTML='<p class="msg">診断中…</p>';
+        (function go(i){ if(i>=plan.length){ out.innerHTML='<pre style="font-size:13px;white-space:pre-wrap">'+esc(lines.join('\n'))+'</pre>'; return; }
+          capture1(plan[i][1],plan[i][2]).then(function(){ lines.push(plan[i][0]+': OK'); },function(e){ lines.push(plan[i][0]+': NG '+String(e&&(e.message||e.name)||e).slice(0,120)); }).then(function(){ go(i+1); }); })(0);
+      };
+    }
     document.getElementById('sv').onclick=function(){
       var out=document.getElementById('imgout'), btn=document.getElementById('sv'); btn.disabled=true; out.innerHTML='<p class="msg">'+esc(t('saveBusy'))+'</p>';
       capture(3).then(function(c){
