@@ -3038,7 +3038,7 @@ function viewFlyer(id,my){
     };
     drawAdj();
     /* capture: clone the fixed 620px poster (no transform) and render it at 3x. A4 has the same ratio, so image and PDF are the same picture */
-    function capture(scale){
+    function capture1(scale,noSvg){
       var fl=document.querySelector('.flyer'), wrap=null;
       /* html2canvas measures text baselines with a probe img appended to body in the live document; the site-wide img{display:block} makes it drop all text about half an em, so make the probe inline while capturing */
       var fx=document.createElement('style'); fx.textContent='body>div>img{display:inline-block !important}'; document.head.appendChild(fx);
@@ -3047,9 +3047,18 @@ function viewFlyer(id,my){
         if(!window.html2canvas) throw new Error('lib');
         wrap=document.createElement('div'); wrap.className='capwrap';
         var cl=fl.cloneNode(true); cl.removeAttribute('id'); cl.classList.add('cap'); cl.style.transform='none'; wrap.appendChild(cl); document.body.appendChild(wrap);
+        if(noSvg){ Array.prototype.slice.call(cl.querySelectorAll('svg')).forEach(function(x){ if(x.parentNode) x.parentNode.removeChild(x); }); }
         return new Promise(function(r){ setTimeout(r,200); }).then(function(){ return html2canvas(cl,{scale:scale,backgroundColor:'#ffffff',useCORS:true,logging:false,width:620,height:877,windowWidth:620}); });
-      }).then(function(c){ clean(); return c; },function(e){ clean(); throw e; });
+      }).then(function(c){ clean(); c.toDataURL('image/jpeg',0.5); return c; },function(e){ clean(); throw e; });
     }
+    /* iPhoneで失敗する時のため、重い設定から順に3回まで試す。最後の失敗理由は lastErr に残す */
+    var lastErr='';
+    function capture(scale){
+      var plan=[[scale,false],[2,false],[1.6,true]];
+      function go(i){ return capture1(plan[i][0],plan[i][1]).catch(function(e){ lastErr=String(e&&(e.message||e.name)||e).slice(0,160); if(i+1<plan.length) return go(i+1); throw e; }); }
+      return go(0);
+    }
+    function failMsg(k){ return '<p class="err">'+esc(t(k))+'</p>'+(lastErr?'<p class="help" style="font-size:12px;color:#888">('+esc(lastErr)+')</p>':''); }
     document.getElementById('pr').onclick=function(){
       var out=document.getElementById('imgout'), btn=document.getElementById('pr'); btn.disabled=true; out.innerHTML='<p class="msg">'+esc(t('pdfBusy'))+'</p>';
       capture(3).then(function(c){
@@ -3064,14 +3073,14 @@ function viewFlyer(id,my){
           document.getElementById('pdfopen').onclick=function(ev){ ev.preventDefault(); navigator.share({files:[file]}).catch(function(){ window.open(url,'_blank'); }); };
         }
         btn.disabled=false; out.scrollIntoView({block:'start'});
-      }).catch(function(){ out.innerHTML='<p class="err">'+esc(t('pdfFail'))+'</p>'; btn.disabled=false; });
+      }).catch(function(e){ if(!lastErr) lastErr=String(e&&(e.message||e.name)||e).slice(0,160); out.innerHTML=failMsg('pdfFail'); btn.disabled=false; });
     };
     document.getElementById('sv').onclick=function(){
       var out=document.getElementById('imgout'), btn=document.getElementById('sv'); btn.disabled=true; out.innerHTML='<p class="msg">'+esc(t('saveBusy'))+'</p>';
       capture(3).then(function(c){
         out.innerHTML='<p class="help">'+esc(t('saveHint'))+'</p><img src="'+c.toDataURL('image/jpeg',0.92)+'" alt="" style="width:100%;border:1px solid var(--rose-pale)">';
         btn.disabled=false; out.scrollIntoView({block:'start'});
-      }).catch(function(){ out.innerHTML='<p class="err">'+esc(t('saveFail'))+'</p>'; btn.disabled=false; });
+      }).catch(function(e){ if(!lastErr) lastErr=String(e&&(e.message||e.name)||e).slice(0,160); out.innerHTML=failMsg('saveFail'); btn.disabled=false; });
     };
   });
 }
